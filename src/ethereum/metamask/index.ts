@@ -1,3 +1,9 @@
+import {
+  NotImplementedError,
+  Signer,
+  WalletInterface,
+  WALLET_STATUS,
+} from "~/src/types";
 import { State } from "./types";
 
 const initialState: Readonly<State> = Object.freeze({
