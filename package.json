@@ -1,0 +1,18 @@
+{
+  "name": "wallet-component",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "julien <julien@undercurrent.tech>",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "jest-environment-jsdom": "^28.1.1",
+    "ts-jest": "^28.0.5"
+  },
+  "dependencies": {
+    "jest": "^28.1.1"
+  }
+}
