@@ -2,7 +2,7 @@ enum WALLET_STATUS {
   OK,
   LOGIN_ERROR,
   WALLET_ERROR,
-  EXTENSION_ERROR,
+  EXTENSION_NOT_FOUND,
 }
 
 class NotImplementedError extends Error {}
@@ -16,8 +16,8 @@ interface WalletInterface {
   signIn: () => Promise<WALLET_STATUS>;
   signOut: () => Promise<WALLET_STATUS>;
   getSigner: () => Signer;
-  getAmount: () => number | Promise<number>;
-  getAsset: () => unknown | Promise<unknown>;
+  getBallance: () => number | Promise<number>;
+  getAssets: () => unknown | Promise<unknown>;
 }
 
 export { NotImplementedError, WalletInterface };

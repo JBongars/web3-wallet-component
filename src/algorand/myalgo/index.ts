@@ -37,11 +37,11 @@ class MyAlgo implements WalletInterface {
     throw new NotImplementedError();
   };
 
-  public getAmount: () => number | Promise<number> = () => {
+  public getBallance: () => number | Promise<number> = () => {
     throw new NotImplementedError();
   };
 
-  public getAsset: () => unknown | Promise<unknown> = async () => {};
+  public getAssets: () => unknown | Promise<unknown> = async () => {};
 }
 
 export { MyAlgo };
