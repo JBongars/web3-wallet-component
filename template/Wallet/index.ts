@@ -11,7 +11,7 @@ const initialState: Readonly<State> = Object.freeze({
   data2: "",
 });
 
-class MyAlgo implements WalletInterface<State> {
+class Wallet implements WalletInterface<State> {
   public state: State;
 
   constructor(state?: State) {
@@ -51,5 +51,5 @@ class MyAlgo implements WalletInterface<State> {
   }
 }
 
-export { MyAlgo };
-export type { State as MyAlgoState };
+export { Wallet };
+export type { State as WalletState };

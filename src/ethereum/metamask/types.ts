@@ -3,4 +3,6 @@ type State = {
   data2: string;
 };
 
-export type { State };
+type Asset = {};
+
+export type { State, Asset };

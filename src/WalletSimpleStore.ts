@@ -1,11 +1,5 @@
 import { Algorand, AlgorandState } from "./algorand";
 import { Ethereum, EthereumState } from "./ethereum";
-import {
-  NotImplementedError,
-  Signer,
-  WalletInterface,
-  WALLET_STATUS,
-} from "./types";
 
 type WalletSimpleStoreState = {
   algorand?: AlgorandState;

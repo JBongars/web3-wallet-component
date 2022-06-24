@@ -1,11 +1,6 @@
-import { Algorand, AlgorandState } from "./algorand";
-import { Ethereum, EthereumState } from "./ethereum";
-import {
-  NotImplementedError,
-  Signer,
-  WalletInterface,
-  WALLET_STATUS,
-} from "./types";
+import { Algorand, AlgorandState, MyAlgo } from "./algorand";
+import { Ethereum, EthereumState, MetaMask } from "./ethereum";
+import { WalletInterface } from "./types";
 
 type WalletStoreState = {
   algorand?: AlgorandState;
@@ -13,18 +8,21 @@ type WalletStoreState = {
 };
 
 class WalletStore {
-  public algorand: Algorand;
-  public ethereum: Ethereum;
+  private wallets: WalletInterface<unknown>[];
 
-  constructor(data?: WalletStoreState) {
-    this.algorand = new Algorand(data?.algorand);
-    this.ethereum = new Ethereum(data?.ethereum);
+  constructor() {
+    this.wallets = [new MyAlgo(), new MetaMask()];
   }
 
-  // This is to prevent non-POJO warnings on Nuxt server instance
-  // investigate alternative in the future
   toJSON() {
-    return { ...this }; // here I make a POJO's copy of the class instance
+    const states = this.wallets.reduce(
+      (a, elem) => ({
+        ...a,
+        [elem.constructor.name]: elem.toJSON(),
+      }),
+      {}
+    );
+    return { ...states }; // here I make a POJO's copy of the class instance
   }
 }
 

@@ -4,14 +4,14 @@ import {
   WalletInterface,
   WALLET_STATUS,
 } from "~/src/types";
-import { State } from "./types";
+import { Asset, State } from "./types";
 
 const initialState: Readonly<State> = Object.freeze({
   data1: "",
   data2: "",
 });
 
-class MetaMask implements WalletInterface {
+class MetaMask implements WalletInterface<State> {
   public state: State;
 
   constructor(state?: State) {
@@ -22,27 +22,33 @@ class MetaMask implements WalletInterface {
     }
   }
 
-  public init: () => Promise<WALLET_STATUS> = async () => {
+  public async init(): Promise<WALLET_STATUS> {
     throw new NotImplementedError();
-  };
+  }
 
-  public signIn: () => Promise<WALLET_STATUS> = async () => {
+  public async signIn(): Promise<WALLET_STATUS> {
     throw new NotImplementedError();
-  };
+  }
 
-  public signOut: () => Promise<WALLET_STATUS> = async () => {
+  public async signOut(): Promise<WALLET_STATUS> {
     throw new NotImplementedError();
-  };
+  }
 
-  public getSigner: () => Signer = () => {
+  public async getSigner(): Promise<Signer> {
     throw new NotImplementedError();
-  };
+  }
 
-  public getBallance: () => number | Promise<number> = () => {
+  public async getBallance(): Promise<number> {
     throw new NotImplementedError();
-  };
+  }
 
-  public getAssets: () => unknown | Promise<unknown> = async () => {};
+  public async getAssets(): Promise<Asset[]> {
+    throw new NotImplementedError();
+  }
+
+  public toJSON(): State {
+    return this.state;
+  }
 }
 
 export { MetaMask };

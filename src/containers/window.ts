@@ -12,4 +12,4 @@ const useWindow = async (cb: (windows: Window) => Promise<unknown>) => {
   return null;
 };
 
-export default useWindow;
+export { useWindow };

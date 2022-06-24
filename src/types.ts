@@ -11,13 +11,14 @@ type Signer = (
   transactions: unknown[]
 ) => Promise<{ signedTransaction: unknown[]; status: WALLET_STATUS }>;
 
-interface WalletInterface {
+interface WalletInterface<T> {
   init: () => Promise<WALLET_STATUS>;
   signIn: () => Promise<WALLET_STATUS>;
   signOut: () => Promise<WALLET_STATUS>;
-  getSigner: () => Signer;
-  getBallance: () => number | Promise<number>;
-  getAssets: () => unknown | Promise<unknown>;
+  getSigner: () => Promise<Signer>;
+  getBallance: () => Promise<number>;
+  getAssets: () => Promise<unknown[]>;
+  toJSON: () => T;
 }
 
 export { NotImplementedError, WalletInterface };
