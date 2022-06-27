@@ -92,7 +92,6 @@ export type WalletStoreConfig = {
 };
 export class WalletStore implements useWallets {
     constructor(config: WalletStoreConfig);
-    test(): string;
     use(walletName: WalletID): any;
     toJSON(): WalletState[];
 }

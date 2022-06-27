@@ -1,5 +1,5 @@
-import { MyAlgo } from "./algorand";
-import { MetaMask } from "./ethereum";
+import { MyAlgo, MyAlgoState } from "./algorand";
+import { MetaMask, MetaMaskState } from "./ethereum";
 import {
   NotImplementedError,
   useWallets,
@@ -29,10 +29,6 @@ class WalletStore implements useWallets {
 
   constructor(config: WalletStoreConfig) {
     this.walletStates = config.previousWalletState || [];
-  }
-
-  public test(): string {
-    return "hello world~";
   }
 
   private updateState(key: WalletID, newState: { [key: string]: unknown }) {
@@ -65,13 +61,16 @@ class WalletStore implements useWallets {
       }
 
       let target: WalletInterface<{ [key: string]: unknown }>;
+      const previousState: unknown = this.walletStates.find(
+        (elem) => elem.id === walletName
+      )?.state;
 
       switch (walletName) {
         case WALLETS.METAMASK:
-          target = new MetaMask();
+          target = new MetaMask(previousState as MetaMaskState);
           break;
         case WALLETS.MYALGO:
-          target = new MyAlgo();
+          target = new MyAlgo(previousState as MyAlgoState);
           break;
         default:
           throw new NotImplementedError();
