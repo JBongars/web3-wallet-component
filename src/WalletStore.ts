@@ -1,6 +1,11 @@
 import { MyAlgo } from "./algorand";
 import { MetaMask } from "./ethereum";
-import { NotImplementedError, WalletInterface, WALLETS } from "./types";
+import {
+  NotImplementedError,
+  useWallets,
+  WalletInterface,
+  WALLETS,
+} from "./types";
 import { clone, iffyClone, useProxy } from "./utils";
 
 type WalletID = keyof typeof WALLETS;
@@ -19,11 +24,15 @@ type WalletStoreConfig = {
   previousWalletState?: WalletState[];
 };
 
-class WalletStore {
+class WalletStore implements useWallets {
   private walletStates: WalletState[];
 
   constructor(config: WalletStoreConfig) {
     this.walletStates = config.previousWalletState || [];
+  }
+
+  public test(): string {
+    return "hello world~";
   }
 
   private updateState(key: WalletID, newState: { [key: string]: unknown }) {
@@ -47,8 +56,8 @@ class WalletStore {
     return wallet;
   }
 
-  public use(walletName: WalletID): ProxyHandler<{ [key: string]: unknown }> {
-    return useProxy(async (prop: string | Symbol) => {
+  public use(walletName: WalletID): any {
+    return useProxy((prop: string | Symbol) => {
       if (prop === "state") {
         return iffyClone(
           this.walletStates.find((elem) => elem.id === walletName)?.state
@@ -68,11 +77,25 @@ class WalletStore {
           throw new NotImplementedError();
       }
 
-      const result =
-        target[prop as keyof WalletInterface<{ [key: string]: unknown }>];
-      await this.updateState(walletName, target.toJSON());
+      if (
+        typeof target[
+          prop as keyof WalletInterface<{ [key: string]: unknown }>
+        ] !== "function"
+      ) {
+        return target[
+          prop as keyof WalletInterface<{ [key: string]: unknown }>
+        ];
+      }
 
-      return result;
+      return async (...args: any[]) => {
+        const result = await target[
+          prop as keyof WalletInterface<{ [key: string]: unknown }>
+        ](...(args as []));
+
+        this.updateState(walletName, target.toJSON());
+
+        return result;
+      };
     });
   }
 

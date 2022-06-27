@@ -36,8 +36,8 @@ let $81c1b644006d48ec$var$WALLET_STATUS;
     WALLET_STATUS1[WALLET_STATUS1["EXTENSION_NOT_FOUND"] = 3] = "EXTENSION_NOT_FOUND";
 })($81c1b644006d48ec$var$WALLET_STATUS || ($81c1b644006d48ec$var$WALLET_STATUS = {}));
 const $81c1b644006d48ec$export$412a02074a4127ac = {
-    METAMASK: "METAMASK",
-    MYALGO: "MYALGO"
+    MYALGO: "MYALGO",
+    METAMASK: "METAMASK"
 };
 class $81c1b644006d48ec$export$e162153238934121 extends Error {
 }
@@ -161,7 +161,7 @@ $parcel$exportWildcard($61dc865ce14f4bf4$exports, $85bc198bca370cae$exports);
 const $fab42eb3dee39b5b$export$9cd59f9826255e47 = (obj)=>JSON.parse(JSON.stringify(obj));
 const $fab42eb3dee39b5b$export$22d904b3af0cacbd = (obj)=>obj && obj !== null ? $fab42eb3dee39b5b$export$9cd59f9826255e47(obj) : null;
 const $fab42eb3dee39b5b$export$4c7dc056506f1572 = (callback)=>new Proxy({}, {
-        async get (_target, prop, receiver) {
+        get (_target, prop, receiver) {
             const result = callback(prop);
             if (result === null) return receiver;
             else return result;
@@ -172,6 +172,9 @@ const $fab42eb3dee39b5b$export$4c7dc056506f1572 = (callback)=>new Proxy({}, {
 class $9a1f3323ce7a357e$export$b2ed8906266612d9 {
     constructor(config){
         this.walletStates = config.previousWalletState || [];
+    }
+    test() {
+        return "hello world~";
     }
     updateState(key, newState) {
         const wallet = this.walletStates.find((elem)=>elem.id === key);
@@ -189,7 +192,7 @@ class $9a1f3323ce7a357e$export$b2ed8906266612d9 {
         return wallet;
     }
     use(walletName) {
-        return (0, $fab42eb3dee39b5b$export$4c7dc056506f1572)(async (prop)=>{
+        return (0, $fab42eb3dee39b5b$export$4c7dc056506f1572)((prop)=>{
             if (prop === "state") return (0, $fab42eb3dee39b5b$export$22d904b3af0cacbd)(this.walletStates.find((elem)=>elem.id === walletName)?.state);
             let target;
             switch(walletName){
@@ -202,9 +205,12 @@ class $9a1f3323ce7a357e$export$b2ed8906266612d9 {
                 default:
                     throw new (0, $81c1b644006d48ec$export$e162153238934121)();
             }
-            const result = target[prop];
-            await this.updateState(walletName, target.toJSON());
-            return result;
+            if (typeof target[prop] !== "function") return target[prop];
+            return async (...args)=>{
+                const result = await target[prop](...args);
+                this.updateState(walletName, target.toJSON());
+                return result;
+            };
         });
     }
     toJSON() {

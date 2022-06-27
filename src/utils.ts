@@ -8,11 +8,11 @@ const iffyClone = (
 
 const useProxy = (
   callback: (prop: string | Symbol) => Promise<unknown> | unknown
-) =>
+): any =>
   new Proxy(
     {},
     {
-      async get(_target, prop, receiver) {
+      get(_target, prop, receiver) {
         const result = callback(prop);
         if (result === null) return receiver;
         else return result;

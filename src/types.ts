@@ -1,3 +1,6 @@
+import { MyAlgo } from "./algorand";
+import { MetaMask } from "./ethereum";
+
 enum WALLET_STATUS {
   OK,
   LOGIN_ERROR,
@@ -6,9 +9,14 @@ enum WALLET_STATUS {
 }
 
 const WALLETS = {
-  METAMASK: "METAMASK",
   MYALGO: "MYALGO",
+  METAMASK: "METAMASK",
 } as const;
+
+interface useWallets {
+  use(walletName: "MYALGO"): MyAlgo;
+  use(walletName: "METAMASK"): MetaMask;
+}
 
 class NotImplementedError extends Error {}
 
@@ -27,4 +35,4 @@ interface WalletInterface<T> {
 }
 
 export { WALLETS, NotImplementedError, WalletInterface };
-export type { WALLET_STATUS, Signer };
+export type { WALLET_STATUS, Signer, useWallets };
