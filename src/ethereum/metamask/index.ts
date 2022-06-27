@@ -6,6 +6,8 @@ import {
 } from "~/src/types";
 import { Asset, State } from "./types";
 
+type MetaMaskState = State;
+
 const initialState: Readonly<State> = Object.freeze({
   data1: "",
   data2: "",
@@ -52,4 +54,4 @@ class MetaMask implements WalletInterface<State> {
 }
 
 export { MetaMask };
-export type { State as MetaMaskState };
+export type { MetaMaskState };

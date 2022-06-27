@@ -5,6 +5,11 @@ enum WALLET_STATUS {
   EXTENSION_NOT_FOUND,
 }
 
+const WALLETS = {
+  METAMASK: "METAMASK",
+  MYALGO: "MYALGO",
+} as const;
+
 class NotImplementedError extends Error {}
 
 type Signer = (
@@ -21,5 +26,5 @@ interface WalletInterface<T> {
   toJSON: () => T;
 }
 
-export { NotImplementedError, WalletInterface };
+export { WALLETS, NotImplementedError, WalletInterface };
 export type { WALLET_STATUS, Signer };

@@ -6,9 +6,12 @@ import {
 } from "~/src/types";
 import { Asset, State } from "./types";
 
+type MyAlgoState = State;
+
 const initialState: Readonly<State> = Object.freeze({
   data1: "",
   data2: "",
+  counter: 0,
 });
 
 class MyAlgo implements WalletInterface<State> {
@@ -20,6 +23,11 @@ class MyAlgo implements WalletInterface<State> {
     } else {
       this.state = { ...initialState };
     }
+  }
+
+  public test(): string {
+    this.state.counter++;
+    return "ok";
   }
 
   public async init(): Promise<WALLET_STATUS> {
@@ -52,4 +60,4 @@ class MyAlgo implements WalletInterface<State> {
 }
 
 export { MyAlgo };
-export type { State as MyAlgoState };
+export type { MyAlgoState };

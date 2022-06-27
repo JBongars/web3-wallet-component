@@ -56,17 +56,26 @@ type Signer = (
 | EXTENSION_NOT_FOUND | Wallet Extension was not found on the browser |
 
 ## Road Map
-- Ethereum
-  - [ ] Metamask
-    - [ ] signIn
-    - [ ] signOut
-    - [ ] getSigner
-    - [ ] getBallance
-    - [ ] getAssets
-- Algorand
-  - [ ] MyAlgo
-    - [ ] signIn
-    - [ ] signOut
-    - [ ] getSigner
-    - [ ] getBallance
-    - [ ] getAssets
+- Chains
+  - Ethereum
+    - [ ] Metamask
+      - [ ] signIn
+      - [ ] signOut
+      - [ ] getSigner
+      - [ ] getBallance
+      - [ ] getAssets
+  - Algorand
+    - [ ] MyAlgo
+      - [ ] signIn
+      - [ ] signOut
+      - [ ] getSigner
+      - [ ] getBallance
+      - [ ] getAssets
+- Features
+  - [ ] ReactContext component
+  - [ ] Wallet Widget (see Example below)
+
+### Wallet Widget (WIP)
+example: https://app.nf.domains/
+
+![Wallet Widget](docs/images/wallet_widget.png?raw=true "Wallet Widget")
