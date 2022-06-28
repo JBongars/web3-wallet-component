@@ -60,6 +60,8 @@ class WalletStore implements useWallets {
         );
       }
 
+      // there may be an issue where if the client preserves multiple
+      // proxies, the wallet state could fall out of sync...
       let target: WalletInterface<{ [key: string]: unknown }>;
       const previousState: unknown = this.walletStates.find(
         (elem) => elem.id === walletName

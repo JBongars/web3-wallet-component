@@ -191,6 +191,8 @@ class $9a1f3323ce7a357e$export$b2ed8906266612d9 {
     use(walletName) {
         return (0, $fab42eb3dee39b5b$export$4c7dc056506f1572)((prop)=>{
             if (prop === "state") return (0, $fab42eb3dee39b5b$export$22d904b3af0cacbd)(this.walletStates.find((elem)=>elem.id === walletName)?.state);
+            // there may be an issue where if the client preserves multiple
+            // proxies, the wallet state could fall out of sync...
             let target;
             const previousState = this.walletStates.find((elem)=>elem.id === walletName)?.state;
             switch(walletName){
