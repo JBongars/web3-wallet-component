@@ -6,6 +6,7 @@ enum WALLET_STATUS {
   LOGIN_ERROR,
   WALLET_ERROR,
   EXTENSION_NOT_FOUND,
+  ACCOUNT_NOT_FOUND
 }
 
 const WALLETS = {
@@ -18,21 +19,22 @@ interface useWallets {
   use(walletName: "METAMASK"): MetaMask;
 }
 
-class NotImplementedError extends Error {}
+class NotImplementedError extends Error { }
 
 type Signer = (
-  transactions: unknown[]
-) => Promise<{ signedTransaction: unknown[]; status: WALLET_STATUS }>;
+  transactions: any
+) => Promise<{ signedTransaction: any; status: WALLET_STATUS }>;
+
 
 interface WalletInterface<T> {
   init: () => Promise<WALLET_STATUS>;
   signIn: () => Promise<WALLET_STATUS>;
   signOut: () => Promise<WALLET_STATUS>;
-  getSigner: () => Promise<Signer>;
-  getBallance: () => Promise<number>;
+  getSigner: Signer;
+  getBalance: () => Promise<number>;
   getAssets: () => Promise<unknown[]>;
   toJSON: () => T;
 }
 
-export { WALLETS, NotImplementedError, WalletInterface };
-export type { WALLET_STATUS, Signer, useWallets };
+export { WALLETS, NotImplementedError, WalletInterface, WALLET_STATUS };
+export type { Signer, useWallets };
