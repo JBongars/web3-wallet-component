@@ -27,11 +27,11 @@ This design is the simplest and most straightforward to implement however it may
 
 #### Steps
 1. The client will make a request to the ```Store.use('WALLET')``` method which will return a proxy that looks like the wallet class.
-2. The Proxy will pull the state cache from the store and construct a new classs instance of the wallet. If the state is empty, it will generate a new state.
+2. The Proxy will pull the state cache from the store and construct a new class instance of the wallet. If the state is empty, it will generate a new state.
 3. If the client attempts to use some method in the ```Wallet``` class, instead of the method, some asynchronous callback function will be returned. Think of this as a wrapped method.
 4. When the callback function is called, the new state will be pulled from the wallet using the ```toJSON``` method.
 5. This will be synced with the global state cache from step 2
-6. The result will be returned to the client. From the client's eyes, it will look like the ```Store.use``` method simply returns the Wallet Object and they can use it directly. However, the state is cached automatically and the Wallet object will self destruct once it is no longer used.
+6. The result will be returned to the client. From the client's eyes, it will look like the ```Store.use``` method simply returns the Wallet Object and they can use it directly. However, the state is cached automatically and the Wallet object will self-destruct once it is no longer used.
 
 #### Code example
 1. Backend
@@ -106,7 +106,7 @@ const result = wallet.getBallance(); // no error
 ```
 
 #### Considerations
-There is a significantly higher amount of complexity and overhead for this store to work meaning that this method might be more prone to bugs and polishing before this can be safe to use. The up side is since we are managing state in one place and all wallets are both stateless and virtual, this solution could become more scalable as we integrate more wallets. One consideration we might have is making sure that for each context and for each call to the callback, we have to make sure that the global state is in sync otherwise we could end up in a situation where two or more wallets drift out of sync with each other. Just from the complexity, this solution may also become more difficult to maintain over time.
+There is a significantly higher amount of complexity and overhead for this store to work meaning that this method might be more prone to bugs and polishing before this can be safe to use. The upside is since we are managing state in one place and all wallets are both stateless and virtual, this solution could become more scalable as we integrate more wallets. One consideration we might have is making sure that for each context and for each call to the callback, we have to make sure that the global state is in sync otherwise we could end up in a situation where two or more wallets drift out of sync with each other. Just from the complexity, this solution may also become more difficult to maintain over time.
 
 ## API
 
@@ -170,10 +170,31 @@ type Signer = (
       - [ ] getBallance
       - [ ] getAssets
 - Features
-  - [ ] ReactContext component
-  - [ ] Wallet Widget (see Example below)
+  - [ ] Mock Next Application for testing changes in isolation (In progress)
+  - [ ] React Context Component (To be confirmed)
+  - [ ] Managing/ Syncing Chain Events to all Wallets
+  - [ ] Wallet Connect Integration
+  - [ ] HTTPS/GRPC Calls to Chain Nodes
+  - [ ] Wallet Widget
 
-### Wallet Widget (WIP)
-example: https://app.nf.domains/
+### Details
+#### Mock Next Application for testing changes in isolation (In progress)
+We are creating a mock react application to test the wallet-component in isolation. Once we have created a widget as well, this will be onboarded there instead.
 
+#### React Context Component (To be confirmed)
+Run the wallet-component as a react context then include the provider in the root of any project. The wallet state and methods should then be available on any component.
+
+#### Managing/ Syncing Chain Events to all Wallets
+Need a way to sync chain events such as pinging wallets whenever a new block has been added to the blockchain. That way, each wallet won't need their own timer. Thinking of just creating an observable and passing that to each wallet. That way, consumers can create their own observables and pass that.
+
+#### Wallet Connect Integration
+Integrate Wallet Connect class for all chains and/or build utility for handling wallets that can be used on multiple chains (TBC). This can most likely cover a large amount of wallets. Maybe we can create a base class and any 'wallet-connect' compatible wallet can just inherit from that class. Or, we can use a factory to do this programmatically instead if it's not too complicated.
+
+#### HTTPS/GRPC Calls to Chain Nodes
+We need to handle requests to the Chain node if we want certain functionality such as fetching the list of assets from a particular wallet for instance. Right now, discussion around this subject suggests that the wallet-component should not support this kind of functionality and it should be handled by the app instead. However, that would make the proposal for the widget impossible. Consider discussing this point further.
+
+
+#### Wallet Widget
 ![Wallet Widget](docs/images/wallet_widget.png?raw=true "Wallet Widget")
+
+A wallet widget with a button that we can use on all our dapps moving forward. Should have the ability to connect to multiple wallets even on the same chain and manage transactions in a stateless way. Details and design for this to be confirmed in the future but we are using https://app.nf.domains/ as a reference.
