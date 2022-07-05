@@ -22,15 +22,15 @@ interface useWallets {
 class NotImplementedError extends Error { }
 
 type Signer = (
-  transactions: any
-) => Promise<{ signedTransaction: any; status: WALLET_STATUS }>;
+  transactions: unknown[]
+) => Promise<{ signedTransaction: unknown[]; status: WALLET_STATUS }>;
 
 
 interface WalletInterface<T> {
   init: () => Promise<WALLET_STATUS>;
   signIn: () => Promise<WALLET_STATUS>;
   signOut: () => Promise<WALLET_STATUS>;
-  getSigner: Signer;
+  getSigner: () => Promise<Signer>;
   getBalance: () => Promise<number>;
   getAssets: () => Promise<unknown[]>;
   toJSON: () => T;

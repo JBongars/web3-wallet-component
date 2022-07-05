@@ -1,8 +1,8 @@
 type State = {
   accounts: string[],
-  isConnected: Boolean
+  isConnected: Boolean,
 };
 
 type Asset = {};
 
-export type { State, Asset };
+export type { State as MetaMaskState, Asset };

@@ -13,4 +13,4 @@ type Asset = {
   sourceDecimals: Number
 };
 
-export type { State, Asset };
+export type { State as MyAlgoState, Asset };

@@ -1,36 +1,19 @@
-import {
-  Signer,
-  WalletInterface,
-  WALLET_STATUS,
-} from "~/src/types";
-import { Asset, State } from "./types";
+import { Signer, WalletInterface, WALLET_STATUS, NotImplementedError} from "~/src/types";
+import { Asset, MetaMaskState } from "./types";
 import { ethers } from "ethers";
 import Web3 from "web3";
-import axios from 'axios'
 import { TransactionRequest, TransactionResponse } from "@ethersproject/abstract-provider";
+import { useWindow } from "~/src/containers";
 
-/**
- * Temporary (will move this to somewhere and change ethereum data type)
- */
-declare global {
-  interface Window {
-    ethereum: any
-  }
-}
-const { ethereum } = window
-
-
-type MetaMaskState = State;
-
-const initialState: Readonly<State> = Object.freeze({
+const initialState: Readonly<MetaMaskState> = Object.freeze({
   accounts: [],
   isConnected: false,
 });
 
-class MetaMask implements WalletInterface<State> {
-  public state: State;
+class MetaMask implements WalletInterface<MetaMaskState> {
+  public state: MetaMaskState;
 
-  constructor(state?: State) {
+  constructor(state?: MetaMaskState) {
     if (state) {
       this.state = { ...state };
     } else {
@@ -39,20 +22,16 @@ class MetaMask implements WalletInterface<State> {
   }
 
   public async init(): Promise<WALLET_STATUS> {
-    /**
-     * @TODO check metamask extension.
-     */
-
-    ethereum.on('accountsChanged', (accounts: string[]) => {
-      this.state.accounts = accounts
-    });
-
+    await this.getProvider()
+    await this.mountEventListeners()
+    
     throw WALLET_STATUS.OK;
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
-    this.state.accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-    this.state.isConnected = ethereum.isConnected();
+    const provider = await this.getProvider();
+    this.state.accounts = await provider.request({ method: 'eth_requestAccounts' });
+    this.state.isConnected = provider.isConnected();
 
     return WALLET_STATUS.OK;
   }
@@ -64,24 +43,24 @@ class MetaMask implements WalletInterface<State> {
     return WALLET_STATUS.OK
   }
 
-  public getSigner: Signer = async (transaction: TransactionRequest)
-    : Promise<{ signedTransaction: TransactionResponse; status: WALLET_STATUS }> => {
-    const provider = new ethers.providers.Web3Provider(ethereum);
+  public async getSigner(): Promise<Signer> { 
+    return async (transactions:  unknown[]) : Promise<{ signedTransaction: TransactionResponse[]; status: WALLET_STATUS }> => {
+      const provider = new ethers.providers.Web3Provider(this.getProvider());
+      const transactionResponse = await provider.getSigner().sendTransaction(transactions as TransactionRequest)
 
-    const transactionResponse = await provider.getSigner().sendTransaction(transaction)
-
-    return {
-      signedTransaction: transactionResponse,
-      status: WALLET_STATUS.OK
+      return {
+        signedTransaction: [transactionResponse],
+        status: WALLET_STATUS.OK
+      }
     }
-  };
+  }
 
   public async getBalance(): Promise<number> {
     if (!this.state.isConnected) {
       return WALLET_STATUS.ACCOUNT_NOT_FOUND;
     }
 
-    const web3 = new Web3(window.ethereum)
+    const web3 = new Web3(this.getProvider())
 
     const balance = await web3.eth.getBalance(this.state.accounts[0])
 
@@ -89,13 +68,35 @@ class MetaMask implements WalletInterface<State> {
   }
 
   public async getAssets(): Promise<Asset[]> {
-    const { data } = await axios.get<Asset[]>("https://bridge.messina.devucc.name/api/transactions/assets");
-
-    return data;
+     throw new NotImplementedError('getAssets not implemented.')
   }
 
-  public toJSON(): State {
+  public toJSON(): MetaMaskState {
     return this.state;
+  }
+
+  public async mountEventListeners() {
+    const provider = await this.getProvider()
+
+    provider.on('accountsChanged', (accounts: string[]) => {
+      this.state.accounts = accounts
+    })
+  }
+
+  public async unmountEventListeners() {
+    const provider = await this.getProvider()
+
+    provider.removeListener('accountsChanged')
+  }
+
+   public async getProvider(): Promise<unknown> {
+    const ethereum = await useWindow(async (w) => w.ethereum);
+
+    if (!ethereum) {
+      throw new Error('Error opening window.');
+    }
+
+    return ethereum;
   }
 }
 
