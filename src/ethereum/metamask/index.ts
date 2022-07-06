@@ -1,8 +1,18 @@
-import { Signer, WalletInterface, WALLET_STATUS, NotImplementedError} from "~/src/types";
+import {
+  Signer,
+  WalletInterface,
+  WALLET_STATUS,
+  NotImplementedError,
+} from "~/src/types";
 import { Asset, MetaMaskState } from "./types";
 import { ethers } from "ethers";
+
 import Web3 from "web3";
-import { TransactionRequest, TransactionResponse } from "@ethersproject/abstract-provider";
+
+import {
+  TransactionRequest,
+  TransactionResponse,
+} from "@ethersproject/abstract-provider";
 import { useWindow } from "~/src/containers";
 
 const initialState: Readonly<MetaMaskState> = Object.freeze({
@@ -22,37 +32,44 @@ class MetaMask implements WalletInterface<MetaMaskState> {
   }
 
   public async init(): Promise<WALLET_STATUS> {
-    await this.getProvider()
-    await this.mountEventListeners()
-    
+    await this.getProvider();
+    await this.mountEventListeners();
+
     throw WALLET_STATUS.OK;
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
     const provider = await this.getProvider();
-    this.state.accounts = await provider.request({ method: 'eth_requestAccounts' });
-    this.state.isConnected = provider.isConnected();
+    this.state.accounts = await provider.send("eth_requestAccounts", []);
+    this.state.isConnected = this.state.accounts.length > 0;
 
     return WALLET_STATUS.OK;
   }
 
   public async signOut(): Promise<WALLET_STATUS> {
     this.state.accounts = [];
-    this.state.isConnected = false
+    this.state.isConnected = false;
 
-    return WALLET_STATUS.OK
+    return WALLET_STATUS.OK;
   }
 
-  public async getSigner(): Promise<Signer> { 
-    return async (transactions:  unknown[]) : Promise<{ signedTransaction: TransactionResponse[]; status: WALLET_STATUS }> => {
-      const provider = new ethers.providers.Web3Provider(this.getProvider());
-      const transactionResponse = await provider.getSigner().sendTransaction(transactions as TransactionRequest)
+  public async getSigner(): Promise<Signer> {
+    return async (
+      transactions: unknown[]
+    ): Promise<{
+      signedTransaction: TransactionResponse[];
+      status: WALLET_STATUS;
+    }> => {
+      const provider = await this.getProvider();
+      const transactionResponse = await provider
+        .getSigner()
+        .sendTransaction(transactions as TransactionRequest);
 
       return {
         signedTransaction: [transactionResponse],
-        status: WALLET_STATUS.OK
-      }
-    }
+        status: WALLET_STATUS.OK,
+      };
+    };
   }
 
   public async getBalance(): Promise<number> {
@@ -60,43 +77,54 @@ class MetaMask implements WalletInterface<MetaMaskState> {
       return WALLET_STATUS.ACCOUNT_NOT_FOUND;
     }
 
-    const web3 = new Web3(this.getProvider())
+    const provider = await this.getProvider();
+    const balance = await provider.getBalance(this.state.accounts[0]);
 
-    const balance = await web3.eth.getBalance(this.state.accounts[0])
+    // const web3 = new Web3();
+    // const balance = await web3.eth.getBalance(this.state.accounts[0]);
 
     return Number(balance);
   }
 
   public async getAssets(): Promise<Asset[]> {
-     throw new NotImplementedError('getAssets not implemented.')
+    throw new NotImplementedError("getAssets not implemented.");
   }
 
   public toJSON(): MetaMaskState {
     return this.state;
   }
 
-  public async mountEventListeners() {
-    const provider = await this.getProvider()
+  public async mountEventListeners(
+    callback?: (accounts: string[]) => Promise<unknown>
+  ) {
+    const provider = await this.getProvider();
 
-    provider.on('accountsChanged', (accounts: string[]) => {
-      this.state.accounts = accounts
-    })
+    provider.on("accountsChanged", async (accounts: string[]) => {
+      this.state.accounts = accounts;
+
+      if (callback) {
+        await callback(accounts);
+      }
+    });
   }
 
-  public async unmountEventListeners() {
-    const provider = await this.getProvider()
+  public async unmountEventListeners(callback: () => Promise<unknown>) {
+    const provider = await this.getProvider();
 
-    provider.removeListener('accountsChanged')
+    provider.removeListener("accountsChanged", async () => await callback());
   }
 
-   public async getProvider(): Promise<unknown> {
-    const ethereum = await useWindow(async (w) => w.ethereum);
+  public async getProvider(): Promise<ethers.providers.Web3Provider> {
+    const ethereum = (await useWindow(async (w) => (w as any).ethereum)) as any;
 
     if (!ethereum) {
-      throw new Error('Error opening window.');
+      throw new Error("Error opening window.");
     }
 
-    return ethereum;
+    const provider: ethers.providers.Web3Provider =
+      new ethers.providers.Web3Provider(ethereum);
+
+    return provider;
   }
 }
 
