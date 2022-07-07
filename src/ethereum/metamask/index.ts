@@ -108,10 +108,14 @@ class MetaMask implements WalletInterface<MetaMaskState> {
     });
   }
 
-  public async unmountEventListeners(callback: () => Promise<unknown>) {
+  public async unmountEventListeners(callback?: () => Promise<unknown>) {
     const provider = await this.getProvider();
 
-    provider.removeListener("accountsChanged", async () => await callback());
+    provider.removeListener("accountsChanged", async () => {
+      if (callback) {
+        return callback();
+      }
+    });
   }
 
   public async getProvider(): Promise<ethers.providers.Web3Provider> {
