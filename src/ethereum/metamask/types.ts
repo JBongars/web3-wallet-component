@@ -1,6 +1,8 @@
+import {ethers} from "ethers";
+
 type State = {
   accounts: string[],
-  isConnected: Boolean,
+  isConnected: Boolean
 };
 
 type Asset = {};

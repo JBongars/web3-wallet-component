@@ -1,19 +1,8 @@
-import {
-  Signer,
-  WalletInterface,
-  WALLET_STATUS,
-  NotImplementedError,
-} from "~/src/types";
-import { Asset, MetaMaskState } from "./types";
-import { ethers } from "ethers";
-
-import Web3 from "web3";
-
-import {
-  TransactionRequest,
-  TransactionResponse,
-} from "@ethersproject/abstract-provider";
-import { useWindow } from "~/src/containers";
+import {NotImplementedError, Signer, WALLET_STATUS, WalletInterface, WalletNotInstalled,} from "../../types";
+import {Asset, MetaMaskState} from "./types";
+import {ethers} from "ethers";
+import {TransactionRequest, TransactionResponse,} from "@ethersproject/abstract-provider";
+import {useWindow} from "../../containers";
 
 const initialState: Readonly<MetaMaskState> = Object.freeze({
   accounts: [],
@@ -22,20 +11,21 @@ const initialState: Readonly<MetaMaskState> = Object.freeze({
 
 class MetaMask implements WalletInterface<MetaMaskState> {
   public state: MetaMaskState;
+  public provider?: ethers.providers.Web3Provider
 
-  constructor(state?: MetaMaskState) {
+   constructor(state?: MetaMaskState) {
     if (state) {
-      this.state = { ...state };
+      this.state = {...state};
     } else {
-      this.state = { ...initialState };
+      this.state = {...initialState};
     }
   }
 
   public async init(): Promise<WALLET_STATUS> {
-    await this.getProvider();
-    await this.mountEventListeners();
+   this.provider = await this.getProvider();
+   await this.mountEventListeners();
 
-    throw WALLET_STATUS.OK;
+    return WALLET_STATUS.OK
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
@@ -60,7 +50,7 @@ class MetaMask implements WalletInterface<MetaMaskState> {
       signedTransaction: TransactionResponse[];
       status: WALLET_STATUS;
     }> => {
-      const provider = await this.getProvider();
+      const provider = this.provider || await this.getProvider();
       const transactionResponse = await provider
         .getSigner()
         .sendTransaction(transactions as TransactionRequest);
@@ -72,22 +62,20 @@ class MetaMask implements WalletInterface<MetaMaskState> {
     };
   }
 
-  public async getBalance(): Promise<number> {
+  public async getBalance(): Promise<string> {
     if (!this.state.isConnected) {
-      return WALLET_STATUS.ACCOUNT_NOT_FOUND;
+      return WALLET_STATUS.ACCOUNT_NOT_FOUND as unknown as string;
     }
 
-    const provider = await this.getProvider();
+    const provider = this.provider || await this.getProvider();
+
     const balance = await provider.getBalance(this.state.accounts[0]);
 
-    // const web3 = new Web3();
-    // const balance = await web3.eth.getBalance(this.state.accounts[0]);
-
-    return Number(balance);
+    return balance.toString();
   }
 
   public async getAssets(): Promise<Asset[]> {
-    throw new NotImplementedError("getAssets not implemented.");
+    throw new NotImplementedError();
   }
 
   public toJSON(): MetaMaskState {
@@ -97,19 +85,21 @@ class MetaMask implements WalletInterface<MetaMaskState> {
   public async mountEventListeners(
     callback?: (accounts: string[]) => Promise<unknown>
   ) {
-    const provider = await this.getProvider();
+    const provider = this.provider || await this.getProvider();
 
     provider.on("accountsChanged", async (accounts: string[]) => {
       this.state.accounts = accounts;
 
       if (callback) {
-        await callback(accounts);
+        return callback(accounts);
       }
     });
   }
 
+
   public async unmountEventListeners(callback?: () => Promise<unknown>) {
-    const provider = await this.getProvider();
+
+   const provider = this.provider || await this.getProvider()
 
     provider.removeListener("accountsChanged", async () => {
       if (callback) {
@@ -122,13 +112,10 @@ class MetaMask implements WalletInterface<MetaMaskState> {
     const ethereum = (await useWindow(async (w) => (w as any).ethereum)) as any;
 
     if (!ethereum) {
-      throw new Error("Error opening window.");
+      throw new WalletNotInstalled();
     }
 
-    const provider: ethers.providers.Web3Provider =
-      new ethers.providers.Web3Provider(ethereum);
-
-    return provider;
+    return new ethers.providers.Web3Provider(ethereum);
   }
 }
 

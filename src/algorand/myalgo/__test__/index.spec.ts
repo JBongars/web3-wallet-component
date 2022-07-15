@@ -1,16 +1,16 @@
-import { MyAlgo } from '..';
-import MyAlgoConnect from '@randlabs/myalgo-connect';
-import { NotImplementedError, WALLET_STATUS } from '.././../../types';
+import { MyAlgo } from "..";
+import MyAlgoConnect from "@randlabs/myalgo-connect";
+import { NotImplementedError, WALLET_STATUS } from "../../../types";
 
-describe('#MyAlgo class', () => {
-  test('can sign in', async () => {
+describe("#MyAlgo class", () => {
+  test("can sign in", async () => {
     jest
-      .spyOn(MyAlgoConnect.prototype, 'connect')
+      .spyOn(MyAlgoConnect.prototype, "connect")
       .mockImplementation(async () => {
         return [
           {
-            name: 'test-name',
-            address: 'test-address',
+            name: "test-name",
+            address: "test-address",
           },
         ];
       });
@@ -23,9 +23,9 @@ describe('#MyAlgo class', () => {
     expect(myAlgo.state.isConnected).toBeTruthy();
   });
 
-  test('can sign out', async () => {
+  test("can sign out", async () => {
     const myAlgo = new MyAlgo({
-      accounts: [{ address: 'test-address', name: 'test-account' }],
+      accounts: [{ address: "test-address", name: "test-account" }],
       isConnected: true,
     });
 
@@ -38,13 +38,13 @@ describe('#MyAlgo class', () => {
     expect(myAlgo.state.isConnected).toBeFalsy();
   });
 
-  test('can get signer', async () => {
+  test("can get signer", async () => {
     jest
-      .spyOn(MyAlgoConnect.prototype, 'signTransaction')
+      .spyOn(MyAlgoConnect.prototype, "signTransaction")
       .mockImplementation(async () => {
         return [
           {
-            txID: 'test-txID',
+            txID: "test-txID",
             blob: new Uint8Array(),
           },
         ];
@@ -54,19 +54,19 @@ describe('#MyAlgo class', () => {
 
     const signer = await myAlgo.getSigner();
 
-    const { signedTransaction, status } = await signer(['encodedTransaction']);
+    const { signedTransaction, status } = await signer(["encodedTransaction"]);
 
     expect(signedTransaction).toHaveLength(1);
     expect(status).toEqual(WALLET_STATUS.OK);
   });
 
-  test('get balance should throw NotImplementedError', async () => {
+  test("get balance should throw NotImplementedError", async () => {
     const myAlgo = new MyAlgo();
 
     expect(() => myAlgo.getBalance()).rejects.toThrowError(NotImplementedError);
   });
 
-  test('get assets should throw NotImplementedError', async () => {
+  test("get assets should throw NotImplementedError", async () => {
     const myAlgo = new MyAlgo();
 
     expect(() => myAlgo.getAssets()).rejects.toThrowError(NotImplementedError);

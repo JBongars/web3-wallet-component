@@ -2,15 +2,15 @@ import {
   SignedTx,
   AlgorandTxn,
   EncodedTransaction,
-} from '@randlabs/myalgo-connect';
+} from "@randlabs/myalgo-connect";
 import {
   Signer,
   WALLET_STATUS,
   WalletInterface,
   NotImplementedError,
-} from './../../types';
-import { Asset, MyAlgoState } from './types';
-import MyAlgoConnect from '@randlabs/myalgo-connect';
+} from "./../../types";
+import { Asset, MyAlgoState } from "./types";
+import MyAlgoConnect from "@randlabs/myalgo-connect";
 
 const initialState: Readonly<MyAlgoState> = Object.freeze({
   accounts: [],
@@ -48,12 +48,12 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return WALLET_STATUS.OK;
   }
 
-  public async getBalance(): Promise<number> {
-    throw new NotImplementedError('getBalance not implemented.');
+  public async getBalance(): Promise<string> {
+    throw new NotImplementedError();
   }
 
   public async getAssets(): Promise<Asset[]> {
-    throw new NotImplementedError('getAssets not implemented.');
+    throw new NotImplementedError();
   }
 
   public toJSON(): MyAlgoState {
