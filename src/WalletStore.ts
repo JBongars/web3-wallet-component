@@ -80,7 +80,7 @@ class WalletStore implements useWallets {
 
       if (
         typeof target[
-          prop as keyof WalletInterface<{ [key: string]: unknown }>
+        prop as keyof WalletInterface<{ [key: string]: unknown }>
         ] !== "function"
       ) {
         return target[

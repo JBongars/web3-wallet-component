@@ -6,6 +6,7 @@ enum WALLET_STATUS {
   LOGIN_ERROR,
   WALLET_ERROR,
   EXTENSION_NOT_FOUND,
+  ACCOUNT_NOT_FOUND,
 }
 
 const WALLETS = {
@@ -19,6 +20,7 @@ interface useWallets {
 }
 
 class NotImplementedError extends Error {}
+class WalletNotInstalled extends Error {}
 
 type Signer = (
   transactions: unknown[]
@@ -29,10 +31,16 @@ interface WalletInterface<T> {
   signIn: () => Promise<WALLET_STATUS>;
   signOut: () => Promise<WALLET_STATUS>;
   getSigner: () => Promise<Signer>;
-  getBallance: () => Promise<number>;
+  getBalance: () => Promise<string>;
   getAssets: () => Promise<unknown[]>;
   toJSON: () => T;
 }
 
-export { WALLETS, NotImplementedError, WalletInterface };
-export type { WALLET_STATUS, Signer, useWallets };
+export {
+  WALLETS,
+  NotImplementedError,
+  WalletInterface,
+  WALLET_STATUS,
+  WalletNotInstalled,
+};
+export type { Signer, useWallets };

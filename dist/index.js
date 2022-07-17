@@ -1,3 +1,6 @@
+var $8zHUo$randlabsmyalgoconnect = require("@randlabs/myalgo-connect");
+var $8zHUo$ethers = require("ethers");
+
 function $parcel$exportWildcard(dest, source) {
   Object.keys(source).forEach(function(key) {
     if (key === 'default' || key === '__esModule' || dest.hasOwnProperty(key)) {
@@ -17,6 +20,9 @@ function $parcel$exportWildcard(dest, source) {
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+function $parcel$interopDefault(a) {
+  return a && a.__esModule ? a.default : a;
+}
 var $655db29a5e4f8c98$exports = {};
 
 $parcel$export($655db29a5e4f8c98$exports, "WalletStore", () => $655db29a5e4f8c98$export$b2ed8906266612d9);
@@ -26,27 +32,32 @@ var $a75d728b25ccd0d3$exports = {};
 $parcel$export($a75d728b25ccd0d3$exports, "MyAlgo", () => $a75d728b25ccd0d3$export$6ab354d5c56bf95);
 var $faefaad95e5fcca0$exports = {};
 
+$parcel$export($faefaad95e5fcca0$exports, "WALLET_STATUS", () => $faefaad95e5fcca0$export$de76a1f31766a0a2);
 $parcel$export($faefaad95e5fcca0$exports, "WALLETS", () => $faefaad95e5fcca0$export$412a02074a4127ac);
 $parcel$export($faefaad95e5fcca0$exports, "NotImplementedError", () => $faefaad95e5fcca0$export$e162153238934121);
-let $faefaad95e5fcca0$var$WALLET_STATUS;
+$parcel$export($faefaad95e5fcca0$exports, "WalletNotInstalled", () => $faefaad95e5fcca0$export$2fb08190b68e27a3);
+let $faefaad95e5fcca0$export$de76a1f31766a0a2;
 (function(WALLET_STATUS1) {
     WALLET_STATUS1[WALLET_STATUS1["OK"] = 0] = "OK";
     WALLET_STATUS1[WALLET_STATUS1["LOGIN_ERROR"] = 1] = "LOGIN_ERROR";
     WALLET_STATUS1[WALLET_STATUS1["WALLET_ERROR"] = 2] = "WALLET_ERROR";
     WALLET_STATUS1[WALLET_STATUS1["EXTENSION_NOT_FOUND"] = 3] = "EXTENSION_NOT_FOUND";
-})($faefaad95e5fcca0$var$WALLET_STATUS || ($faefaad95e5fcca0$var$WALLET_STATUS = {}));
+    WALLET_STATUS1[WALLET_STATUS1["ACCOUNT_NOT_FOUND"] = 4] = "ACCOUNT_NOT_FOUND";
+})($faefaad95e5fcca0$export$de76a1f31766a0a2 || ($faefaad95e5fcca0$export$de76a1f31766a0a2 = {}));
 const $faefaad95e5fcca0$export$412a02074a4127ac = {
     MYALGO: "MYALGO",
     METAMASK: "METAMASK"
 };
 class $faefaad95e5fcca0$export$e162153238934121 extends Error {
 }
+class $faefaad95e5fcca0$export$2fb08190b68e27a3 extends Error {
+}
+
 
 
 const $a75d728b25ccd0d3$var$initialState = Object.freeze({
-    data1: "",
-    data2: "",
-    counter: 0
+    accounts: [],
+    isConnected: false
 });
 class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     constructor(state){
@@ -57,23 +68,23 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
             ...$a75d728b25ccd0d3$var$initialState
         };
     }
-    test() {
-        this.state.counter++;
-        return "ok";
-    }
     async init() {
-        throw new (0, $faefaad95e5fcca0$export$e162153238934121)();
+        console.log("about to init!");
+        return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        throw new (0, $faefaad95e5fcca0$export$e162153238934121)();
+        console.log("about to sign in!");
+        const myAlgoConnect = this.getProvider();
+        this.state.accounts = await myAlgoConnect.connect();
+        this.state.isConnected = this.state.accounts.length > 0;
+        return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK;
     }
     async signOut() {
-        throw new (0, $faefaad95e5fcca0$export$e162153238934121)();
+        this.state.accounts = [];
+        this.state.isConnected = false;
+        return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK;
     }
-    async getSigner() {
-        throw new (0, $faefaad95e5fcca0$export$e162153238934121)();
-    }
-    async getBallance() {
+    async getBalance() {
         throw new (0, $faefaad95e5fcca0$export$e162153238934121)();
     }
     async getAssets() {
@@ -81,6 +92,21 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     }
     toJSON() {
         return this.state;
+    }
+    async getSigner() {
+        return async (transactions)=>{
+            const myAlgoConnect = this.getProvider();
+            const signedTx = await myAlgoConnect.signTransaction(transactions);
+            return {
+                signedTransaction: signedTx,
+                status: (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK
+            };
+        };
+    }
+    getProvider() {
+        if (this.provider instanceof (0, ($parcel$interopDefault($8zHUo$randlabsmyalgoconnect)))) return this.provider;
+        this.provider = new (0, ($parcel$interopDefault($8zHUo$randlabsmyalgoconnect)))();
+        return this.provider;
     }
 }
 
@@ -105,9 +131,28 @@ var $2b09ea9ee8d63ad1$exports = {};
 
 $parcel$export($2b09ea9ee8d63ad1$exports, "MetaMask", () => $2b09ea9ee8d63ad1$export$65c0af9a97525a4b);
 
+
+var $fc578d3576b0d8ef$exports = {};
+var $ff033dcd1750fc9d$exports = {};
+
+$parcel$export($ff033dcd1750fc9d$exports, "useWindow", () => $ff033dcd1750fc9d$export$24b8fbafc4b6a151);
+const $ff033dcd1750fc9d$export$24b8fbafc4b6a151 = async (cb)=>{
+    try {
+        return await cb(window);
+    } catch (err) {
+        console.log("Error opening window...");
+        console.log(err);
+    }
+    return null;
+};
+
+
+$parcel$exportWildcard($fc578d3576b0d8ef$exports, $ff033dcd1750fc9d$exports);
+
+
 const $2b09ea9ee8d63ad1$var$initialState = Object.freeze({
-    data1: "",
-    data2: ""
+    accounts: [],
+    isConnected: false
 });
 class $2b09ea9ee8d63ad1$export$65c0af9a97525a4b {
     constructor(state){
@@ -119,25 +164,62 @@ class $2b09ea9ee8d63ad1$export$65c0af9a97525a4b {
         };
     }
     async init() {
-        throw new (0, $faefaad95e5fcca0$export$e162153238934121)();
+        this.provider = await this.getProvider();
+        await this.mountEventListeners();
+        return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        throw new (0, $faefaad95e5fcca0$export$e162153238934121)();
+        const provider = await this.getProvider();
+        this.state.accounts = await provider.send("eth_requestAccounts", []);
+        this.state.isConnected = this.state.accounts.length > 0;
+        return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK;
     }
     async signOut() {
-        throw new (0, $faefaad95e5fcca0$export$e162153238934121)();
+        this.state.accounts = [];
+        this.state.isConnected = false;
+        return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK;
     }
     async getSigner() {
-        throw new (0, $faefaad95e5fcca0$export$e162153238934121)();
+        return async (transactions)=>{
+            const provider = this.provider || await this.getProvider();
+            const transactionResponse = await provider.getSigner().sendTransaction(transactions);
+            return {
+                signedTransaction: [
+                    transactionResponse
+                ],
+                status: (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK
+            };
+        };
     }
-    async getBallance() {
-        throw new (0, $faefaad95e5fcca0$export$e162153238934121)();
+    async getBalance() {
+        if (!this.state.isConnected) return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).ACCOUNT_NOT_FOUND;
+        const provider = this.provider || await this.getProvider();
+        const balance = await provider.getBalance(this.state.accounts[0]);
+        return balance.toString();
     }
     async getAssets() {
         throw new (0, $faefaad95e5fcca0$export$e162153238934121)();
     }
     toJSON() {
         return this.state;
+    }
+    async mountEventListeners(callback) {
+        const provider = this.provider || await this.getProvider();
+        provider.on("accountsChanged", async (accounts)=>{
+            this.state.accounts = accounts;
+            if (callback) return callback(accounts);
+        });
+    }
+    async unmountEventListeners(callback) {
+        const provider = this.provider || await this.getProvider();
+        provider.removeListener("accountsChanged", async ()=>{
+            if (callback) return callback();
+        });
+    }
+    async getProvider() {
+        const ethereum = await (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (w)=>w.ethereum);
+        if (!ethereum) throw new (0, $faefaad95e5fcca0$export$2fb08190b68e27a3)();
+        return new (0, $8zHUo$ethers.ethers).providers.Web3Provider(ethereum);
     }
 }
 
@@ -221,23 +303,6 @@ class $655db29a5e4f8c98$export$b2ed8906266612d9 {
 
 
 
-
-var $fc578d3576b0d8ef$exports = {};
-var $ff033dcd1750fc9d$exports = {};
-
-$parcel$export($ff033dcd1750fc9d$exports, "useWindow", () => $ff033dcd1750fc9d$export$24b8fbafc4b6a151);
-const $ff033dcd1750fc9d$export$24b8fbafc4b6a151 = async (cb)=>{
-    try {
-        return await cb(window);
-    } catch (err) {
-        console.log("Error opening window...");
-        console.log(err);
-    }
-    return null;
-};
-
-
-$parcel$exportWildcard($fc578d3576b0d8ef$exports, $ff033dcd1750fc9d$exports);
 
 
 $parcel$exportWildcard(module.exports, $655db29a5e4f8c98$exports);

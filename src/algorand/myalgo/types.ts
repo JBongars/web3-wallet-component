@@ -1,9 +1,16 @@
+import { Accounts } from '@randlabs/myalgo-connect'
+
 type State = {
-  data1: string;
-  data2: string;
-  counter: number;
+  accounts: Accounts[],
+  isConnected: Boolean,
 };
 
-type Asset = {};
+type Asset = {
+  chainId: String,
+  name: String,
+  unit_name: String,
+  id: String,
+  sourceDecimals: Number
+};
 
-export type { State, Asset };
+export type { State as MyAlgoState, Asset };

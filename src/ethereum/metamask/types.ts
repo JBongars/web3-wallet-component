@@ -1,8 +1,10 @@
+import {ethers} from "ethers";
+
 type State = {
-  data1: string;
-  data2: string;
+  accounts: string[],
+  isConnected: Boolean
 };
 
 type Asset = {};
 
-export type { State, Asset };
+export type { State as MetaMaskState, Asset };

@@ -1,22 +1,28 @@
 import {
   NotImplementedError,
   Signer,
-  WalletInterface,
   WALLET_STATUS,
-} from "~/src/types";
-import { Asset, State } from "./types";
+  WalletInterface,
+  WalletNotInstalled,
+} from "../../types";
+import { Asset, MetaMaskState } from "./types";
+import { ethers } from "ethers";
+import {
+  TransactionRequest,
+  TransactionResponse,
+} from "@ethersproject/abstract-provider";
+import { useWindow } from "../../containers";
 
-type MetaMaskState = State;
-
-const initialState: Readonly<State> = Object.freeze({
-  data1: "",
-  data2: "",
+const initialState: Readonly<MetaMaskState> = Object.freeze({
+  accounts: [],
+  isConnected: false,
 });
 
-class MetaMask implements WalletInterface<State> {
-  public state: State;
+class MetaMask implements WalletInterface<MetaMaskState> {
+  public state: MetaMaskState;
+  public provider?: ethers.providers.Web3Provider;
 
-  constructor(state?: State) {
+  constructor(state?: MetaMaskState) {
     if (state) {
       this.state = { ...state };
     } else {
@@ -25,31 +31,98 @@ class MetaMask implements WalletInterface<State> {
   }
 
   public async init(): Promise<WALLET_STATUS> {
-    throw new NotImplementedError();
+    this.provider = await this.getProvider();
+    await this.mountEventListeners();
+
+    return WALLET_STATUS.OK;
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
-    throw new NotImplementedError();
+    const provider = await this.getProvider();
+    this.state.accounts = await provider.send("eth_requestAccounts", []);
+    this.state.isConnected = this.state.accounts.length > 0;
+
+    return WALLET_STATUS.OK;
   }
 
   public async signOut(): Promise<WALLET_STATUS> {
-    throw new NotImplementedError();
+    this.state.accounts = [];
+    this.state.isConnected = false;
+
+    return WALLET_STATUS.OK;
   }
 
   public async getSigner(): Promise<Signer> {
-    throw new NotImplementedError();
+    return async (
+      transactions: unknown[]
+    ): Promise<{
+      signedTransaction: TransactionResponse[];
+      status: WALLET_STATUS;
+    }> => {
+      const provider = this.provider || (await this.getProvider());
+      const transactionResponse = await provider
+        .getSigner()
+        .sendTransaction(transactions as TransactionRequest);
+
+      return {
+        signedTransaction: [transactionResponse],
+        status: WALLET_STATUS.OK,
+      };
+    };
   }
 
-  public async getBallance(): Promise<number> {
-    throw new NotImplementedError();
+  public async getBalance(): Promise<string> {
+    if (!this.state.isConnected) {
+      return WALLET_STATUS.ACCOUNT_NOT_FOUND as unknown as string;
+    }
+
+    const provider = this.provider || (await this.getProvider());
+
+    const balance = await provider.getBalance(this.state.accounts[0]);
+
+    return balance.toString();
   }
 
   public async getAssets(): Promise<Asset[]> {
     throw new NotImplementedError();
   }
 
-  public toJSON(): State {
+  public toJSON(): MetaMaskState {
     return this.state;
+  }
+
+  public async mountEventListeners(
+    callback?: (accounts: string[]) => Promise<unknown>
+  ) {
+    const provider = this.provider || (await this.getProvider());
+
+    provider.on("accountsChanged", async (accounts: string[]) => {
+      this.state.accounts = accounts;
+
+      if (callback) {
+        return callback(accounts);
+      }
+    });
+  }
+
+  public async unmountEventListeners(callback?: () => Promise<unknown>) {
+    const provider = this.provider || (await this.getProvider());
+
+    provider.removeListener("accountsChanged", async () => {
+      if (callback) {
+        return callback();
+      }
+    });
+  }
+
+  public async getProvider(): Promise<ethers.providers.Web3Provider> {
+    const ethereum = (await useWindow(async (w) => (w as any).ethereum)) as any;
+
+    if (!ethereum) {
+      throw new WalletNotInstalled();
+    }
+
+    return new ethers.providers.Web3Provider(ethereum);
   }
 }
 
