@@ -1,8 +1,17 @@
-import {NotImplementedError, Signer, WALLET_STATUS, WalletInterface, WalletNotInstalled,} from "../../types";
-import {Asset, MetaMaskState} from "./types";
-import {ethers} from "ethers";
-import {TransactionRequest, TransactionResponse,} from "@ethersproject/abstract-provider";
-import {useWindow} from "../../containers";
+import {
+  NotImplementedError,
+  Signer,
+  WALLET_STATUS,
+  WalletInterface,
+  WalletNotInstalled,
+} from "../../types";
+import { Asset, MetaMaskState } from "./types";
+import { ethers } from "ethers";
+import {
+  TransactionRequest,
+  TransactionResponse,
+} from "@ethersproject/abstract-provider";
+import { useWindow } from "../../containers";
 
 const initialState: Readonly<MetaMaskState> = Object.freeze({
   accounts: [],
@@ -11,21 +20,21 @@ const initialState: Readonly<MetaMaskState> = Object.freeze({
 
 class MetaMask implements WalletInterface<MetaMaskState> {
   public state: MetaMaskState;
-  public provider?: ethers.providers.Web3Provider
+  public provider?: ethers.providers.Web3Provider;
 
-   constructor(state?: MetaMaskState) {
+  constructor(state?: MetaMaskState) {
     if (state) {
-      this.state = {...state};
+      this.state = { ...state };
     } else {
-      this.state = {...initialState};
+      this.state = { ...initialState };
     }
   }
 
   public async init(): Promise<WALLET_STATUS> {
-   this.provider = await this.getProvider();
-   await this.mountEventListeners();
+    this.provider = await this.getProvider();
+    await this.mountEventListeners();
 
-    return WALLET_STATUS.OK
+    return WALLET_STATUS.OK;
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
@@ -50,7 +59,7 @@ class MetaMask implements WalletInterface<MetaMaskState> {
       signedTransaction: TransactionResponse[];
       status: WALLET_STATUS;
     }> => {
-      const provider = this.provider || await this.getProvider();
+      const provider = this.provider || (await this.getProvider());
       const transactionResponse = await provider
         .getSigner()
         .sendTransaction(transactions as TransactionRequest);
@@ -67,7 +76,7 @@ class MetaMask implements WalletInterface<MetaMaskState> {
       return WALLET_STATUS.ACCOUNT_NOT_FOUND as unknown as string;
     }
 
-    const provider = this.provider || await this.getProvider();
+    const provider = this.provider || (await this.getProvider());
 
     const balance = await provider.getBalance(this.state.accounts[0]);
 
@@ -85,7 +94,7 @@ class MetaMask implements WalletInterface<MetaMaskState> {
   public async mountEventListeners(
     callback?: (accounts: string[]) => Promise<unknown>
   ) {
-    const provider = this.provider || await this.getProvider();
+    const provider = this.provider || (await this.getProvider());
 
     provider.on("accountsChanged", async (accounts: string[]) => {
       this.state.accounts = accounts;
@@ -96,10 +105,8 @@ class MetaMask implements WalletInterface<MetaMaskState> {
     });
   }
 
-
   public async unmountEventListeners(callback?: () => Promise<unknown>) {
-
-   const provider = this.provider || await this.getProvider()
+    const provider = this.provider || (await this.getProvider());
 
     provider.removeListener("accountsChanged", async () => {
       if (callback) {

@@ -19,6 +19,7 @@ const initialState: Readonly<MyAlgoState> = Object.freeze({
 
 class MyAlgo implements WalletInterface<MyAlgoState> {
   public state: MyAlgoState;
+  private provider: MyAlgoConnect | undefined;
 
   constructor(state?: MyAlgoState) {
     if (state) {
@@ -29,11 +30,14 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   }
 
   public async init(): Promise<WALLET_STATUS> {
+    console.log("about to init!");
     return WALLET_STATUS.OK;
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
-    const myAlgoConnect = new MyAlgoConnect();
+    console.log("about to sign in!");
+
+    const myAlgoConnect = this.getProvider();
 
     this.state.accounts = await myAlgoConnect.connect();
     this.state.isConnected = this.state.accounts.length > 0;
@@ -64,7 +68,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return async (
       transactions: unknown[]
     ): Promise<{ signedTransaction: SignedTx[]; status: WALLET_STATUS }> => {
-      const myAlgoConnect = new MyAlgoConnect();
+      const myAlgoConnect = this.getProvider();
       const signedTx = await myAlgoConnect.signTransaction(
         transactions as (AlgorandTxn | EncodedTransaction)[]
       );
@@ -74,6 +78,15 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
         status: WALLET_STATUS.OK,
       };
     };
+  }
+
+  public getProvider(): MyAlgoConnect {
+    if (this.provider instanceof MyAlgoConnect) {
+      return this.provider;
+    }
+
+    this.provider = new MyAlgoConnect();
+    return this.provider;
   }
 }
 
