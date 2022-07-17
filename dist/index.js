@@ -138,9 +138,7 @@ var $ff033dcd1750fc9d$exports = {};
 $parcel$export($ff033dcd1750fc9d$exports, "useWindow", () => $ff033dcd1750fc9d$export$24b8fbafc4b6a151);
 const $ff033dcd1750fc9d$export$24b8fbafc4b6a151 = async (cb)=>{
     try {
-        // if (process.browser) {
         return await cb(window);
-    // }
     } catch (err) {
         console.log("Error opening window...");
         console.log(err);
@@ -257,9 +255,6 @@ class $655db29a5e4f8c98$export$b2ed8906266612d9 {
     constructor(config){
         this.walletStates = config.previousWalletState || [];
     }
-    test() {
-        return "hello world~";
-    }
     updateState(key, newState) {
         const wallet = this.walletStates.find((elem)=>elem.id === key);
         if (!wallet || wallet === null) {
@@ -278,13 +273,16 @@ class $655db29a5e4f8c98$export$b2ed8906266612d9 {
     use(walletName) {
         return (0, $9ba0f9a5c47c04f2$export$4c7dc056506f1572)((prop)=>{
             if (prop === "state") return (0, $9ba0f9a5c47c04f2$export$22d904b3af0cacbd)(this.walletStates.find((elem)=>elem.id === walletName)?.state);
+            // there may be an issue where if the client preserves multiple
+            // proxies, the wallet state could fall out of sync...
             let target;
+            const previousState = this.walletStates.find((elem)=>elem.id === walletName)?.state;
             switch(walletName){
                 case (0, $faefaad95e5fcca0$export$412a02074a4127ac).METAMASK:
-                    target = new (0, $2b09ea9ee8d63ad1$export$65c0af9a97525a4b)();
+                    target = new (0, $2b09ea9ee8d63ad1$export$65c0af9a97525a4b)(previousState);
                     break;
                 case (0, $faefaad95e5fcca0$export$412a02074a4127ac).MYALGO:
-                    target = new (0, $a75d728b25ccd0d3$export$6ab354d5c56bf95)();
+                    target = new (0, $a75d728b25ccd0d3$export$6ab354d5c56bf95)(previousState);
                     break;
                 default:
                     throw new (0, $faefaad95e5fcca0$export$e162153238934121)();

@@ -18,9 +18,5 @@
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"],
-<<<<<<< HEAD
-  "types": ["@types/node", "jest"]
-=======
-  "types": ["@types/node", "@types/jest"]
->>>>>>> aa206ca (fix: pull request feedback & added my algo testing)
+  "types": ["jest"]
 }
