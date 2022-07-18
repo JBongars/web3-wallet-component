@@ -1,15 +1,12 @@
-const useWindow = async (cb: (windows: Window) => Promise<unknown>) => {
+const useWindow = async (
+  cb: (windows: unknown) => Promise<void>
+): Promise<void> => {
   try {
-    // @ts-expect-error
-    if (process.browser) {
-      return await cb(window);
-    }
+    await cb(window as unknown);
   } catch (err) {
     console.log("Error opening window...");
     console.log(err);
   }
-
-  return null;
 };
 
 export { useWindow };

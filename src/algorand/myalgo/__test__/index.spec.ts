@@ -1,6 +1,6 @@
+import MyAlgoConnect, { AlgorandTxn } from "@randlabs/myalgo-connect";
 import { MyAlgo } from "..";
-import MyAlgoConnect from "@randlabs/myalgo-connect";
-import { NotImplementedError, WALLET_STATUS } from "../../../types";
+import { NotImplementedError } from "../../../errors";
 
 describe("#MyAlgo class", () => {
   test("can sign in", async () => {
@@ -54,10 +54,11 @@ describe("#MyAlgo class", () => {
 
     const signer = await myAlgo.getSigner();
 
-    const { signedTransaction, status } = await signer(["encodedTransaction"]);
+    const signedTransaction = await signer([
+      "encodedTransaction" as unknown as AlgorandTxn,
+    ]);
 
     expect(signedTransaction).toHaveLength(1);
-    expect(status).toEqual(WALLET_STATUS.OK);
   });
 
   test("get balance should throw NotImplementedError", async () => {

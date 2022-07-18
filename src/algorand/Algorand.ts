@@ -1,4 +1,5 @@
-import { MyAlgo, MyAlgoState } from "./myalgo";
+import { MyAlgo } from "./myalgo";
+import { MyAlgoState } from "./myalgo/types";
 
 type AlgorandState = {
   myAlgo?: MyAlgoState;

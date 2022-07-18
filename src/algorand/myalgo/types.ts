@@ -1,16 +1,19 @@
-import { Accounts } from '@randlabs/myalgo-connect'
+import { Accounts, AlgorandTxn, SignedTx } from "@randlabs/myalgo-connect";
+import { Signer as RootSigner } from "~/src/types";
 
-type State = {
-  accounts: Accounts[],
-  isConnected: Boolean,
+type MyAlgoState = {
+  accounts: Accounts[];
+  isConnected: boolean;
 };
 
-type Asset = {
-  chainId: String,
-  name: String,
-  unit_name: String,
-  id: String,
-  sourceDecimals: Number
+type MyAlgoSigner = RootSigner<AlgorandTxn, SignedTx>;
+
+type MyAlgoAsset = {
+  chainId: String;
+  name: String;
+  unit_name: String;
+  id: String;
+  sourceDecimals: Number;
 };
 
-export type { State as MyAlgoState, Asset };
+export type { MyAlgoState, MyAlgoSigner, MyAlgoAsset };

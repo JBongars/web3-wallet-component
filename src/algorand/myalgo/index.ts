@@ -3,14 +3,11 @@ import {
   AlgorandTxn,
   EncodedTransaction,
 } from "@randlabs/myalgo-connect";
-import {
-  Signer,
-  WALLET_STATUS,
-  WalletInterface,
-  NotImplementedError,
-} from "./../../types";
-import { Asset, MyAlgoState } from "./types";
+import { Signer, WALLET_STATUS, WalletInterface } from "./../../types";
+import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from "./types";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
+import { NotImplementedError } from "~/src/errors";
+import { CHAINS } from "~/src/config/constants";
 
 const initialState: Readonly<MyAlgoState> = Object.freeze({
   accounts: [],
@@ -30,13 +27,10 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   }
 
   public async init(): Promise<WALLET_STATUS> {
-    console.log("about to init!");
     return WALLET_STATUS.OK;
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
-    console.log("about to sign in!");
-
     const myAlgoConnect = this.getProvider();
 
     this.state.accounts = await myAlgoConnect.connect();
@@ -52,32 +46,43 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return WALLET_STATUS.OK;
   }
 
-  public async getBalance(): Promise<string> {
-    throw new NotImplementedError();
-  }
-
-  public async getAssets(): Promise<Asset[]> {
-    throw new NotImplementedError();
-  }
-
-  public toJSON(): MyAlgoState {
-    return this.state;
-  }
-
-  public async getSigner(): Promise<Signer> {
-    return async (
-      transactions: unknown[]
-    ): Promise<{ signedTransaction: SignedTx[]; status: WALLET_STATUS }> => {
+  public async getSigner(): Promise<MyAlgoSigner> {
+    return async (transactions: AlgorandTxn[]): Promise<SignedTx[]> => {
       const myAlgoConnect = this.getProvider();
       const signedTx = await myAlgoConnect.signTransaction(
         transactions as (AlgorandTxn | EncodedTransaction)[]
       );
 
-      return {
-        signedTransaction: signedTx,
-        status: WALLET_STATUS.OK,
-      };
+      return signedTx;
     };
+  }
+
+  public async getBalance(): Promise<string> {
+    throw new NotImplementedError();
+  }
+
+  public async getAssets(): Promise<MyAlgoAsset[]> {
+    throw new NotImplementedError();
+  }
+
+  public getIsConnected(): boolean {
+    return this.state.isConnected;
+  }
+
+  public getPrimaryAccount(): string {
+    throw new NotImplementedError();
+  }
+
+  public getAccounts(): unknown[] {
+    throw new NotImplementedError();
+  }
+
+  public async fetchCurrentChainID(): Promise<number> {
+    return CHAINS.CHAIN_ID_ALGORAND;
+  }
+
+  public toJSON(): MyAlgoState {
+    return this.state;
   }
 
   public getProvider(): MyAlgoConnect {
@@ -91,4 +96,3 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
 }
 
 export { MyAlgo };
-export type { MyAlgoState };

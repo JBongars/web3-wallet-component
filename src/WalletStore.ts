@@ -1,11 +1,9 @@
-import { MyAlgo, MyAlgoState } from "./algorand";
-import { MetaMask, MetaMaskState } from "./ethereum";
-import {
-  NotImplementedError,
-  useWallets,
-  WalletInterface,
-  WALLETS,
-} from "./types";
+import { MyAlgo } from "./algorand";
+import { MyAlgoState } from "./algorand/myalgo/types";
+import { NotImplementedError } from "./errors";
+import { Metamask } from "./ethereum";
+import { MetamaskState } from "./ethereum/metamask/types";
+import { useWallets, WalletInterface, WALLETS } from "./types";
 import { clone, iffyClone, useProxy } from "./utils";
 
 type WalletID = keyof typeof WALLETS;
@@ -69,7 +67,7 @@ class WalletStore implements useWallets {
 
       switch (walletName) {
         case WALLETS.METAMASK:
-          target = new MetaMask(previousState as MetaMaskState);
+          target = new Metamask(previousState as MetamaskState);
           break;
         case WALLETS.MYALGO:
           target = new MyAlgo(previousState as MyAlgoState);
@@ -80,7 +78,7 @@ class WalletStore implements useWallets {
 
       if (
         typeof target[
-        prop as keyof WalletInterface<{ [key: string]: unknown }>
+          prop as keyof WalletInterface<{ [key: string]: unknown }>
         ] !== "function"
       ) {
         return target[

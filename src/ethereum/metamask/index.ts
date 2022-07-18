@@ -1,28 +1,27 @@
-import {
-  NotImplementedError,
-  Signer,
-  WALLET_STATUS,
-  WalletInterface,
-  WalletNotInstalled,
-} from "../../types";
-import { Asset, MetaMaskState } from "./types";
+import { Signer, WALLET_STATUS, WalletInterface } from "../../types";
+import { MetamaskAsset, MetamaskSigner, MetamaskState } from "./types";
 import { ethers } from "ethers";
 import {
   TransactionRequest,
   TransactionResponse,
 } from "@ethersproject/abstract-provider";
 import { useWindow } from "../../containers";
+import {
+  NotImplementedError,
+  WalletNotConnectedError,
+  WalletNotInstalledError,
+} from "~/src/errors";
 
-const initialState: Readonly<MetaMaskState> = Object.freeze({
+const initialState: Readonly<MetamaskState> = Object.freeze({
   accounts: [],
   isConnected: false,
 });
 
-class MetaMask implements WalletInterface<MetaMaskState> {
-  public state: MetaMaskState;
+class Metamask implements WalletInterface<MetamaskState> {
+  public state: MetamaskState;
   public provider?: ethers.providers.Web3Provider;
 
-  constructor(state?: MetaMaskState) {
+  constructor(state?: MetamaskState) {
     if (state) {
       this.state = { ...state };
     } else {
@@ -30,9 +29,14 @@ class MetaMask implements WalletInterface<MetaMaskState> {
     }
   }
 
+  private enforceIsConnected(): void {
+    if (!this.getIsConnected()) {
+      throw new WalletNotConnectedError();
+    }
+  }
+
   public async init(): Promise<WALLET_STATUS> {
     this.provider = await this.getProvider();
-    await this.mountEventListeners();
 
     return WALLET_STATUS.OK;
   }
@@ -46,55 +50,73 @@ class MetaMask implements WalletInterface<MetaMaskState> {
   }
 
   public async signOut(): Promise<WALLET_STATUS> {
+    this.enforceIsConnected();
     this.state.accounts = [];
     this.state.isConnected = false;
 
     return WALLET_STATUS.OK;
   }
 
-  public async getSigner(): Promise<Signer> {
+  public async getSigner(): Promise<MetamaskSigner> {
     return async (
-      transactions: unknown[]
-    ): Promise<{
-      signedTransaction: TransactionResponse[];
-      status: WALLET_STATUS;
-    }> => {
+      transactions: TransactionRequest[]
+    ): Promise<TransactionResponse[]> => {
+      this.enforceIsConnected();
+
       const provider = this.provider || (await this.getProvider());
       const transactionResponse = await provider
         .getSigner()
-        .sendTransaction(transactions as TransactionRequest);
+        .sendTransaction(transactions[0]);
 
-      return {
-        signedTransaction: [transactionResponse],
-        status: WALLET_STATUS.OK,
-      };
+      return [transactionResponse];
     };
   }
 
   public async getBalance(): Promise<string> {
-    if (!this.state.isConnected) {
-      return WALLET_STATUS.ACCOUNT_NOT_FOUND as unknown as string;
-    }
+    this.enforceIsConnected();
 
     const provider = this.provider || (await this.getProvider());
-
     const balance = await provider.getBalance(this.state.accounts[0]);
-
     return balance.toString();
   }
 
-  public async getAssets(): Promise<Asset[]> {
+  public async getAssets(): Promise<MetamaskAsset[]> {
     throw new NotImplementedError();
   }
 
-  public toJSON(): MetaMaskState {
+  public getIsConnected(): boolean {
+    return this.state.isConnected;
+  }
+
+  public getPrimaryAccount(): string {
+    this.enforceIsConnected();
+
+    return this.state.accounts[0];
+  }
+
+  public getAccounts(): string[] {
+    this.enforceIsConnected();
+
+    return this.state.accounts;
+  }
+
+  public async fetchCurrentChainID(): Promise<number> {
+    this.enforceIsConnected();
+
+    const provider: ethers.providers.Web3Provider = await this.getProvider();
+    const chainId: number = await provider.send("eth_chainId", []);
+
+    return chainId;
+  }
+
+  public toJSON(): MetamaskState {
     return this.state;
   }
 
   public async mountEventListeners(
     callback?: (accounts: string[]) => Promise<unknown>
   ) {
-    const provider = this.provider || (await this.getProvider());
+    const provider = await this.getProvider();
 
     provider.on("accountsChanged", async (accounts: string[]) => {
       this.state.accounts = accounts;
@@ -106,7 +128,7 @@ class MetaMask implements WalletInterface<MetaMaskState> {
   }
 
   public async unmountEventListeners(callback?: () => Promise<unknown>) {
-    const provider = this.provider || (await this.getProvider());
+    const provider = await this.getProvider();
 
     provider.removeListener("accountsChanged", async () => {
       if (callback) {
@@ -116,15 +138,16 @@ class MetaMask implements WalletInterface<MetaMaskState> {
   }
 
   public async getProvider(): Promise<ethers.providers.Web3Provider> {
-    const ethereum = (await useWindow(async (w) => (w as any).ethereum)) as any;
+    const ethereum = (await useWindow(
+      async (windowObject) => (windowObject as any).ethereum
+    )) as any;
 
     if (!ethereum) {
-      throw new WalletNotInstalled();
+      throw new WalletNotInstalledError();
     }
 
     return new ethers.providers.Web3Provider(ethereum);
   }
 }
 
-export { MetaMask };
-export type { MetaMaskState };
+export { Metamask };

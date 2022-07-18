@@ -1,5 +1,7 @@
 import { MyAlgo } from "./algorand";
-import { MetaMask } from "./ethereum";
+import { Metamask } from "./ethereum";
+
+type ChainID = 2 | 8;
 
 enum WALLET_STATUS {
   OK,
@@ -16,31 +18,24 @@ const WALLETS = {
 
 interface useWallets {
   use(walletName: "MYALGO"): MyAlgo;
-  use(walletName: "METAMASK"): MetaMask;
+  use(walletName: "METAMASK"): Metamask;
 }
 
-class NotImplementedError extends Error {}
-class WalletNotInstalled extends Error {}
-
-type Signer = (
-  transactions: unknown[]
-) => Promise<{ signedTransaction: unknown[]; status: WALLET_STATUS }>;
+type Signer<T, S> = (transactions: T[]) => Promise<S[]>;
 
 interface WalletInterface<T> {
   init: () => Promise<WALLET_STATUS>;
   signIn: () => Promise<WALLET_STATUS>;
   signOut: () => Promise<WALLET_STATUS>;
-  getSigner: () => Promise<Signer>;
+  getSigner: () => Promise<Signer<any, any>>;
   getBalance: () => Promise<string>;
   getAssets: () => Promise<unknown[]>;
+  getIsConnected: () => boolean;
+  getPrimaryAccount: () => unknown;
+  getAccounts: () => unknown[];
+  fetchCurrentChainID: () => Promise<number>;
   toJSON: () => T;
 }
 
-export {
-  WALLETS,
-  NotImplementedError,
-  WalletInterface,
-  WALLET_STATUS,
-  WalletNotInstalled,
-};
-export type { Signer, useWallets };
+export { WALLETS, WalletInterface, WALLET_STATUS };
+export type { ChainID, Signer, useWallets };

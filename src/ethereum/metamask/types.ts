@@ -1,10 +1,16 @@
-import {ethers} from "ethers";
+import { Signer as RootSigner } from "~/src/types";
+import {
+  TransactionRequest,
+  TransactionResponse,
+} from "@ethersproject/abstract-provider";
 
-type State = {
-  accounts: string[],
-  isConnected: Boolean
+type MetamaskState = {
+  accounts: string[];
+  isConnected: boolean;
 };
 
-type Asset = {};
+type MetamaskSigner = RootSigner<TransactionRequest, TransactionResponse>;
 
-export type { State as MetaMaskState, Asset };
+type MetamaskAsset = {};
+
+export type { MetamaskState, MetamaskSigner, MetamaskAsset };
