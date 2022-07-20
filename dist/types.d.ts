@@ -38,7 +38,7 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     getPrimaryAccount(): Accounts;
     getAccounts(): Accounts[];
     fetchCurrentChainID(): Promise<number>;
-    onAccountChange(cb: (accountId: Accounts) => void | Promise<void>): void;
+    onAccountChange(cb: (accountId: Accounts) => void | Promise<void>): symbol;
     toJSON(): MyAlgoState;
     getProvider(): MyAlgoConnect;
 }
@@ -70,7 +70,7 @@ export class Metamask implements WalletInterface<MetamaskState> {
     getPrimaryAccount(): string;
     getAccounts(): string[];
     fetchCurrentChainID(): Promise<number>;
-    onAccountChange(cb: (accountId: string) => void | Promise<void>): void;
+    onAccountChange(cb: (accountId: string) => void | Promise<void>): symbol;
     toJSON(): MetamaskState;
     mountEventListeners(callback?: (accounts: string[]) => Promise<unknown>): Promise<void>;
     unmountEventListeners(callback?: () => Promise<unknown>): Promise<void>;

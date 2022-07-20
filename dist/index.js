@@ -131,6 +131,7 @@ class $4d8b59879bd0f2d0$var$HookRouter {
         this.checkIfValidHook(hook);
         const id = Symbol();
         this.hooks.get(hook)?.set(id, cb);
+        return id;
     }
     deregisterCallback(hook, id) {
         this.checkIfValidHook(hook);

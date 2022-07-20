@@ -40,6 +40,8 @@ class HookRouter {
 
     const id = Symbol();
     this.hooks.get(hook)?.set(id, cb);
+
+    return id;
   }
 
   public deregisterCallback(hook: WALLET_HOOK, id: Symbol) {
