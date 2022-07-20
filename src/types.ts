@@ -11,6 +11,10 @@ enum WALLET_STATUS {
   ACCOUNT_NOT_FOUND,
 }
 
+enum WALLET_HOOK {
+  ACCOUNT_ON_CHANGE,
+}
+
 const WALLETS = {
   MYALGO: "MYALGO",
   METAMASK: "METAMASK",
@@ -34,8 +38,9 @@ interface WalletInterface<T> {
   getPrimaryAccount: () => unknown;
   getAccounts: () => unknown[];
   fetchCurrentChainID: () => Promise<number>;
+  onAccountChange: (cb: (accountId: unknown) => void | Promise<void>) => void;
   toJSON: () => T;
 }
 
-export { WALLETS, WalletInterface, WALLET_STATUS };
+export { WALLETS, WalletInterface, WALLET_STATUS, WALLET_HOOK };
 export type { ChainID, Signer, useWallets };

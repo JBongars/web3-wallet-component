@@ -1,13 +1,18 @@
+import MyAlgoConnect, { Accounts, AlgorandTxn, SignedTx } from "@randlabs/myalgo-connect";
 import { TransactionRequest, TransactionResponse } from "@ethersproject/abstract-provider";
 import { ethers } from "ethers";
-import MyAlgoConnect, { Accounts, AlgorandTxn, SignedTx } from "@randlabs/myalgo-connect";
-type MetamaskState = {
-    accounts: string[];
+type MyAlgoState = {
+    accounts: Accounts[];
     isConnected: boolean;
 };
-type MetamaskSigner = Signer<TransactionRequest, TransactionResponse>;
-type MetamaskAsset = {};
-export const useWindow: (cb: (windows: unknown) => Promise<void>) => Promise<void>;
+type MyAlgoSigner = Signer<AlgorandTxn, SignedTx>;
+type MyAlgoAsset = {
+    chainId: String;
+    name: String;
+    unit_name: String;
+    id: String;
+    sourceDecimals: Number;
+};
 export class NotImplementedError extends Error {
     constructor(message?: string);
 }
@@ -17,6 +22,40 @@ export class WalletNotInstalledError extends Error {
 export class WalletNotConnectedError extends Error {
     constructor(message?: string);
 }
+export class HookNotAvailableError extends Error {
+    constructor(message?: string);
+}
+export class MyAlgo implements WalletInterface<MyAlgoState> {
+    state: MyAlgoState;
+    constructor(state?: MyAlgoState);
+    init(): Promise<WALLET_STATUS>;
+    signIn(): Promise<WALLET_STATUS>;
+    signOut(): Promise<WALLET_STATUS>;
+    getSigner(): Promise<MyAlgoSigner>;
+    getBalance(): Promise<string>;
+    getAssets(): Promise<MyAlgoAsset[]>;
+    getIsConnected(): boolean;
+    getPrimaryAccount(): Accounts;
+    getAccounts(): Accounts[];
+    fetchCurrentChainID(): Promise<number>;
+    onAccountChange(cb: (accountId: Accounts) => void | Promise<void>): void;
+    toJSON(): MyAlgoState;
+    getProvider(): MyAlgoConnect;
+}
+export type AlgorandState = {
+    myAlgo?: MyAlgoState;
+};
+export class Algorand {
+    myAlgo: MyAlgo;
+    constructor(data?: AlgorandState);
+}
+type MetamaskState = {
+    accounts: string[];
+    isConnected: boolean;
+};
+type MetamaskSigner = Signer<TransactionRequest, TransactionResponse>;
+type MetamaskAsset = {};
+export const useWindow: (cb: (windows: unknown) => Promise<void>) => Promise<void>;
 export class Metamask implements WalletInterface<MetamaskState> {
     state: MetamaskState;
     provider?: ethers.providers.Web3Provider;
@@ -31,6 +70,7 @@ export class Metamask implements WalletInterface<MetamaskState> {
     getPrimaryAccount(): string;
     getAccounts(): string[];
     fetchCurrentChainID(): Promise<number>;
+    onAccountChange(cb: (accountId: string) => void | Promise<void>): void;
     toJSON(): MetamaskState;
     mountEventListeners(callback?: (accounts: string[]) => Promise<unknown>): Promise<void>;
     unmountEventListeners(callback?: () => Promise<unknown>): Promise<void>;
@@ -50,6 +90,9 @@ export enum WALLET_STATUS {
     WALLET_ERROR = 2,
     EXTENSION_NOT_FOUND = 3,
     ACCOUNT_NOT_FOUND = 4
+}
+export enum WALLET_HOOK {
+    ACCOUNT_ON_CHANGE = 0
 }
 export const WALLETS: {
     readonly MYALGO: "MYALGO";
@@ -71,60 +114,8 @@ export interface WalletInterface<T> {
     getPrimaryAccount: () => unknown;
     getAccounts: () => unknown[];
     fetchCurrentChainID: () => Promise<number>;
+    onAccountChange: (cb: (accountId: unknown) => void | Promise<void>) => void;
     toJSON: () => T;
-}
-type MyAlgoState = {
-    accounts: Accounts[];
-    isConnected: boolean;
-};
-type MyAlgoSigner = Signer<AlgorandTxn, SignedTx>;
-type MyAlgoAsset = {
-    chainId: String;
-    name: String;
-    unit_name: String;
-    id: String;
-    sourceDecimals: Number;
-};
-export class MyAlgo implements WalletInterface<MyAlgoState> {
-    state: MyAlgoState;
-    constructor(state?: MyAlgoState);
-    init(): Promise<WALLET_STATUS>;
-    signIn(): Promise<WALLET_STATUS>;
-    signOut(): Promise<WALLET_STATUS>;
-    getSigner(): Promise<MyAlgoSigner>;
-    getBalance(): Promise<string>;
-    getAssets(): Promise<MyAlgoAsset[]>;
-    getIsConnected(): boolean;
-    getPrimaryAccount(): string;
-    getAccounts(): unknown[];
-    fetchCurrentChainID(): Promise<number>;
-    toJSON(): MyAlgoState;
-    getProvider(): MyAlgoConnect;
-}
-export type AlgorandState = {
-    myAlgo?: MyAlgoState;
-};
-export class Algorand {
-    myAlgo: MyAlgo;
-    constructor(data?: AlgorandState);
-}
-export type WalletID = keyof typeof WALLETS;
-export type WalletState = {
-    id: WalletID;
-    state: {
-        [key: string]: unknown;
-    };
-    previousStates: {
-        [key: string]: unknown;
-    }[];
-};
-export type WalletStoreConfig = {
-    previousWalletState?: WalletState[];
-};
-export class WalletStore implements useWallets {
-    constructor(config: WalletStoreConfig);
-    use(walletName: WalletID): any;
-    toJSON(): WalletState[];
 }
 
 //# sourceMappingURL=types.d.ts.map

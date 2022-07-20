@@ -1,4 +1,9 @@
-import { Signer, WALLET_STATUS, WalletInterface } from "../../types";
+import {
+  Signer,
+  WALLET_STATUS,
+  WalletInterface,
+  WALLET_HOOK,
+} from "../../types";
 import { MetamaskAsset, MetamaskSigner, MetamaskState } from "./types";
 import { ethers } from "ethers";
 import {
@@ -11,6 +16,7 @@ import {
   WalletNotConnectedError,
   WalletNotInstalledError,
 } from "~/src/errors";
+import HookRouter from "~/src/utils/HookRouter";
 
 const initialState: Readonly<MetamaskState> = Object.freeze({
   accounts: [],
@@ -18,6 +24,9 @@ const initialState: Readonly<MetamaskState> = Object.freeze({
 });
 
 class Metamask implements WalletInterface<MetamaskState> {
+  private hookRouter: HookRouter = new HookRouter([
+    WALLET_HOOK.ACCOUNT_ON_CHANGE,
+  ]);
   public state: MetamaskState;
   public provider?: ethers.providers.Web3Provider;
 
@@ -46,6 +55,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     this.state.accounts = await provider.send("eth_requestAccounts", []);
     this.state.isConnected = this.state.accounts.length > 0;
 
+    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     return WALLET_STATUS.OK;
   }
 
@@ -54,6 +64,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     this.state.accounts = [];
     this.state.isConnected = false;
 
+    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     return WALLET_STATUS.OK;
   }
 
@@ -107,6 +118,15 @@ class Metamask implements WalletInterface<MetamaskState> {
     const chainId: number = await provider.send("eth_chainId", []);
 
     return chainId;
+  }
+
+  public onAccountChange(cb: (accountId: string) => void | Promise<void>) {
+    return this.hookRouter.registerCallback(
+      WALLET_HOOK.ACCOUNT_ON_CHANGE,
+      () => {
+        return cb(this.getPrimaryAccount());
+      }
+    );
   }
 
   public toJSON(): MetamaskState {

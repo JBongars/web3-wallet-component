@@ -19,8 +19,16 @@ class WalletNotConnectedError extends Error {
   }
 }
 
+class HookNotAvailableError extends Error {
+  constructor(message: string = "HookNotAvailableError") {
+    super(message);
+    this.name = "HookNotAvailableError";
+  }
+}
+
 export {
   NotImplementedError,
   WalletNotInstalledError,
   WalletNotConnectedError,
+  HookNotAvailableError,
 };
