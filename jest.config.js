@@ -1,5 +1,8 @@
 module.exports = {
-  moduleDirectories: ["node_modules", "<rootDir>/"],
+  moduleDirectories: ["node_modules", "src"],
+  moduleNameMapper: {
+    "~/(.*)": "<rootDir>/$1",
+  },
   testEnvironment: "jest-environment-jsdom",
   testMatch: [
     "<rootDir>/src/**/*.spec.ts",
@@ -8,6 +11,9 @@ module.exports = {
   transform: {
     "^.+\\.ts$": "ts-jest",
   },
-  collectCoverage: true,
-  collectCoverageFrom: ["<rootDir>/src/**/*.ts"],
+
+  // skip coverage for now.
+
+  // collectCoverage: true,
+  // collectCoverageFrom: ["<rootDir>/src/**/*.ts"],
 };

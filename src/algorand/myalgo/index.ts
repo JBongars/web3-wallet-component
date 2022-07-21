@@ -2,15 +2,19 @@ import {
   SignedTx,
   AlgorandTxn,
   EncodedTransaction,
+  Accounts,
 } from "@randlabs/myalgo-connect";
 import {
   Signer,
   WALLET_STATUS,
   WalletInterface,
-  NotImplementedError,
+  WALLET_HOOK,
 } from "./../../types";
-import { Asset, MyAlgoState } from "./types";
+import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from "./types";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
+import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
+import { CHAINS } from "~/src/config/constants";
+import HookRouter from "~/src/utils/HookRouter";
 
 const initialState: Readonly<MyAlgoState> = Object.freeze({
   accounts: [],
@@ -18,6 +22,9 @@ const initialState: Readonly<MyAlgoState> = Object.freeze({
 });
 
 class MyAlgo implements WalletInterface<MyAlgoState> {
+  private hookRouter: HookRouter = new HookRouter([
+    WALLET_HOOK.ACCOUNT_ON_CHANGE,
+  ]);
   public state: MyAlgoState;
   private provider: MyAlgoConnect | undefined;
 
@@ -29,55 +36,83 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     }
   }
 
+  private enforceIsConnected(): void {
+    if (!this.getIsConnected()) {
+      throw new WalletNotConnectedError();
+    }
+  }
+
   public async init(): Promise<WALLET_STATUS> {
-    console.log("about to init!");
     return WALLET_STATUS.OK;
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
-    console.log("about to sign in!");
-
     const myAlgoConnect = this.getProvider();
 
     this.state.accounts = await myAlgoConnect.connect();
     this.state.isConnected = this.state.accounts.length > 0;
 
+    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     return WALLET_STATUS.OK;
   }
 
   public async signOut(): Promise<WALLET_STATUS> {
+    this.enforceIsConnected();
     this.state.accounts = [];
     this.state.isConnected = false;
 
+    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     return WALLET_STATUS.OK;
+  }
+
+  public async getSigner(): Promise<MyAlgoSigner> {
+    return async (
+      transactions: AlgorandTxn[] | EncodedTransaction[]
+    ): Promise<SignedTx[]> => {
+      this.enforceIsConnected();
+
+      const myAlgoConnect = this.getProvider();
+      const signedTx = await myAlgoConnect.signTransaction(transactions);
+
+      return signedTx;
+    };
   }
 
   public async getBalance(): Promise<string> {
     throw new NotImplementedError();
   }
 
-  public async getAssets(): Promise<Asset[]> {
+  public async getAssets(): Promise<MyAlgoAsset[]> {
     throw new NotImplementedError();
+  }
+
+  public getIsConnected(): boolean {
+    return this.state.isConnected;
+  }
+
+  public getPrimaryAccount(): Accounts {
+    return this.state.accounts[0];
+  }
+
+  public getAccounts(): Accounts[] {
+    return this.state.accounts;
+  }
+
+  public async fetchCurrentChainID(): Promise<number> {
+    return CHAINS.CHAIN_ID_ALGORAND;
+  }
+
+  public onAccountChange(cb: (accountId: Accounts) => void | Promise<void>) {
+    return this.hookRouter.registerCallback(
+      WALLET_HOOK.ACCOUNT_ON_CHANGE,
+      () => {
+        return cb(this.getPrimaryAccount());
+      }
+    );
   }
 
   public toJSON(): MyAlgoState {
     return this.state;
-  }
-
-  public async getSigner(): Promise<Signer> {
-    return async (
-      transactions: unknown[]
-    ): Promise<{ signedTransaction: SignedTx[]; status: WALLET_STATUS }> => {
-      const myAlgoConnect = this.getProvider();
-      const signedTx = await myAlgoConnect.signTransaction(
-        transactions as (AlgorandTxn | EncodedTransaction)[]
-      );
-
-      return {
-        signedTransaction: signedTx,
-        status: WALLET_STATUS.OK,
-      };
-    };
   }
 
   public getProvider(): MyAlgoConnect {
@@ -91,4 +126,3 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
 }
 
 export { MyAlgo };
-export type { MyAlgoState };

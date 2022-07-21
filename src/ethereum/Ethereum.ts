@@ -1,15 +1,16 @@
-import { MetaMask, MetaMaskState } from "./metamask";
+import { Metamask } from "./metamask";
+import { MetamaskState } from "./metamask/types";
 
 type EthereumState = {
-  metaMask?: MetaMaskState;
+  metaMask?: MetamaskState;
 };
 
 class Ethereum {
-  public metaMask: MetaMask;
+  public metaMask: Metamask;
 
   constructor(data?: EthereumState) {
-    this.metaMask = new MetaMask(data?.metaMask);
+    this.metaMask = new Metamask(data?.metaMask);
   }
 }
 
-export { Ethereum, EthereumState };
+export type { Ethereum, EthereumState };
