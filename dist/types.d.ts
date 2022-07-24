@@ -34,6 +34,7 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     getSigner(): Promise<MyAlgoSigner>;
     getBalance(): Promise<string>;
     getAssets(): Promise<MyAlgoAsset[]>;
+    getIsWalletInstalled(): boolean;
     getIsConnected(): boolean;
     getPrimaryAccount(): Accounts;
     getAccounts(): Accounts[];
@@ -55,7 +56,7 @@ type MetamaskState = {
 };
 type MetamaskSigner = Signer<TransactionRequest, TransactionResponse>;
 type MetamaskAsset = {};
-export const useWindow: (cb: (windows: unknown) => Promise<void>) => Promise<void>;
+export const useWindow: <T>(cb: (windowObject: unknown) => T) => T | null;
 export class Metamask implements WalletInterface<MetamaskState> {
     state: MetamaskState;
     provider?: ethers.providers.Web3Provider;
@@ -67,6 +68,7 @@ export class Metamask implements WalletInterface<MetamaskState> {
     getBalance(): Promise<string>;
     getAssets(): Promise<MetamaskAsset[]>;
     getIsConnected(): boolean;
+    getIsWalletInstalled(): boolean;
     getPrimaryAccount(): string;
     getAccounts(): string[];
     fetchCurrentChainID(): Promise<number>;
@@ -111,6 +113,7 @@ export interface WalletInterface<T> {
     getBalance: () => Promise<string>;
     getAssets: () => Promise<unknown[]>;
     getIsConnected: () => boolean;
+    getIsWalletInstalled: () => boolean;
     getPrimaryAccount: () => unknown;
     getAccounts: () => unknown[];
     fetchCurrentChainID: () => Promise<number>;

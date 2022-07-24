@@ -1,11 +1,8 @@
-const useWindow = async (
-  cb: (windows: unknown) => Promise<void>
-): Promise<void> => {
-  try {
-    return cb(window as unknown);
-  } catch (err) {
-    console.log("Error opening window...");
-    console.log(err);
+const useWindow = <T>(cb: (windowObject: unknown) => T): T | null => {
+  if (Object.keys(globalThis).includes("window")) {
+    return cb(globalThis.window);
+  } else {
+    return null;
   }
 };
 
