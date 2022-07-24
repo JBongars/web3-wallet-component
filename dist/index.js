@@ -88,13 +88,9 @@ var $fc578d3576b0d8ef$exports = {};
 var $ff033dcd1750fc9d$exports = {};
 
 $parcel$export($ff033dcd1750fc9d$exports, "useWindow", () => $ff033dcd1750fc9d$export$24b8fbafc4b6a151);
-const $ff033dcd1750fc9d$export$24b8fbafc4b6a151 = async (cb)=>{
-    try {
-        return cb(window);
-    } catch (err) {
-        console.log("Error opening window...");
-        console.log(err);
-    }
+const $ff033dcd1750fc9d$export$24b8fbafc4b6a151 = (cb)=>{
+    if (Object.keys(globalThis).includes("window")) return cb(globalThis.window);
+    else return null;
 };
 
 
@@ -211,6 +207,10 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
     getIsConnected() {
         return this.state.isConnected;
     }
+    getIsWalletInstalled() {
+        const ethereum = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
+        return ethereum !== null;
+    }
     getPrimaryAccount() {
         this.enforceIsConnected();
         return this.state.accounts[0];
@@ -248,7 +248,7 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
     }
     async getProvider() {
         const ethereum = await (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
-        if (!ethereum) throw new (0, $d083fd37dae77b99$export$72563c16b91dfd16)();
+        if (ethereum === null) throw new (0, $d083fd37dae77b99$export$72563c16b91dfd16)();
         return new (0, $8zHUo$ethers.ethers).providers.Web3Provider(ethereum);
     }
 }
@@ -334,6 +334,9 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     }
     async getAssets() {
         throw new (0, $d083fd37dae77b99$export$e162153238934121)();
+    }
+    getIsWalletInstalled() {
+        return true; // wallet is web only so is always installed
     }
     getIsConnected() {
         return this.state.isConnected;

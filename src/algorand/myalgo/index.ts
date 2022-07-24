@@ -86,6 +86,10 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     throw new NotImplementedError();
   }
 
+  public getIsWalletInstalled(): boolean {
+    return true; // wallet is web only so is always installed
+  }
+
   public getIsConnected(): boolean {
     return this.state.isConnected;
   }

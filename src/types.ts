@@ -35,6 +35,7 @@ interface WalletInterface<T> {
   getBalance: () => Promise<string>;
   getAssets: () => Promise<unknown[]>;
   getIsConnected: () => boolean;
+  getIsWalletInstalled: () => boolean;
   getPrimaryAccount: () => unknown;
   getAccounts: () => unknown[];
   fetchCurrentChainID: () => Promise<number>;
