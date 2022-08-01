@@ -1,7 +1,23 @@
 import { MyAlgo } from "./algorand";
 import { Metamask } from "./ethereum";
 
-type ChainID = 2 | 8;
+declare type ChainID =
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 13
+  | 14
+  | 15
+  | 10001;
 
 enum WALLET_STATUS {
   OK,
@@ -13,6 +29,9 @@ enum WALLET_STATUS {
 
 enum WALLET_HOOK {
   ACCOUNT_ON_CHANGE,
+  CHAIN_ON_CHANGE,
+  DISCONNECT,
+  NEW_BLOCK,
 }
 
 const WALLETS = {
@@ -40,6 +59,8 @@ interface WalletInterface<T> {
   getAccounts: () => unknown[];
   fetchCurrentChainID: () => Promise<number>;
   onAccountChange: (cb: (accountId: unknown) => void | Promise<void>) => void;
+  onChainChange: (cb: (chainId: ChainID) => void | Promise<void>) => void;
+  onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => void;
   toJSON: () => T;
 }
 

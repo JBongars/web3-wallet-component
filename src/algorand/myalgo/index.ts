@@ -9,6 +9,7 @@ import {
   WALLET_STATUS,
   WalletInterface,
   WALLET_HOOK,
+  ChainID,
 } from "./../../types";
 import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from "./types";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
@@ -111,6 +112,26 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
       () => {
         return cb(this.getPrimaryAccount());
+      }
+    );
+  }
+
+  public onChainChange(cb: (chain: ChainID) => void | Promise<void>) {
+    return this.hookRouter.registerCallback(
+      WALLET_HOOK.CHAIN_ON_CHANGE,
+      async () => {
+        const currentChainId: ChainID =
+          (await this.fetchCurrentChainID()) as ChainID;
+        return cb(currentChainId);
+      }
+    );
+  }
+
+  public onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>) {
+    return this.hookRouter.registerCallback(
+      WALLET_HOOK.NEW_BLOCK,
+      (block: unknown) => {
+        return cb(block);
       }
     );
   }

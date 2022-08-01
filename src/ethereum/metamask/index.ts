@@ -3,8 +3,14 @@ import {
   WALLET_STATUS,
   WalletInterface,
   WALLET_HOOK,
+  ChainID,
 } from "../../types";
-import { MetamaskAsset, MetamaskSigner, MetamaskState } from "./types";
+import {
+  MetamaskAsset,
+  MetamaskSigner,
+  MetamaskState,
+  ProviderMessage,
+} from "./types";
 import { ethers } from "ethers";
 import {
   TransactionRequest,
@@ -137,21 +143,48 @@ class Metamask implements WalletInterface<MetamaskState> {
     );
   }
 
+  public onChainChange(cb: (chain: ChainID) => void | Promise<void>) {
+    return this.hookRouter.registerCallback(
+      WALLET_HOOK.CHAIN_ON_CHANGE,
+      async () => {
+        const currentChainId: ChainID =
+          (await this.fetchCurrentChainID()) as ChainID;
+        return cb(currentChainId);
+      }
+    );
+  }
+
+  public onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>) {
+    return this.hookRouter.registerCallback(
+      WALLET_HOOK.NEW_BLOCK,
+      (block: unknown) => {
+        return cb(block);
+      }
+    );
+  }
+
   public toJSON(): MetamaskState {
     return this.state;
   }
 
-  public async mountEventListeners(
-    callback?: (accounts: string[]) => Promise<unknown>
-  ) {
+  public async mountEventListeners() {
     const provider = await this.getProvider();
 
     provider.on("accountsChanged", async (accounts: string[]) => {
       this.state.accounts = accounts;
+      this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+    });
 
-      if (callback) {
-        return callback(accounts);
-      }
+    provider.on("chainChanged", async (_chainId: string) => {
+      this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_CHANGE]);
+    });
+
+    provider.on("disconnect", async (result) => {
+      this.signOut();
+    });
+
+    provider.on("message", (message: ProviderMessage) => {
+      console.log("Metamask message: ", message);
     });
   }
 
