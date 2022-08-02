@@ -168,6 +168,8 @@ class Metamask implements WalletInterface<MetamaskState> {
   }
 
   public async mountEventListeners() {
+    console.log("mountEventListeners");
+
     const provider = await this.getProvider();
 
     provider.on("accountsChanged", async (accounts: string[]) => {
@@ -183,19 +185,14 @@ class Metamask implements WalletInterface<MetamaskState> {
       this.signOut();
     });
 
-    provider.on("message", (message: ProviderMessage) => {
-      console.log("Metamask message: ", message);
+    provider.on("block", (block: unknown) => {
+      this.hookRouter.applyHooks([WALLET_HOOK.NEW_BLOCK]);
     });
   }
 
-  public async unmountEventListeners(callback?: () => Promise<unknown>) {
+  public async unmountEventListeners() {
     const provider = await this.getProvider();
-
-    provider.removeListener("accountsChanged", async () => {
-      if (callback) {
-        return callback();
-      }
-    });
+    provider.removeAllListeners();
   }
 
   public async getProvider(): Promise<ethers.providers.Web3Provider> {

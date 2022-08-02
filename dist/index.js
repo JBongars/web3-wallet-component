@@ -39,6 +39,9 @@ let $faefaad95e5fcca0$export$de76a1f31766a0a2;
 let $faefaad95e5fcca0$export$5ee9bf08a91850b9;
 (function(WALLET_HOOK1) {
     WALLET_HOOK1[WALLET_HOOK1["ACCOUNT_ON_CHANGE"] = 0] = "ACCOUNT_ON_CHANGE";
+    WALLET_HOOK1[WALLET_HOOK1["CHAIN_ON_CHANGE"] = 1] = "CHAIN_ON_CHANGE";
+    WALLET_HOOK1[WALLET_HOOK1["DISCONNECT"] = 2] = "DISCONNECT";
+    WALLET_HOOK1[WALLET_HOOK1["NEW_BLOCK"] = 3] = "NEW_BLOCK";
 })($faefaad95e5fcca0$export$5ee9bf08a91850b9 || ($faefaad95e5fcca0$export$5ee9bf08a91850b9 = {}));
 const $faefaad95e5fcca0$export$412a02074a4127ac = {
     MYALGO: "MYALGO",
@@ -133,12 +136,17 @@ class $4d8b59879bd0f2d0$var$HookRouter {
         this.checkIfValidHook(hook);
         this.hooks.get(hook)?.delete(id);
     }
-    applyHooks(hooks) {
+    async applyHooks(hooks) {
         const callbacksToInvoke = [];
         hooks.forEach((hook)=>{
             this.hooks.get(hook)?.forEach((fn)=>callbacksToInvoke.push(fn));
         });
-        Promise.all(callbacksToInvoke.map((fn)=>fn()));
+        await Promise.all(callbacksToInvoke.map((fn)=>fn()));
+    }
+    async applyHookWithArgs(hook, ...args) {
+        const callbacksToInvoke = [];
+        this.hooks.get(hook)?.forEach((fn)=>callbacksToInvoke.push(fn));
+        await Promise.all(callbacksToInvoke.map((fn)=>fn(...args)));
     }
 }
 var $4d8b59879bd0f2d0$export$2e2bcd8739ae039 = $4d8b59879bd0f2d0$var$HookRouter;
@@ -230,21 +238,46 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
             return cb(this.getPrimaryAccount());
         });
     }
+    onChainChange(cb) {
+        return this.hookRouter.registerCallback((0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async ()=>{
+            const currentChainId = await this.fetchCurrentChainID();
+            return cb(currentChainId);
+        });
+    }
+    onBlockAdded(cb) {
+        return this.hookRouter.registerCallback((0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
+            return cb(block);
+        });
+    }
     toJSON() {
         return this.state;
     }
-    async mountEventListeners(callback) {
+    async mountEventListeners() {
+        console.log("mountEventListeners");
         const provider = await this.getProvider();
         provider.on("accountsChanged", async (accounts)=>{
             this.state.accounts = accounts;
-            if (callback) return callback(accounts);
+            this.hookRouter.applyHooks([
+                (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+            ]);
+        });
+        provider.on("chainChanged", async (_chainId)=>{
+            this.hookRouter.applyHooks([
+                (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE
+            ]);
+        });
+        provider.on("disconnect", async (result)=>{
+            this.signOut();
+        });
+        provider.on("block", (block)=>{
+            this.hookRouter.applyHooks([
+                (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).NEW_BLOCK
+            ]);
         });
     }
-    async unmountEventListeners(callback) {
+    async unmountEventListeners() {
         const provider = await this.getProvider();
-        provider.removeListener("accountsChanged", async ()=>{
-            if (callback) return callback();
-        });
+        provider.removeAllListeners();
     }
     async getProvider() {
         const ethereum = await (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
@@ -353,6 +386,17 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     onAccountChange(cb) {
         return this.hookRouter.registerCallback((0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
             return cb(this.getPrimaryAccount());
+        });
+    }
+    onChainChange(cb) {
+        return this.hookRouter.registerCallback((0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async ()=>{
+            const currentChainId = await this.fetchCurrentChainID();
+            return cb(currentChainId);
+        });
+    }
+    onBlockAdded(cb) {
+        return this.hookRouter.registerCallback((0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
+            return cb(block);
         });
     }
     toJSON() {
