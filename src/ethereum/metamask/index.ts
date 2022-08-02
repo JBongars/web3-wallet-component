@@ -181,7 +181,7 @@ class Metamask implements WalletInterface<MetamaskState> {
       this.signOut();
     });
 
-    provider.on("block", (block: { block: number }) => {
+    provider.on("block", (block: number) => {
       this.hookRouter.applyHookWithArgs(WALLET_HOOK.NEW_BLOCK, block);
     });
   }
