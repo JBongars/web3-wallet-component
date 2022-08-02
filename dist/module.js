@@ -155,7 +155,10 @@ const $05db05568a951b86$var$initialState = Object.freeze({
 });
 class $05db05568a951b86$export$2c78a3b4fc11d8fa {
     hookRouter = new (0, $a9b7f2548bb682a5$export$2e2bcd8739ae039)([
-        (0, $81c1b644006d48ec$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, 
+        (0, $81c1b644006d48ec$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
+        (0, $81c1b644006d48ec$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
+        (0, $81c1b644006d48ec$export$5ee9bf08a91850b9).DISCONNECT,
+        (0, $81c1b644006d48ec$export$5ee9bf08a91850b9).NEW_BLOCK, 
     ]);
     constructor(state){
         if (state) this.state = {
@@ -250,7 +253,6 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         return this.state;
     }
     async mountEventListeners() {
-        console.log("mountEventListeners");
         const provider = await this.getProvider();
         provider.on("accountsChanged", async (accounts)=>{
             this.state.accounts = accounts;
@@ -317,7 +319,9 @@ const $0e4707f80e4e0187$var$initialState = Object.freeze({
 });
 class $0e4707f80e4e0187$export$6ab354d5c56bf95 {
     hookRouter = new (0, $a9b7f2548bb682a5$export$2e2bcd8739ae039)([
-        (0, $81c1b644006d48ec$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, 
+        (0, $81c1b644006d48ec$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
+        (0, $81c1b644006d48ec$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
+        (0, $81c1b644006d48ec$export$5ee9bf08a91850b9).DISCONNECT, 
     ]);
     constructor(state){
         if (state) this.state = {
@@ -392,9 +396,7 @@ class $0e4707f80e4e0187$export$6ab354d5c56bf95 {
         });
     }
     onBlockAdded(cb) {
-        return this.hookRouter.registerCallback((0, $81c1b644006d48ec$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
-            return cb(block);
-        });
+        throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
     }
     toJSON() {
         return this.state;

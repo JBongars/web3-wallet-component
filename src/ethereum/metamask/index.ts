@@ -27,6 +27,9 @@ const initialState: Readonly<MetamaskState> = Object.freeze({
 class Metamask implements WalletInterface<MetamaskState> {
   private hookRouter: HookRouter = new HookRouter([
     WALLET_HOOK.ACCOUNT_ON_CHANGE,
+    WALLET_HOOK.CHAIN_ON_CHANGE,
+    WALLET_HOOK.DISCONNECT,
+    WALLET_HOOK.NEW_BLOCK,
   ]);
   public state: MetamaskState;
   public provider?: ethers.providers.Web3Provider;

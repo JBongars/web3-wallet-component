@@ -25,6 +25,8 @@ const initialState: Readonly<MyAlgoState> = Object.freeze({
 class MyAlgo implements WalletInterface<MyAlgoState> {
   private hookRouter: HookRouter = new HookRouter([
     WALLET_HOOK.ACCOUNT_ON_CHANGE,
+    WALLET_HOOK.CHAIN_ON_CHANGE,
+    WALLET_HOOK.DISCONNECT,
   ]);
   public state: MyAlgoState;
   private provider: MyAlgoConnect | undefined;
@@ -128,12 +130,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   }
 
   public onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>) {
-    return this.hookRouter.registerCallback(
-      WALLET_HOOK.NEW_BLOCK,
-      (block: unknown) => {
-        return cb(block);
-      }
-    );
+    throw new NotImplementedError();
   }
 
   public toJSON(): MyAlgoState {

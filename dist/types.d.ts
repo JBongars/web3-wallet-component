@@ -41,7 +41,7 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     fetchCurrentChainID(): Promise<number>;
     onAccountChange(cb: (accountId: Accounts) => void | Promise<void>): symbol;
     onChainChange(cb: (chain: ChainID) => void | Promise<void>): symbol;
-    onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): symbol;
+    onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): void;
     toJSON(): MyAlgoState;
     getProvider(): MyAlgoConnect;
 }
