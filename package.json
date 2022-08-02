@@ -25,7 +25,10 @@
   },
   "dependencies": {
     "@randlabs/myalgo-connect": "^1.2.0",
-    "ethers": "^5.6.9"
+    "bufferutil": "^4.0.6",
+    "ethers": "^5.6.9",
+    "utf-8-validate": "^5.0.9",
+    "ws": "^8.8.1"
   },
   "files": [
     "/dist"
