@@ -76,7 +76,7 @@ export class Metamask implements WalletInterface<MetamaskState> {
     fetchCurrentChainID(): Promise<number>;
     onAccountChange(cb: (accountId: string) => void | Promise<void>): symbol;
     onChainChange(cb: (chain: ChainID) => void | Promise<void>): symbol;
-    onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): symbol;
+    onBlockAdded(cb: (newBlock: number) => void | Promise<void>): symbol;
     toJSON(): MetamaskState;
     mountEventListeners(): Promise<void>;
     unmountEventListeners(): Promise<void>;
