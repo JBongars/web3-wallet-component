@@ -163,8 +163,6 @@ class Metamask implements WalletInterface<MetamaskState> {
   }
 
   public async mountEventListeners() {
-    console.log("mountEventListeners");
-
     const provider = await this.getProvider();
 
     provider.on("accountsChanged", async (accounts: string[]) => {
