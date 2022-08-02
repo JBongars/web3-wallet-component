@@ -50,7 +50,7 @@ class HookRouter {
     this.hooks.get(hook)?.delete(id);
   }
 
-  public applyHooks(hooks: WALLET_HOOK[]) {
+  public async applyHooks(hooks: WALLET_HOOK[]): Promise<void> {
     const callbacksToInvoke: Function[] = [];
 
     hooks.forEach((hook) => {
@@ -59,7 +59,18 @@ class HookRouter {
         ?.forEach((fn: Function) => callbacksToInvoke.push(fn));
     });
 
-    Promise.all(callbacksToInvoke.map((fn) => fn()));
+    await Promise.all(callbacksToInvoke.map((fn) => fn()));
+  }
+
+  public async applyHookWithArgs(
+    hook: WALLET_HOOK,
+    ...args: any[]
+  ): Promise<void> {
+    const callbacksToInvoke: Function[] = [];
+
+    this.hooks.get(hook)?.forEach((fn: Function) => callbacksToInvoke.push(fn));
+
+    await Promise.all(callbacksToInvoke.map((fn) => fn(...args)));
   }
 }
 

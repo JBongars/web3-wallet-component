@@ -40,6 +40,8 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     getAccounts(): Accounts[];
     fetchCurrentChainID(): Promise<number>;
     onAccountChange(cb: (accountId: Accounts) => void | Promise<void>): symbol;
+    onChainChange(cb: (chain: ChainID) => void | Promise<void>): symbol;
+    onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): symbol;
     toJSON(): MyAlgoState;
     getProvider(): MyAlgoConnect;
 }
@@ -73,9 +75,11 @@ export class Metamask implements WalletInterface<MetamaskState> {
     getAccounts(): string[];
     fetchCurrentChainID(): Promise<number>;
     onAccountChange(cb: (accountId: string) => void | Promise<void>): symbol;
+    onChainChange(cb: (chain: ChainID) => void | Promise<void>): symbol;
+    onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): symbol;
     toJSON(): MetamaskState;
-    mountEventListeners(callback?: (accounts: string[]) => Promise<unknown>): Promise<void>;
-    unmountEventListeners(callback?: () => Promise<unknown>): Promise<void>;
+    mountEventListeners(): Promise<void>;
+    unmountEventListeners(): Promise<void>;
     getProvider(): Promise<ethers.providers.Web3Provider>;
 }
 export type EthereumState = {
@@ -85,7 +89,7 @@ export class Ethereum {
     metaMask: Metamask;
     constructor(data?: EthereumState);
 }
-export type ChainID = 2 | 8;
+export type ChainID = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 10001;
 export enum WALLET_STATUS {
     OK = 0,
     LOGIN_ERROR = 1,
@@ -94,7 +98,10 @@ export enum WALLET_STATUS {
     ACCOUNT_NOT_FOUND = 4
 }
 export enum WALLET_HOOK {
-    ACCOUNT_ON_CHANGE = 0
+    ACCOUNT_ON_CHANGE = 0,
+    CHAIN_ON_CHANGE = 1,
+    DISCONNECT = 2,
+    NEW_BLOCK = 3
 }
 export const WALLETS: {
     readonly MYALGO: "MYALGO";
@@ -118,6 +125,8 @@ export interface WalletInterface<T> {
     getAccounts: () => unknown[];
     fetchCurrentChainID: () => Promise<number>;
     onAccountChange: (cb: (accountId: unknown) => void | Promise<void>) => void;
+    onChainChange: (cb: (chainId: ChainID) => void | Promise<void>) => void;
+    onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => void;
     toJSON: () => T;
 }
 
