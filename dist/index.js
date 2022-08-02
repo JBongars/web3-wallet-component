@@ -272,9 +272,7 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
             this.signOut();
         });
         provider.on("block", (block)=>{
-            this.hookRouter.applyHooks([
-                (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).NEW_BLOCK
-            ]);
+            this.hookRouter.applyHookWithArgs((0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).NEW_BLOCK, block);
         });
     }
     async unmountEventListeners() {

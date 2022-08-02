@@ -155,7 +155,7 @@ class Metamask implements WalletInterface<MetamaskState> {
   public onBlockAdded(cb: (newBlock: number) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.NEW_BLOCK,
-      (block: any) => {
+      (block: number) => {
         return cb(block);
       }
     );
@@ -181,8 +181,8 @@ class Metamask implements WalletInterface<MetamaskState> {
       this.signOut();
     });
 
-    provider.on("block", (block: unknown) => {
-      this.hookRouter.applyHooks([WALLET_HOOK.NEW_BLOCK]);
+    provider.on("block", (block: { block: number }) => {
+      this.hookRouter.applyHookWithArgs(WALLET_HOOK.NEW_BLOCK, block);
     });
   }
 
