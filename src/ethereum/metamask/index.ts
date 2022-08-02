@@ -5,12 +5,7 @@ import {
   WALLET_HOOK,
   ChainID,
 } from "../../types";
-import {
-  MetamaskAsset,
-  MetamaskSigner,
-  MetamaskState,
-  ProviderMessage,
-} from "./types";
+import { MetamaskAsset, MetamaskSigner, MetamaskState } from "./types";
 import { ethers } from "ethers";
 import {
   TransactionRequest,
