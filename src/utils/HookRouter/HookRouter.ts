@@ -1,5 +1,5 @@
-import { HookNotAvailableError } from "../errors";
-import { WALLET_HOOK } from "../types";
+import { HookNotAvailableError } from "../../errors";
+import { HookEvent, WALLET_HOOK } from "./types";
 
 class HookRouter {
   private availableHooks: WALLET_HOOK[];
@@ -35,13 +35,16 @@ class HookRouter {
     });
   }
 
-  public registerCallback(hook: WALLET_HOOK, cb: Function) {
+  public registerCallback(hook: WALLET_HOOK, cb: Function): HookEvent {
     this.checkIfValidHook(hook);
 
     const id = Symbol();
     this.hooks.get(hook)?.set(id, cb);
 
-    return id;
+    return {
+      id,
+      destroy: () => this.deregisterCallback(hook, id),
+    };
   }
 
   public deregisterCallback(hook: WALLET_HOOK, id: Symbol) {

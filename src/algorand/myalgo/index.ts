@@ -4,18 +4,17 @@ import {
   EncodedTransaction,
   Accounts,
 } from "@randlabs/myalgo-connect";
-import {
-  Signer,
-  WALLET_STATUS,
-  WalletInterface,
-  WALLET_HOOK,
-  ChainID,
-} from "./../../types";
+import { WalletInterface, ChainID } from "./../../types";
 import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from "./types";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
 import { CHAINS } from "~/src/config/constants";
-import HookRouter from "~/src/utils/HookRouter";
+import HookRouter from "~/src/utils/HookRouter/HookRouter";
+import {
+  HookEvent,
+  WALLET_HOOK,
+  WALLET_STATUS,
+} from "~/src/utils/HookRouter/types";
 
 const initialState: Readonly<MyAlgoState> = Object.freeze({
   accounts: [],
@@ -129,7 +128,9 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     );
   }
 
-  public onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>) {
+  public onBlockAdded(
+    cb: (newBlock: unknown) => void | Promise<void>
+  ): HookEvent {
     throw new NotImplementedError();
   }
 

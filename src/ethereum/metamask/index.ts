@@ -1,10 +1,4 @@
-import {
-  Signer,
-  WALLET_STATUS,
-  WalletInterface,
-  WALLET_HOOK,
-  ChainID,
-} from "../../types";
+import { WalletInterface, ChainID } from "../../types";
 import { MetamaskAsset, MetamaskSigner, MetamaskState } from "./types";
 import { ethers } from "ethers";
 import {
@@ -17,7 +11,8 @@ import {
   WalletNotConnectedError,
   WalletNotInstalledError,
 } from "~/src/errors";
-import HookRouter from "~/src/utils/HookRouter";
+import HookRouter from "~/src/utils/HookRouter/HookRouter";
+import { WALLET_HOOK, WALLET_STATUS } from "~/src/utils/HookRouter/types";
 
 const initialState: Readonly<MetamaskState> = Object.freeze({
   accounts: [],

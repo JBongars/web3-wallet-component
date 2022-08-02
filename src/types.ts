@@ -1,5 +1,6 @@
 import { MyAlgo } from "./algorand";
 import { Metamask } from "./ethereum";
+import { HookEvent, WALLET_STATUS } from "./utils/HookRouter/types";
 
 declare type ChainID =
   | 1
@@ -18,21 +19,6 @@ declare type ChainID =
   | 14
   | 15
   | 10001;
-
-enum WALLET_STATUS {
-  OK,
-  LOGIN_ERROR,
-  WALLET_ERROR,
-  EXTENSION_NOT_FOUND,
-  ACCOUNT_NOT_FOUND,
-}
-
-enum WALLET_HOOK {
-  ACCOUNT_ON_CHANGE,
-  CHAIN_ON_CHANGE,
-  DISCONNECT,
-  NEW_BLOCK,
-}
 
 const WALLETS = {
   MYALGO: "MYALGO",
@@ -58,11 +44,13 @@ interface WalletInterface<T> {
   getPrimaryAccount: () => unknown;
   getAccounts: () => unknown[];
   fetchCurrentChainID: () => Promise<number>;
-  onAccountChange: (cb: (accountId: unknown) => void | Promise<void>) => void;
-  onChainChange: (cb: (chainId: ChainID) => void | Promise<void>) => void;
-  onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => void;
+  onAccountChange: (
+    cb: (accountId: unknown) => void | Promise<void>
+  ) => HookEvent;
+  onChainChange: (cb: (chainId: ChainID) => void | Promise<void>) => HookEvent;
+  onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;
   toJSON: () => T;
 }
 
-export { WALLETS, WalletInterface, WALLET_STATUS, WALLET_HOOK };
+export { WALLETS, WalletInterface };
 export type { ChainID, Signer, useWallets };

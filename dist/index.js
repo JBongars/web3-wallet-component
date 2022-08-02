@@ -25,24 +25,7 @@ function $parcel$interopDefault(a) {
 }
 var $faefaad95e5fcca0$exports = {};
 
-$parcel$export($faefaad95e5fcca0$exports, "WALLET_STATUS", () => $faefaad95e5fcca0$export$de76a1f31766a0a2);
-$parcel$export($faefaad95e5fcca0$exports, "WALLET_HOOK", () => $faefaad95e5fcca0$export$5ee9bf08a91850b9);
 $parcel$export($faefaad95e5fcca0$exports, "WALLETS", () => $faefaad95e5fcca0$export$412a02074a4127ac);
-let $faefaad95e5fcca0$export$de76a1f31766a0a2;
-(function(WALLET_STATUS1) {
-    WALLET_STATUS1[WALLET_STATUS1["OK"] = 0] = "OK";
-    WALLET_STATUS1[WALLET_STATUS1["LOGIN_ERROR"] = 1] = "LOGIN_ERROR";
-    WALLET_STATUS1[WALLET_STATUS1["WALLET_ERROR"] = 2] = "WALLET_ERROR";
-    WALLET_STATUS1[WALLET_STATUS1["EXTENSION_NOT_FOUND"] = 3] = "EXTENSION_NOT_FOUND";
-    WALLET_STATUS1[WALLET_STATUS1["ACCOUNT_NOT_FOUND"] = 4] = "ACCOUNT_NOT_FOUND";
-})($faefaad95e5fcca0$export$de76a1f31766a0a2 || ($faefaad95e5fcca0$export$de76a1f31766a0a2 = {}));
-let $faefaad95e5fcca0$export$5ee9bf08a91850b9;
-(function(WALLET_HOOK1) {
-    WALLET_HOOK1[WALLET_HOOK1["ACCOUNT_ON_CHANGE"] = 0] = "ACCOUNT_ON_CHANGE";
-    WALLET_HOOK1[WALLET_HOOK1["CHAIN_ON_CHANGE"] = 1] = "CHAIN_ON_CHANGE";
-    WALLET_HOOK1[WALLET_HOOK1["DISCONNECT"] = 2] = "DISCONNECT";
-    WALLET_HOOK1[WALLET_HOOK1["NEW_BLOCK"] = 3] = "NEW_BLOCK";
-})($faefaad95e5fcca0$export$5ee9bf08a91850b9 || ($faefaad95e5fcca0$export$5ee9bf08a91850b9 = {}));
 const $faefaad95e5fcca0$export$412a02074a4127ac = {
     MYALGO: "MYALGO",
     METAMASK: "METAMASK"
@@ -86,7 +69,6 @@ var $2b09ea9ee8d63ad1$exports = {};
 
 $parcel$export($2b09ea9ee8d63ad1$exports, "Metamask", () => $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa);
 
-
 var $fc578d3576b0d8ef$exports = {};
 var $ff033dcd1750fc9d$exports = {};
 
@@ -102,7 +84,7 @@ $parcel$exportWildcard($fc578d3576b0d8ef$exports, $ff033dcd1750fc9d$exports);
 
 
 
-class $4d8b59879bd0f2d0$var$HookRouter {
+class $a71b91c4d64511bd$var$HookRouter {
     constructor(hooks){
         this.hooks = new Map();
         this.availableHooks = hooks;
@@ -130,7 +112,10 @@ class $4d8b59879bd0f2d0$var$HookRouter {
         this.checkIfValidHook(hook);
         const id = Symbol();
         this.hooks.get(hook)?.set(id, cb);
-        return id;
+        return {
+            id: id,
+            destroy: ()=>this.deregisterCallback(hook, id)
+        };
     }
     deregisterCallback(hook, id) {
         this.checkIfValidHook(hook);
@@ -149,7 +134,24 @@ class $4d8b59879bd0f2d0$var$HookRouter {
         await Promise.all(callbacksToInvoke.map((fn)=>fn(...args)));
     }
 }
-var $4d8b59879bd0f2d0$export$2e2bcd8739ae039 = $4d8b59879bd0f2d0$var$HookRouter;
+var $a71b91c4d64511bd$export$2e2bcd8739ae039 = $a71b91c4d64511bd$var$HookRouter;
+
+
+let $57b8a5d2d8300786$export$de76a1f31766a0a2;
+(function(WALLET_STATUS1) {
+    WALLET_STATUS1[WALLET_STATUS1["OK"] = 0] = "OK";
+    WALLET_STATUS1[WALLET_STATUS1["LOGIN_ERROR"] = 1] = "LOGIN_ERROR";
+    WALLET_STATUS1[WALLET_STATUS1["WALLET_ERROR"] = 2] = "WALLET_ERROR";
+    WALLET_STATUS1[WALLET_STATUS1["EXTENSION_NOT_FOUND"] = 3] = "EXTENSION_NOT_FOUND";
+    WALLET_STATUS1[WALLET_STATUS1["ACCOUNT_NOT_FOUND"] = 4] = "ACCOUNT_NOT_FOUND";
+})($57b8a5d2d8300786$export$de76a1f31766a0a2 || ($57b8a5d2d8300786$export$de76a1f31766a0a2 = {}));
+let $57b8a5d2d8300786$export$5ee9bf08a91850b9;
+(function(WALLET_HOOK1) {
+    WALLET_HOOK1[WALLET_HOOK1["ACCOUNT_ON_CHANGE"] = 0] = "ACCOUNT_ON_CHANGE";
+    WALLET_HOOK1[WALLET_HOOK1["CHAIN_ON_CHANGE"] = 1] = "CHAIN_ON_CHANGE";
+    WALLET_HOOK1[WALLET_HOOK1["DISCONNECT"] = 2] = "DISCONNECT";
+    WALLET_HOOK1[WALLET_HOOK1["NEW_BLOCK"] = 3] = "NEW_BLOCK";
+})($57b8a5d2d8300786$export$5ee9bf08a91850b9 || ($57b8a5d2d8300786$export$5ee9bf08a91850b9 = {}));
 
 
 const $2b09ea9ee8d63ad1$var$initialState = Object.freeze({
@@ -157,11 +159,11 @@ const $2b09ea9ee8d63ad1$var$initialState = Object.freeze({
     isConnected: false
 });
 class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
-    hookRouter = new (0, $4d8b59879bd0f2d0$export$2e2bcd8739ae039)([
-        (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
-        (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
-        (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).DISCONNECT,
-        (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).NEW_BLOCK, 
+    hookRouter = new (0, $a71b91c4d64511bd$export$2e2bcd8739ae039)([
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).DISCONNECT,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
     ]);
     constructor(state){
         if (state) this.state = {
@@ -176,25 +178,25 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
     }
     async init() {
         this.provider = await this.getProvider();
-        return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK;
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
         const provider = await this.getProvider();
         this.state.accounts = await provider.send("eth_requestAccounts", []);
         this.state.isConnected = this.state.accounts.length > 0;
         this.hookRouter.applyHooks([
-            (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+            (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
         ]);
-        return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK;
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signOut() {
         this.enforceIsConnected();
         this.state.accounts = [];
         this.state.isConnected = false;
         this.hookRouter.applyHooks([
-            (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+            (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
         ]);
-        return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK;
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async getSigner() {
         return async (transactions)=>{
@@ -237,18 +239,18 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         return chainId;
     }
     onAccountChange(cb) {
-        return this.hookRouter.registerCallback((0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
             return cb(this.getPrimaryAccount());
         });
     }
     onChainChange(cb) {
-        return this.hookRouter.registerCallback((0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async ()=>{
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async ()=>{
             const currentChainId = await this.fetchCurrentChainID();
             return cb(currentChainId);
         });
     }
     onBlockAdded(cb) {
-        return this.hookRouter.registerCallback((0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
             return cb(block);
         });
     }
@@ -260,19 +262,19 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         provider.on("accountsChanged", async (accounts)=>{
             this.state.accounts = accounts;
             this.hookRouter.applyHooks([
-                (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
             ]);
         });
         provider.on("chainChanged", async (_chainId)=>{
             this.hookRouter.applyHooks([
-                (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE
+                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE
             ]);
         });
         provider.on("disconnect", async (result)=>{
             this.signOut();
         });
         provider.on("block", (block)=>{
-            this.hookRouter.applyHookWithArgs((0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).NEW_BLOCK, block);
+            this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, block);
         });
     }
     async unmountEventListeners() {
@@ -306,11 +308,11 @@ var $a75d728b25ccd0d3$exports = {};
 $parcel$export($a75d728b25ccd0d3$exports, "MyAlgo", () => $a75d728b25ccd0d3$export$6ab354d5c56bf95);
 
 
-
 const $859a8ceca3662d63$export$8d781dbcfe5be41e = {
     CHAIN_ID_ALGORAND: 8,
     CHAIN_ID_ETHEREUM: 2
 };
+
 
 
 
@@ -319,10 +321,10 @@ const $a75d728b25ccd0d3$var$initialState = Object.freeze({
     isConnected: false
 });
 class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
-    hookRouter = new (0, $4d8b59879bd0f2d0$export$2e2bcd8739ae039)([
-        (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
-        (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
-        (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).DISCONNECT, 
+    hookRouter = new (0, $a71b91c4d64511bd$export$2e2bcd8739ae039)([
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).DISCONNECT, 
     ]);
     constructor(state){
         if (state) this.state = {
@@ -336,25 +338,25 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
         if (!this.getIsConnected()) throw new (0, $d083fd37dae77b99$export$313d299817c74896)();
     }
     async init() {
-        return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK;
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
         const myAlgoConnect = this.getProvider();
         this.state.accounts = await myAlgoConnect.connect();
         this.state.isConnected = this.state.accounts.length > 0;
         this.hookRouter.applyHooks([
-            (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+            (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
         ]);
-        return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK;
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signOut() {
         this.enforceIsConnected();
         this.state.accounts = [];
         this.state.isConnected = false;
         this.hookRouter.applyHooks([
-            (0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+            (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
         ]);
-        return (0, $faefaad95e5fcca0$export$de76a1f31766a0a2).OK;
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async getSigner() {
         return async (transactions)=>{
@@ -386,12 +388,12 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
         return (0, $859a8ceca3662d63$export$8d781dbcfe5be41e).CHAIN_ID_ALGORAND;
     }
     onAccountChange(cb) {
-        return this.hookRouter.registerCallback((0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
             return cb(this.getPrimaryAccount());
         });
     }
     onChainChange(cb) {
-        return this.hookRouter.registerCallback((0, $faefaad95e5fcca0$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async ()=>{
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async ()=>{
             const currentChainId = await this.fetchCurrentChainID();
             return cb(currentChainId);
         });
