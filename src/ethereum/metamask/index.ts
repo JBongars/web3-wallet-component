@@ -1,5 +1,10 @@
 import { WalletInterface, ChainID } from "../../types";
-import { MetamaskAsset, MetamaskSigner, MetamaskState } from "./types";
+import {
+  MetamaskAsset,
+  MetamaskChainConfig,
+  MetamaskSigner,
+  MetamaskState,
+} from "./types";
 import { ethers } from "ethers";
 import {
   TransactionRequest,
@@ -13,6 +18,7 @@ import {
 } from "~/src/errors";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import { WALLET_HOOK, WALLET_STATUS } from "~/src/utils/HookRouter/types";
+import { getChainConfig } from "./chains";
 
 const initialState: Readonly<MetamaskState> = Object.freeze({
   accounts: [],
@@ -125,6 +131,37 @@ class Metamask implements WalletInterface<MetamaskState> {
     const chainId: number = await provider.send("eth_chainId", []);
 
     return chainId;
+  }
+
+  public async addChainToWallet(
+    chainConfig: MetamaskChainConfig
+  ): Promise<void> {
+    return useWindow(async (window: any) =>
+      window.ethereum?.request({
+        method: "wallet_addEthereumChain",
+        params: [chainConfig],
+      })
+    );
+  }
+
+  public async forceCurrentChainID(chain: number): Promise<void> {
+    const ethereum = useWindow((window: any) => window.ethereum);
+
+    if (ethereum.networkVersion !== chain) {
+      try {
+        await ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: `0x${chain}` }],
+        });
+      } catch (err) {
+        if (err && (err as { code: number }).code === 4902) {
+          const chainConfig = getChainConfig(chain);
+          await this.addChainToWallet(chainConfig);
+        } else {
+          throw err;
+        }
+      }
+    }
   }
 
   public onAccountChange(cb: (accountId: string) => void | Promise<void>) {
