@@ -32,6 +32,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     WALLET_HOOK.DISCONNECT,
     WALLET_HOOK.NEW_BLOCK,
   ]);
+  private chain: string | null = null;
   public state: MetamaskState;
   public provider?: ethers.providers.Web3Provider;
 
@@ -43,20 +44,45 @@ class Metamask implements WalletInterface<MetamaskState> {
     }
   }
 
-  private enforceIsConnected(): void {
+  private async _getProvider(): Promise<ethers.providers.Web3Provider> {
+    const ethereum = (await useWindow(
+      async (windowObject) => (windowObject as any).ethereum
+    )) as any;
+
+    if (ethereum === null) {
+      throw new WalletNotInstalledError();
+    }
+
+    return new ethers.providers.Web3Provider(ethereum);
+  }
+
+  private _enforceIsConnected(): void {
     if (!this.getIsConnected()) {
       throw new WalletNotConnectedError();
     }
   }
 
+  private async _enforceChain(): Promise<void> {
+    if (this.chain === null) return;
+
+    const provider = await this._getProvider();
+    const currentChain: string = await provider.send("eth_chainId", []);
+
+    if (currentChain !== this.chain) {
+      throw new Error(
+        `Chain has changed to ${currentChain} when it should be ${this.chain}`
+      );
+    }
+  }
+
   public async init(): Promise<WALLET_STATUS> {
-    this.provider = await this.getProvider();
+    this.provider = await this._getProvider();
 
     return WALLET_STATUS.OK;
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
-    const provider = await this.getProvider();
+    const provider = await this._getProvider();
     this.state.accounts = await provider.send("eth_requestAccounts", []);
     this.state.isConnected = this.state.accounts.length > 0;
 
@@ -65,7 +91,7 @@ class Metamask implements WalletInterface<MetamaskState> {
   }
 
   public async signOut(): Promise<WALLET_STATUS> {
-    this.enforceIsConnected();
+    this._enforceIsConnected();
     this.state.accounts = [];
     this.state.isConnected = false;
 
@@ -77,9 +103,10 @@ class Metamask implements WalletInterface<MetamaskState> {
     return async (
       transactions: TransactionRequest[]
     ): Promise<TransactionResponse[]> => {
-      this.enforceIsConnected();
+      this._enforceChain();
+      this._enforceIsConnected();
 
-      const provider = this.provider || (await this.getProvider());
+      const provider = this.provider || (await this._getProvider());
       const transactionResponse = await provider
         .getSigner()
         .sendTransaction(transactions[0]);
@@ -89,9 +116,10 @@ class Metamask implements WalletInterface<MetamaskState> {
   }
 
   public async getBalance(): Promise<string> {
-    this.enforceIsConnected();
+    this._enforceChain();
+    this._enforceIsConnected();
 
-    const provider = this.provider || (await this.getProvider());
+    const provider = this.provider || (await this._getProvider());
     const balance = await provider.getBalance(this.state.accounts[0]);
     return balance.toString();
   }
@@ -113,21 +141,23 @@ class Metamask implements WalletInterface<MetamaskState> {
   }
 
   public getPrimaryAccount(): string {
-    this.enforceIsConnected();
+    this._enforceChain();
+    this._enforceIsConnected();
 
     return this.state.accounts[0];
   }
 
   public getAccounts(): string[] {
-    this.enforceIsConnected();
+    this._enforceChain();
+    this._enforceIsConnected();
 
     return this.state.accounts;
   }
 
   public async fetchCurrentChainID(): Promise<number> {
-    this.enforceIsConnected();
+    this._enforceIsConnected();
 
-    const provider: ethers.providers.Web3Provider = await this.getProvider();
+    const provider: ethers.providers.Web3Provider = await this._getProvider();
     const chainId: number = await provider.send("eth_chainId", []);
 
     return chainId;
@@ -145,6 +175,14 @@ class Metamask implements WalletInterface<MetamaskState> {
   }
 
   public async forceCurrentChainID(chain: number): Promise<void> {
+    if (this.chain !== null && this.chain !== `0x${chain}`) {
+      throw new Error(
+        `Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`
+      );
+    }
+
+    this.chain = `0x${chain}`;
+
     const ethereum = useWindow((window: any) => window.ethereum);
 
     if (ethereum.networkVersion !== chain) {
@@ -198,7 +236,7 @@ class Metamask implements WalletInterface<MetamaskState> {
   }
 
   public async mountEventListeners() {
-    const provider = await this.getProvider();
+    const provider = await this._getProvider();
 
     provider.on("accountsChanged", async (accounts: string[]) => {
       this.state.accounts = accounts;
@@ -219,20 +257,14 @@ class Metamask implements WalletInterface<MetamaskState> {
   }
 
   public async unmountEventListeners() {
-    const provider = await this.getProvider();
+    const provider = await this._getProvider();
     provider.removeAllListeners();
   }
 
   public async getProvider(): Promise<ethers.providers.Web3Provider> {
-    const ethereum = (await useWindow(
-      async (windowObject) => (windowObject as any).ethereum
-    )) as any;
+    await this._enforceChain();
 
-    if (ethereum === null) {
-      throw new WalletNotInstalledError();
-    }
-
-    return new ethers.providers.Web3Provider(ethereum);
+    return this._getProvider();
   }
 }
 
