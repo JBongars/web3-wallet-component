@@ -201,6 +201,7 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
     ]);
+    chain = null;
     constructor(state){
         if (state) this.state = {
             ...state
@@ -209,15 +210,26 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
             ...$2b09ea9ee8d63ad1$var$initialState
         };
     }
-    enforceIsConnected() {
+    async _getProvider() {
+        const ethereum = await (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
+        if (ethereum === null) throw new (0, $d083fd37dae77b99$export$72563c16b91dfd16)();
+        return new (0, $8zHUo$ethers.ethers).providers.Web3Provider(ethereum);
+    }
+    _enforceIsConnected() {
         if (!this.getIsConnected()) throw new (0, $d083fd37dae77b99$export$313d299817c74896)();
     }
+    async _enforceChain() {
+        if (this.chain === null) return;
+        const provider = await this._getProvider();
+        const currentChain = await provider.send("eth_chainId", []);
+        if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
+    }
     async init() {
-        this.provider = await this.getProvider();
+        this.provider = await this._getProvider();
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        const provider = await this.getProvider();
+        const provider = await this._getProvider();
         this.state.accounts = await provider.send("eth_requestAccounts", []);
         this.state.isConnected = this.state.accounts.length > 0;
         this.hookRouter.applyHooks([
@@ -226,7 +238,7 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signOut() {
-        this.enforceIsConnected();
+        this._enforceIsConnected();
         this.state.accounts = [];
         this.state.isConnected = false;
         this.hookRouter.applyHooks([
@@ -236,8 +248,9 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
     }
     async getSigner() {
         return async (transactions)=>{
-            this.enforceIsConnected();
-            const provider = this.provider || await this.getProvider();
+            this._enforceChain();
+            this._enforceIsConnected();
+            const provider = this.provider || await this._getProvider();
             const transactionResponse = await provider.getSigner().sendTransaction(transactions[0]);
             return [
                 transactionResponse
@@ -245,8 +258,9 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         };
     }
     async getBalance() {
-        this.enforceIsConnected();
-        const provider = this.provider || await this.getProvider();
+        this._enforceChain();
+        this._enforceIsConnected();
+        const provider = this.provider || await this._getProvider();
         const balance = await provider.getBalance(this.state.accounts[0]);
         return balance.toString();
     }
@@ -261,16 +275,18 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         return ethereum !== null;
     }
     getPrimaryAccount() {
-        this.enforceIsConnected();
+        this._enforceChain();
+        this._enforceIsConnected();
         return this.state.accounts[0];
     }
     getAccounts() {
-        this.enforceIsConnected();
+        this._enforceChain();
+        this._enforceIsConnected();
         return this.state.accounts;
     }
     async fetchCurrentChainID() {
-        this.enforceIsConnected();
-        const provider = await this.getProvider();
+        this._enforceIsConnected();
+        const provider = await this._getProvider();
         const chainId = await provider.send("eth_chainId", []);
         return chainId;
     }
@@ -283,6 +299,8 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
             }));
     }
     async forceCurrentChainID(chain) {
+        if (this.chain !== null && this.chain !== `0x${chain}`) throw new Error(`Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`);
+        this.chain = `0x${chain}`;
         const ethereum = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)((window)=>window.ethereum);
         if (ethereum.networkVersion !== chain) try {
             await ethereum.request({
@@ -320,7 +338,7 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         return this.state;
     }
     async mountEventListeners() {
-        const provider = await this.getProvider();
+        const provider = await this._getProvider();
         provider.on("accountsChanged", async (accounts)=>{
             this.state.accounts = accounts;
             this.hookRouter.applyHooks([
@@ -340,13 +358,12 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         });
     }
     async unmountEventListeners() {
-        const provider = await this.getProvider();
+        const provider = await this._getProvider();
         provider.removeAllListeners();
     }
     async getProvider() {
-        const ethereum = await (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
-        if (ethereum === null) throw new (0, $d083fd37dae77b99$export$72563c16b91dfd16)();
-        return new (0, $8zHUo$ethers.ethers).providers.Web3Provider(ethereum);
+        await this._enforceChain();
+        return this._getProvider();
     }
 }
 
