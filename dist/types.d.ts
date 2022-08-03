@@ -69,6 +69,16 @@ type MetamaskState = {
 };
 type MetamaskSigner = Signer<TransactionRequest, TransactionResponse>;
 type MetamaskAsset = {};
+type MetamaskChainConfig = {
+    chainName: string;
+    chainId: string;
+    nativeCurrency: {
+        name: string;
+        decimals: 18;
+        symbol: string;
+    };
+    rpcUrls: string[];
+};
 export const useWindow: <T>(cb: (windowObject: unknown) => T) => T | null;
 export class Metamask implements WalletInterface<MetamaskState> {
     state: MetamaskState;
@@ -85,6 +95,8 @@ export class Metamask implements WalletInterface<MetamaskState> {
     getPrimaryAccount(): string;
     getAccounts(): string[];
     fetchCurrentChainID(): Promise<number>;
+    addChainToWallet(chainConfig: MetamaskChainConfig): Promise<void>;
+    forceCurrentChainID(chain: number): Promise<void>;
     onAccountChange(cb: (accountId: string) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
     onChainChange(cb: (chain: ChainID) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
     onBlockAdded(cb: (newBlock: number) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;

@@ -154,6 +154,42 @@ let $57b8a5d2d8300786$export$5ee9bf08a91850b9;
 })($57b8a5d2d8300786$export$5ee9bf08a91850b9 || ($57b8a5d2d8300786$export$5ee9bf08a91850b9 = {}));
 
 
+const $2ea60662ee21d00c$export$92de899abf5da75a = {
+    chainName: "Rinkeby Test Network",
+    chainId: "0x4",
+    nativeCurrency: {
+        name: "ETH",
+        decimals: 18,
+        symbol: "ETH"
+    },
+    rpcUrls: [
+        "https://rinkeby.etherscan.io"
+    ]
+};
+const $2ea60662ee21d00c$export$abdf78135f8407bb = {
+    chainName: "Rinkeby Test Network",
+    chainId: "0x1",
+    nativeCurrency: {
+        name: "ETH",
+        decimals: 18,
+        symbol: "ETH"
+    },
+    rpcUrls: [
+        "https://rinkeby.etherscan.io"
+    ]
+};
+const $2ea60662ee21d00c$export$703a843624f42e6c = (chainId)=>{
+    switch(chainId){
+        case 1:
+            return $2ea60662ee21d00c$export$abdf78135f8407bb;
+        case 4:
+            return $2ea60662ee21d00c$export$92de899abf5da75a;
+        default:
+            throw new Error(`ChainId ${chainId} configuration not found`);
+    }
+};
+
+
 const $2b09ea9ee8d63ad1$var$initialState = Object.freeze({
     accounts: [],
     isConnected: false
@@ -237,6 +273,32 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         const provider = await this.getProvider();
         const chainId = await provider.send("eth_chainId", []);
         return chainId;
+    }
+    async addChainToWallet(chainConfig) {
+        return (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (window)=>window.ethereum?.request({
+                method: "wallet_addEthereumChain",
+                params: [
+                    chainConfig
+                ]
+            }));
+    }
+    async forceCurrentChainID(chain) {
+        const ethereum = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)((window)=>window.ethereum);
+        if (ethereum.networkVersion !== chain) try {
+            await ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [
+                    {
+                        chainId: `0x${chain}`
+                    }
+                ]
+            });
+        } catch (err) {
+            if (err && err.code === 4902) {
+                const chainConfig = (0, $2ea60662ee21d00c$export$703a843624f42e6c)(chain);
+                await this.addChainToWallet(chainConfig);
+            } else throw err;
+        }
     }
     onAccountChange(cb) {
         return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
