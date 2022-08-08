@@ -174,17 +174,8 @@ class Metamask implements WalletInterface<MetamaskState> {
     );
   }
 
-  public async forceCurrentChainID(chain: number): Promise<void> {
-    if (this.chain !== null && this.chain !== `0x${chain}`) {
-      throw new Error(
-        `Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`
-      );
-    }
-
-    this.chain = `0x${chain}`;
-
+  public async switchChainFromWallet(chain: number) {
     const ethereum = useWindow((window: any) => window.ethereum);
-
     if (ethereum.networkVersion !== chain) {
       try {
         await ethereum.request({
@@ -200,6 +191,17 @@ class Metamask implements WalletInterface<MetamaskState> {
         }
       }
     }
+  }
+
+  public async forceCurrentChainID(chain: number): Promise<void> {
+    if (this.chain !== null && this.chain !== `0x${chain}`) {
+      throw new Error(
+        `Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`
+      );
+    }
+
+    this.chain = `0x${chain}`;
+    this.switchChainFromWallet(chain);
   }
 
   public onAccountChange(cb: (accountId: string) => void | Promise<void>) {
@@ -236,22 +238,27 @@ class Metamask implements WalletInterface<MetamaskState> {
   }
 
   public async mountEventListeners() {
-    const provider = await this._getProvider();
+    const ethereum = useWindow((window: any) => window.ethereum);
 
-    provider.on("accountsChanged", async (accounts: string[]) => {
+    ethereum.on("accountsChanged", async (accounts: string[]) => {
+      console.log("accountsChanged", accounts);
       this.state.accounts = accounts;
       this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     });
 
-    provider.on("chainChanged", async (_chainId: string) => {
+    ethereum.on("chainChanged", async (_chainId: string) => {
+      console.log("chainChanged", _chainId);
+
       this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_CHANGE]);
     });
 
-    provider.on("disconnect", async (result) => {
+    ethereum.on("disconnect", async (err: Error) => {
+      console.log("disconnect", err);
       this.signOut();
     });
 
-    provider.on("block", (block: number) => {
+    ethereum.on("block", (block: number) => {
+      console.log("block", block);
       this.hookRouter.applyHookWithArgs(WALLET_HOOK.NEW_BLOCK, block);
     });
   }
