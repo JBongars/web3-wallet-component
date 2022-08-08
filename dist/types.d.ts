@@ -96,6 +96,7 @@ export class Metamask implements WalletInterface<MetamaskState> {
     getAccounts(): string[];
     fetchCurrentChainID(): Promise<number>;
     addChainToWallet(chainConfig: MetamaskChainConfig): Promise<void>;
+    switchChainFromWallet(chain: number): Promise<void>;
     forceCurrentChainID(chain: number): Promise<void>;
     onAccountChange(cb: (accountId: string) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
     onChainChange(cb: (chain: ChainID) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;

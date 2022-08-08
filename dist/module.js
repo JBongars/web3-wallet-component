@@ -295,9 +295,7 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
                 ]
             }));
     }
-    async forceCurrentChainID(chain) {
-        if (this.chain !== null && this.chain !== `0x${chain}`) throw new Error(`Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`);
-        this.chain = `0x${chain}`;
+    async switchChainFromWallet(chain) {
         const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
         if (ethereum.networkVersion !== chain) try {
             await ethereum.request({
@@ -314,6 +312,11 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
                 await this.addChainToWallet(chainConfig);
             } else throw err;
         }
+    }
+    async forceCurrentChainID(chain) {
+        if (this.chain !== null && this.chain !== `0x${chain}`) throw new Error(`Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`);
+        this.chain = `0x${chain}`;
+        this.switchChainFromWallet(chain);
     }
     onAccountChange(cb) {
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
@@ -335,22 +338,22 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         return this.state;
     }
     async mountEventListeners() {
-        const provider = await this._getProvider();
-        provider.on("accountsChanged", async (accounts)=>{
+        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
+        ethereum.on("accountsChanged", async (accounts)=>{
             this.state.accounts = accounts;
             this.hookRouter.applyHooks([
                 (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
             ]);
         });
-        provider.on("chainChanged", async (_chainId)=>{
+        ethereum.on("chainChanged", async (_chainId)=>{
             this.hookRouter.applyHooks([
                 (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE
             ]);
         });
-        provider.on("disconnect", async (result)=>{
+        ethereum.on("disconnect", async (err)=>{
             this.signOut();
         });
-        provider.on("block", (block)=>{
+        ethereum.on("block", (block)=>{
             this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, block);
         });
     }
