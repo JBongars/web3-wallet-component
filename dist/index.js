@@ -210,15 +210,6 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
             ...$2b09ea9ee8d63ad1$var$initialState
         };
     }
-    // private async _getWeb3Provider(): Promise<Web3> {
-    //   const ethereum = (await useWindow(
-    //     async (windowObject) => (windowObject as any).ethereum
-    //   )) as any;
-    //   if (ethereum === null) {
-    //     throw new WalletNotInstalledError();
-    //   }
-    //   return new Web3(Web3.givenProvider);
-    // }
     async _getProvider() {
         const ethereum = await (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
         if (ethereum === null) throw new (0, $d083fd37dae77b99$export$72563c16b91dfd16)();
@@ -352,24 +343,20 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
     async mountEventListeners() {
         const ethereum = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)((window)=>window.ethereum);
         ethereum.on("accountsChanged", async (accounts)=>{
-            console.log("accountsChanged", accounts);
             this.state.accounts = accounts;
             this.hookRouter.applyHooks([
                 (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
             ]);
         });
         ethereum.on("chainChanged", async (_chainId)=>{
-            console.log("chainChanged", _chainId);
             this.hookRouter.applyHooks([
                 (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE
             ]);
         });
         ethereum.on("disconnect", async (err)=>{
-            console.log("disconnect", err);
             this.signOut();
         });
         ethereum.on("block", (block)=>{
-            console.log("block", block);
             this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, block);
         });
     }
