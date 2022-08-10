@@ -338,6 +338,7 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         return this.state;
     }
     async mountEventListeners() {
+        const provider = await this._getProvider();
         const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
         ethereum.on("accountsChanged", async (accounts)=>{
             this.state.accounts = accounts;
@@ -353,7 +354,7 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         ethereum.on("disconnect", async (err)=>{
             this.signOut();
         });
-        ethereum.on("block", (block)=>{
+        provider.on("block", (block)=>{
             this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, block);
         });
     }
@@ -419,9 +420,14 @@ class $0e4707f80e4e0187$export$6ab354d5c56bf95 {
     async init() {
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
-    async signIn() {
+    async signIn(options = {}) {
+        const shouldSelectOneAccount = options.shouldSelectOneAccount || true;
         const myAlgoConnect = this.getProvider();
-        this.state.accounts = await myAlgoConnect.connect();
+        // forces user to only choose one account.
+        // This prevents a lot of edge cases.
+        this.state.accounts = await myAlgoConnect.connect({
+            shouldSelectOneAccount: shouldSelectOneAccount
+        });
         this.state.isConnected = this.state.accounts.length > 0;
         this.hookRouter.applyHooks([
             (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE

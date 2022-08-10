@@ -238,6 +238,7 @@ class Metamask implements WalletInterface<MetamaskState> {
   }
 
   public async mountEventListeners() {
+    const provider = await this._getProvider();
     const ethereum = useWindow((window: any) => window.ethereum);
 
     ethereum.on("accountsChanged", async (accounts: string[]) => {
@@ -253,7 +254,7 @@ class Metamask implements WalletInterface<MetamaskState> {
       this.signOut();
     });
 
-    ethereum.on("block", (block: number) => {
+    provider.on("block", (block: number) => {
       this.hookRouter.applyHookWithArgs(WALLET_HOOK.NEW_BLOCK, block);
     });
   }

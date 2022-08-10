@@ -36,11 +36,14 @@ type HookEvent = {
     destroy: () => void;
     id: Symbol;
 };
+export type MyAlgoConfig = {
+    shouldSelectOneAccount?: boolean;
+};
 export class MyAlgo implements WalletInterface<MyAlgoState> {
     state: MyAlgoState;
     constructor(state?: MyAlgoState);
     init(): Promise<WALLET_STATUS>;
-    signIn(): Promise<WALLET_STATUS>;
+    signIn(options?: MyAlgoConfig): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
     getSigner(): Promise<MyAlgoSigner>;
     getBalance(): Promise<string>;

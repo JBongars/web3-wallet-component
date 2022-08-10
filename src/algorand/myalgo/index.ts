@@ -16,6 +16,10 @@ import {
   WALLET_STATUS,
 } from "~/src/utils/HookRouter/types";
 
+type MyAlgoConfig = {
+  shouldSelectOneAccount?: boolean;
+};
+
 const initialState: Readonly<MyAlgoState> = Object.freeze({
   accounts: [],
   isConnected: false,
@@ -48,10 +52,15 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return WALLET_STATUS.OK;
   }
 
-  public async signIn(): Promise<WALLET_STATUS> {
+  public async signIn(options: MyAlgoConfig = {}): Promise<WALLET_STATUS> {
+    const shouldSelectOneAccount = options.shouldSelectOneAccount || true;
     const myAlgoConnect = this.getProvider();
 
-    this.state.accounts = await myAlgoConnect.connect();
+    // forces user to only choose one account.
+    // This prevents a lot of edge cases.
+    this.state.accounts = await myAlgoConnect.connect({
+      shouldSelectOneAccount,
+    });
     this.state.isConnected = this.state.accounts.length > 0;
 
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
@@ -149,3 +158,4 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
 }
 
 export { MyAlgo };
+export { MyAlgoConfig };
