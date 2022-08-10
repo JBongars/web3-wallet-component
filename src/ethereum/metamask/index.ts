@@ -220,6 +220,10 @@ class Metamask implements WalletInterface<MetamaskState> {
     );
   }
 
+  public onDisconnect(cb: () => void | Promise<void>) {
+    return this.hookRouter.registerCallback(WALLET_HOOK.CHAIN_ON_CHANGE, cb);
+  }
+
   public onBlockAdded(cb: (newBlock: number) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.NEW_BLOCK,
@@ -251,6 +255,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     });
 
     ethereum.on("disconnect", async (err: Error) => {
+      this.hookRouter.applyHooks([WALLET_HOOK.DISCONNECT]);
       this.signOut();
     });
 
