@@ -338,6 +338,7 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         return this.state;
     }
     async mountEventListeners() {
+        const provider = await this._getProvider();
         const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
         ethereum.on("accountsChanged", async (accounts)=>{
             this.state.accounts = accounts;
@@ -353,7 +354,8 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         ethereum.on("disconnect", async (err)=>{
             this.signOut();
         });
-        ethereum.on("block", (block)=>{
+        provider.on("block", (block)=>{
+            console.log("block: ", block);
             this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, block);
         });
     }
