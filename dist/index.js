@@ -358,7 +358,6 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
             this.signOut();
         });
         provider.on("block", (block)=>{
-            console.log("block: ", block);
             this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, block);
         });
     }
