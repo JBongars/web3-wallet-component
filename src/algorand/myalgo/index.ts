@@ -113,8 +113,8 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return this.state.accounts;
   }
 
-  public async fetchCurrentChainID(): Promise<number> {
-    return CHAINS.CHAIN_ID_ALGORAND;
+  public async fetchCurrentChainID(): Promise<string> {
+    return "0x1";
   }
 
   public onAccountChange(cb: (accountId: Accounts) => void | Promise<void>) {
@@ -126,12 +126,11 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     );
   }
 
-  public onChainChange(cb: (chain: ChainID) => void | Promise<void>) {
+  public onChainChange(cb: (chain: string) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.CHAIN_ON_CHANGE,
       async () => {
-        const currentChainId: ChainID =
-          (await this.fetchCurrentChainID()) as ChainID;
+        const currentChainId = await this.fetchCurrentChainID();
         return cb(currentChainId);
       }
     );

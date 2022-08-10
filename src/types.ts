@@ -43,11 +43,11 @@ interface WalletInterface<T> {
   getIsWalletInstalled: () => boolean;
   getPrimaryAccount: () => unknown;
   getAccounts: () => unknown[];
-  fetchCurrentChainID: () => Promise<number>;
+  fetchCurrentChainID: () => Promise<string>;
   onAccountChange: (
     cb: (accountId: unknown) => void | Promise<void>
   ) => HookEvent;
-  onChainChange: (cb: (chainId: ChainID) => void | Promise<void>) => HookEvent;
+  onChainChange: (cb: (chainId: string) => void | Promise<void>) => HookEvent;
   onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;
   toJSON: () => T;
 }

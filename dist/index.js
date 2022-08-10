@@ -285,7 +285,6 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         return this.state.accounts;
     }
     async fetchCurrentChainID() {
-        this._enforceIsConnected();
         const provider = await this._getProvider();
         const chainId = await provider.send("eth_chainId", []);
         return chainId;
@@ -322,13 +321,12 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         this.switchChainFromWallet(chain);
     }
     onAccountChange(cb) {
-        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
-            return cb(this.getPrimaryAccount());
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, (account)=>{
+            return cb(account);
         });
     }
     onChainChange(cb) {
-        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async ()=>{
-            const currentChainId = await this.fetchCurrentChainID();
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async (currentChainId)=>{
             return cb(currentChainId);
         });
     }
@@ -344,15 +342,12 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         const provider = await this._getProvider();
         const ethereum = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)((window)=>window.ethereum);
         ethereum.on("accountsChanged", async (accounts)=>{
+            console.log("account has changed...");
             this.state.accounts = accounts;
-            this.hookRouter.applyHooks([
-                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
-            ]);
+            this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts[0]);
         });
-        ethereum.on("chainChanged", async (_chainId)=>{
-            this.hookRouter.applyHooks([
-                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE
-            ]);
+        ethereum.on("chainChanged", async (chainId)=>{
+            this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
         });
         ethereum.on("disconnect", async (err)=>{
             this.signOut();

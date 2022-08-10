@@ -52,9 +52,9 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     getIsConnected(): boolean;
     getPrimaryAccount(): Accounts;
     getAccounts(): Accounts[];
-    fetchCurrentChainID(): Promise<number>;
+    fetchCurrentChainID(): Promise<string>;
     onAccountChange(cb: (accountId: Accounts) => void | Promise<void>): HookEvent;
-    onChainChange(cb: (chain: ChainID) => void | Promise<void>): HookEvent;
+    onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
     toJSON(): MyAlgoState;
     getProvider(): MyAlgoConnect;
@@ -97,12 +97,12 @@ export class Metamask implements WalletInterface<MetamaskState> {
     getIsWalletInstalled(): boolean;
     getPrimaryAccount(): string;
     getAccounts(): string[];
-    fetchCurrentChainID(): Promise<number>;
+    fetchCurrentChainID(): Promise<string>;
     addChainToWallet(chainConfig: MetamaskChainConfig): Promise<void>;
     switchChainFromWallet(chain: number): Promise<void>;
     forceCurrentChainID(chain: number): Promise<void>;
     onAccountChange(cb: (accountId: string) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
-    onChainChange(cb: (chain: ChainID) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onChainChange(cb: (chain: string) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
     onBlockAdded(cb: (newBlock: number) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
     toJSON(): MetamaskState;
     mountEventListeners(): Promise<void>;
@@ -137,9 +137,9 @@ export interface WalletInterface<T> {
     getIsWalletInstalled: () => boolean;
     getPrimaryAccount: () => unknown;
     getAccounts: () => unknown[];
-    fetchCurrentChainID: () => Promise<number>;
+    fetchCurrentChainID: () => Promise<string>;
     onAccountChange: (cb: (accountId: unknown) => void | Promise<void>) => HookEvent;
-    onChainChange: (cb: (chainId: ChainID) => void | Promise<void>) => HookEvent;
+    onChainChange: (cb: (chainId: string) => void | Promise<void>) => HookEvent;
     onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;
     toJSON: () => T;
 }
