@@ -154,11 +154,9 @@ class Metamask implements WalletInterface<MetamaskState> {
     return this.state.accounts;
   }
 
-  public async fetchCurrentChainID(): Promise<number> {
-    this._enforceIsConnected();
-
+  public async fetchCurrentChainID(): Promise<string> {
     const provider: ethers.providers.Web3Provider = await this._getProvider();
-    const chainId: number = await provider.send("eth_chainId", []);
+    const chainId = await provider.send("eth_chainId", []);
 
     return chainId;
   }
@@ -207,18 +205,16 @@ class Metamask implements WalletInterface<MetamaskState> {
   public onAccountChange(cb: (accountId: string) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
-      () => {
-        return cb(this.getPrimaryAccount());
+      (account: string) => {
+        return cb(account);
       }
     );
   }
 
-  public onChainChange(cb: (chain: ChainID) => void | Promise<void>) {
+  public onChainChange(cb: (chain: string) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.CHAIN_ON_CHANGE,
-      async () => {
-        const currentChainId: ChainID =
-          (await this.fetchCurrentChainID()) as ChainID;
+      async (currentChainId: string) => {
         return cb(currentChainId);
       }
     );
@@ -242,12 +238,16 @@ class Metamask implements WalletInterface<MetamaskState> {
     const ethereum = useWindow((window: any) => window.ethereum);
 
     ethereum.on("accountsChanged", async (accounts: string[]) => {
+      console.log("account has changed...");
       this.state.accounts = accounts;
-      this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+      this.hookRouter.applyHookWithArgs(
+        WALLET_HOOK.ACCOUNT_ON_CHANGE,
+        accounts[0]
+      );
     });
 
-    ethereum.on("chainChanged", async (_chainId: string) => {
-      this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_CHANGE]);
+    ethereum.on("chainChanged", async (chainId: string) => {
+      this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, chainId);
     });
 
     ethereum.on("disconnect", async (err: Error) => {
