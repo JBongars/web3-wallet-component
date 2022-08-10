@@ -419,9 +419,14 @@ class $0e4707f80e4e0187$export$6ab354d5c56bf95 {
     async init() {
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
-    async signIn() {
+    async signIn(options = {}) {
+        const shouldSelectOneAccount = options.shouldSelectOneAccount || true;
         const myAlgoConnect = this.getProvider();
-        this.state.accounts = await myAlgoConnect.connect();
+        // forces user to only choose one account.
+        // This prevents a lot of edge cases.
+        this.state.accounts = await myAlgoConnect.connect({
+            shouldSelectOneAccount: shouldSelectOneAccount
+        });
         this.state.isConnected = this.state.accounts.length > 0;
         this.hookRouter.applyHooks([
             (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
