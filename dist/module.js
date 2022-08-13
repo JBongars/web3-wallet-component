@@ -327,6 +327,9 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
             return cb(currentChainId);
         });
     }
+    onDisconnect(cb) {
+        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, cb);
+    }
     onBlockAdded(cb) {
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
             return cb(block);
@@ -347,6 +350,9 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
             this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
         });
         ethereum.on("disconnect", async (err)=>{
+            this.hookRouter.applyHooks([
+                (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).DISCONNECT
+            ]);
             this.signOut();
         });
         provider.on("block", (block)=>{
@@ -381,12 +387,6 @@ var $dc4d60a7eb431eef$exports = {};
 var $0e4707f80e4e0187$exports = {};
 
 $parcel$export($0e4707f80e4e0187$exports, "MyAlgo", () => $0e4707f80e4e0187$export$6ab354d5c56bf95);
-
-
-const $e2d4c0050d1df44a$export$8d781dbcfe5be41e = {
-    CHAIN_ID_ALGORAND: 8,
-    CHAIN_ID_ETHEREUM: 2
-};
 
 
 
@@ -465,7 +465,7 @@ class $0e4707f80e4e0187$export$6ab354d5c56bf95 {
         return this.state.accounts;
     }
     async fetchCurrentChainID() {
-        return (0, $e2d4c0050d1df44a$export$8d781dbcfe5be41e).CHAIN_ID_ALGORAND;
+        return "0x1";
     }
     onAccountChange(cb) {
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{

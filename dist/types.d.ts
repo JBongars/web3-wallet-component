@@ -103,6 +103,7 @@ export class Metamask implements WalletInterface<MetamaskState> {
     forceCurrentChainID(chain: number): Promise<void>;
     onAccountChange(cb: (accountId: string) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
     onChainChange(cb: (chain: string) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onDisconnect(cb: () => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
     onBlockAdded(cb: (newBlock: number) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
     toJSON(): MetamaskState;
     mountEventListeners(): Promise<void>;
