@@ -151,20 +151,8 @@ let $90bab4f8b8f7e96d$export$5ee9bf08a91850b9;
 })($90bab4f8b8f7e96d$export$5ee9bf08a91850b9 || ($90bab4f8b8f7e96d$export$5ee9bf08a91850b9 = {}));
 
 
-const $40eed140bd70c71c$export$92de899abf5da75a = {
-    chainName: "Rinkeby Test Network",
-    chainId: "0x4",
-    nativeCurrency: {
-        name: "ETH",
-        decimals: 18,
-        symbol: "ETH"
-    },
-    rpcUrls: [
-        "https://rinkeby.etherscan.io"
-    ]
-};
 const $40eed140bd70c71c$export$abdf78135f8407bb = {
-    chainName: "Rinkeby Test Network",
+    chainName: "Ethereum Mainnet",
     chainId: "0x1",
     nativeCurrency: {
         name: "ETH",
@@ -175,12 +163,66 @@ const $40eed140bd70c71c$export$abdf78135f8407bb = {
         "https://rinkeby.etherscan.io"
     ]
 };
+const $40eed140bd70c71c$var$ropstenEth = {
+    chainName: "Ropsten Test Network",
+    chainId: "0x3",
+    nativeCurrency: {
+        name: "RopstenETH",
+        decimals: 18,
+        symbol: "RopstenETH"
+    },
+    rpcUrls: [
+        "https://ropsten.etherscan.io"
+    ]
+};
+const $40eed140bd70c71c$export$92de899abf5da75a = {
+    chainName: "Rinkeby Test Network",
+    chainId: "0x4",
+    nativeCurrency: {
+        name: "RinkebyETH",
+        decimals: 18,
+        symbol: "RinkebyETH"
+    },
+    rpcUrls: [
+        "https://rinkeby.etherscan.io"
+    ]
+};
+const $40eed140bd70c71c$var$goerliEth = {
+    chainName: "Goerli Test Network",
+    chainId: "0x5",
+    nativeCurrency: {
+        name: "GoerliETH",
+        decimals: 18,
+        symbol: "GoerliETH"
+    },
+    rpcUrls: [
+        "https://goerli.etherscan.io"
+    ]
+};
+const $40eed140bd70c71c$var$kovanEth = {
+    chainName: "Kovan Test Network",
+    chainId: "0x42",
+    nativeCurrency: {
+        name: "KovanETH",
+        decimals: 18,
+        symbol: "KovanETH"
+    },
+    rpcUrls: [
+        "https://kovan.etherscan.io"
+    ]
+};
 const $40eed140bd70c71c$export$703a843624f42e6c = (chainId)=>{
     switch(chainId){
         case 1:
             return $40eed140bd70c71c$export$abdf78135f8407bb;
+        case 3:
+            return $40eed140bd70c71c$var$ropstenEth;
         case 4:
             return $40eed140bd70c71c$export$92de899abf5da75a;
+        case 5:
+            return $40eed140bd70c71c$var$goerliEth;
+        case 42:
+            return $40eed140bd70c71c$var$kovanEth;
         default:
             throw new Error(`ChainId ${chainId} configuration not found`);
     }
@@ -372,9 +414,13 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
 
 var $85bc198bca370cae$exports = {};
 
-class $85bc198bca370cae$var$Ethereum {
-    constructor(data){
-        this.metaMask = new (0, $05db05568a951b86$export$2c78a3b4fc11d8fa)(data?.metaMask);
+$parcel$export($85bc198bca370cae$exports, "Ethereum", () => $85bc198bca370cae$export$aa318bacd7f710c5);
+
+class $85bc198bca370cae$export$aa318bacd7f710c5 {
+    constructor(){
+        this.wallets = {
+            metaMask: new (0, $05db05568a951b86$export$2c78a3b4fc11d8fa)()
+        };
     }
 }
 
@@ -510,5 +556,5 @@ $parcel$exportWildcard($dc4d60a7eb431eef$exports, $b5af4601982a5fe5$exports);
 
 
 
-export {$81c1b644006d48ec$export$412a02074a4127ac as WALLETS, $05db05568a951b86$export$2c78a3b4fc11d8fa as Metamask, $0e4707f80e4e0187$export$6ab354d5c56bf95 as MyAlgo, $b5af4601982a5fe5$export$2a2454b5976b73ac as Algorand, $412a545945027ba9$export$24b8fbafc4b6a151 as useWindow, $28ac839a9eca26f5$export$e162153238934121 as NotImplementedError, $28ac839a9eca26f5$export$72563c16b91dfd16 as WalletNotInstalledError, $28ac839a9eca26f5$export$313d299817c74896 as WalletNotConnectedError, $28ac839a9eca26f5$export$f4d277c155d1965e as HookNotAvailableError};
+export {$81c1b644006d48ec$export$412a02074a4127ac as WALLETS, $05db05568a951b86$export$2c78a3b4fc11d8fa as Metamask, $85bc198bca370cae$export$aa318bacd7f710c5 as Ethereum, $0e4707f80e4e0187$export$6ab354d5c56bf95 as MyAlgo, $b5af4601982a5fe5$export$2a2454b5976b73ac as Algorand, $412a545945027ba9$export$24b8fbafc4b6a151 as useWindow, $28ac839a9eca26f5$export$e162153238934121 as NotImplementedError, $28ac839a9eca26f5$export$72563c16b91dfd16 as WalletNotInstalledError, $28ac839a9eca26f5$export$313d299817c74896 as WalletNotConnectedError, $28ac839a9eca26f5$export$f4d277c155d1965e as HookNotAvailableError};
 //# sourceMappingURL=module.js.map
