@@ -45,7 +45,7 @@ interface WalletInterface<T> {
   getAccounts: () => unknown[];
   fetchCurrentChainID: () => Promise<string>;
   onAccountChange: (
-    cb: (accountId: unknown) => void | Promise<void>
+    cb: (accounts: unknown) => void | Promise<void>
   ) => HookEvent;
   onChainChange: (cb: (chainId: string) => void | Promise<void>) => HookEvent;
   onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;

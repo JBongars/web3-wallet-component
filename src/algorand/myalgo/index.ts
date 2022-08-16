@@ -28,8 +28,8 @@ const initialState: Readonly<MyAlgoState> = Object.freeze({
 class MyAlgo implements WalletInterface<MyAlgoState> {
   private hookRouter: HookRouter = new HookRouter([
     WALLET_HOOK.ACCOUNT_ON_CHANGE,
+    WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
     WALLET_HOOK.CHAIN_ON_CHANGE,
-    WALLET_HOOK.DISCONNECT,
   ]);
   public state: MyAlgoState;
   private provider: MyAlgoConnect | undefined;
@@ -117,7 +117,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return "0x1";
   }
 
-  public onAccountChange(cb: (accountId: Accounts) => void | Promise<void>) {
+  public onAccountChange(cb: (accounts: Accounts) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
       () => {
