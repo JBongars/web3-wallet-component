@@ -49,7 +49,7 @@ class Metamask implements WalletInterface<MetamaskState> {
       async (windowObject) => (windowObject as any).ethereum
     )) as any;
 
-    if (ethereum === null) {
+    if (ethereum === undefined) {
       throw new WalletNotInstalledError();
     }
 
@@ -134,10 +134,10 @@ class Metamask implements WalletInterface<MetamaskState> {
 
   public getIsWalletInstalled(): boolean {
     const ethereum = useWindow(
-      async (windowObject) => (windowObject as any).ethereum
+      (windowObject) => (windowObject as any).ethereum
     ) as any;
 
-    return ethereum !== null;
+    return ethereum !== undefined;
   }
 
   public getPrimaryAccount(): string {
