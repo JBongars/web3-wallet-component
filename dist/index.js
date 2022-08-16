@@ -154,8 +154,20 @@ let $57b8a5d2d8300786$export$5ee9bf08a91850b9;
 })($57b8a5d2d8300786$export$5ee9bf08a91850b9 || ($57b8a5d2d8300786$export$5ee9bf08a91850b9 = {}));
 
 
+const $2ea60662ee21d00c$export$92de899abf5da75a = {
+    chainName: "Rinkeby Test Network",
+    chainId: "0x4",
+    nativeCurrency: {
+        name: "ETH",
+        decimals: 18,
+        symbol: "ETH"
+    },
+    rpcUrls: [
+        "https://rinkeby.etherscan.io"
+    ]
+};
 const $2ea60662ee21d00c$export$abdf78135f8407bb = {
-    chainName: "Ethereum Mainnet",
+    chainName: "Rinkeby Test Network",
     chainId: "0x1",
     nativeCurrency: {
         name: "ETH",
@@ -166,66 +178,12 @@ const $2ea60662ee21d00c$export$abdf78135f8407bb = {
         "https://rinkeby.etherscan.io"
     ]
 };
-const $2ea60662ee21d00c$var$ropstenEth = {
-    chainName: "Ropsten Test Network",
-    chainId: "0x3",
-    nativeCurrency: {
-        name: "RopstenETH",
-        decimals: 18,
-        symbol: "RopstenETH"
-    },
-    rpcUrls: [
-        "https://ropsten.etherscan.io"
-    ]
-};
-const $2ea60662ee21d00c$export$92de899abf5da75a = {
-    chainName: "Rinkeby Test Network",
-    chainId: "0x4",
-    nativeCurrency: {
-        name: "RinkebyETH",
-        decimals: 18,
-        symbol: "RinkebyETH"
-    },
-    rpcUrls: [
-        "https://rinkeby.etherscan.io"
-    ]
-};
-const $2ea60662ee21d00c$var$goerliEth = {
-    chainName: "Goerli Test Network",
-    chainId: "0x5",
-    nativeCurrency: {
-        name: "GoerliETH",
-        decimals: 18,
-        symbol: "GoerliETH"
-    },
-    rpcUrls: [
-        "https://goerli.etherscan.io"
-    ]
-};
-const $2ea60662ee21d00c$var$kovanEth = {
-    chainName: "Kovan Test Network",
-    chainId: "0x42",
-    nativeCurrency: {
-        name: "KovanETH",
-        decimals: 18,
-        symbol: "KovanETH"
-    },
-    rpcUrls: [
-        "https://kovan.etherscan.io"
-    ]
-};
 const $2ea60662ee21d00c$export$703a843624f42e6c = (chainId)=>{
     switch(chainId){
         case 1:
             return $2ea60662ee21d00c$export$abdf78135f8407bb;
-        case 3:
-            return $2ea60662ee21d00c$var$ropstenEth;
         case 4:
             return $2ea60662ee21d00c$export$92de899abf5da75a;
-        case 5:
-            return $2ea60662ee21d00c$var$goerliEth;
-        case 42:
-            return $2ea60662ee21d00c$var$kovanEth;
         default:
             throw new Error(`ChainId ${chainId} configuration not found`);
     }
@@ -417,13 +375,9 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
 
 var $d5d3dec9ab4b7763$exports = {};
 
-$parcel$export($d5d3dec9ab4b7763$exports, "Ethereum", () => $d5d3dec9ab4b7763$export$aa318bacd7f710c5);
-
-class $d5d3dec9ab4b7763$export$aa318bacd7f710c5 {
-    constructor(){
-        this.wallets = {
-            metaMask: new (0, $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa)()
-        };
+class $d5d3dec9ab4b7763$var$Ethereum {
+    constructor(data){
+        this.metaMask = new (0, $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa)(data?.metaMask);
     }
 }
 
