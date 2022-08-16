@@ -246,10 +246,8 @@ class Metamask implements WalletInterface<MetamaskState> {
     const ethereum = useWindow((window: any) => window.ethereum);
 
     ethereum.on("accountsChanged", async (accounts: string[]) => {
-      console.log("accountsChanged", { accounts });
       this.state.accounts = accounts;
       if (accounts.length === 0) {
-        console.log("signing out");
         await this.signOut();
       } else {
         this.hookRouter.applyHookWithArgs(
