@@ -209,7 +209,7 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
     }
     async _getProvider() {
         const ethereum = await (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
-        if (ethereum === undefined) throw new (0, $28ac839a9eca26f5$export$72563c16b91dfd16)();
+        if (!Boolean(ethereum)) throw new (0, $28ac839a9eca26f5$export$72563c16b91dfd16)();
         return new (0, $hgUW1$ethers).providers.Web3Provider(ethereum);
     }
     _enforceIsConnected() {
@@ -269,7 +269,7 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
     }
     getIsWalletInstalled() {
         const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
-        return ethereum !== undefined;
+        return Boolean(ethereum);
     }
     getPrimaryAccount() {
         this._enforceChain();
