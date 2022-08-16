@@ -87,7 +87,10 @@ class Metamask implements WalletInterface<MetamaskState> {
     this.state.accounts = await provider.send("eth_requestAccounts", []);
     this.state.isConnected = this.state.accounts.length > 0;
 
-    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+    this.hookRouter.applyHookWithArgs(
+      WALLET_HOOK.ACCOUNT_ON_CHANGE,
+      this.state.accounts
+    );
     return WALLET_STATUS.OK;
   }
 
@@ -96,7 +99,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     this.state.accounts = [];
     this.state.isConnected = false;
 
-    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
     return WALLET_STATUS.OK;
   }
 
@@ -204,25 +207,18 @@ class Metamask implements WalletInterface<MetamaskState> {
   }
 
   public onAccountChange(cb: (accounts: string[]) => void | Promise<void>) {
-    return this.hookRouter.registerCallback(
-      WALLET_HOOK.ACCOUNT_ON_CHANGE,
-      (accounts: string[]) => {
-        return cb(accounts);
-      }
-    );
+    return this.hookRouter.registerCallback(WALLET_HOOK.ACCOUNT_ON_CHANGE, cb);
   }
 
   public onChainChange(cb: (chain: string) => void | Promise<void>) {
-    return this.hookRouter.registerCallback(
-      WALLET_HOOK.CHAIN_ON_CHANGE,
-      async (currentChainId: string) => {
-        return cb(currentChainId);
-      }
-    );
+    return this.hookRouter.registerCallback(WALLET_HOOK.CHAIN_ON_CHANGE, cb);
   }
 
   public onAccountDisconnect(cb: () => void | Promise<void>) {
-    return this.hookRouter.registerCallback(WALLET_HOOK.CHAIN_ON_CHANGE, cb);
+    return this.hookRouter.registerCallback(
+      WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
+      cb
+    );
   }
 
   public onChainDisconnect(cb: () => void | Promise<void>) {
@@ -250,10 +246,11 @@ class Metamask implements WalletInterface<MetamaskState> {
     const ethereum = useWindow((window: any) => window.ethereum);
 
     ethereum.on("accountsChanged", async (accounts: string[]) => {
+      console.log("accountsChanged", { accounts });
       this.state.accounts = accounts;
       if (accounts.length === 0) {
+        console.log("signing out");
         await this.signOut();
-        this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
       } else {
         this.hookRouter.applyHookWithArgs(
           WALLET_HOOK.ACCOUNT_ON_CHANGE,
@@ -268,7 +265,6 @@ class Metamask implements WalletInterface<MetamaskState> {
 
     ethereum.on("disconnect", async (err: Error) => {
       this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
-      this.signOut();
     });
 
     provider.on("block", (block: number) => {

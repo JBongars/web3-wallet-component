@@ -231,9 +231,7 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         const provider = await this._getProvider();
         this.state.accounts = await provider.send("eth_requestAccounts", []);
         this.state.isConnected = this.state.accounts.length > 0;
-        this.hookRouter.applyHooks([
-            (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
-        ]);
+        this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, this.state.accounts);
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async signOut() {
@@ -241,7 +239,7 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         this.state.accounts = [];
         this.state.isConnected = false;
         this.hookRouter.applyHooks([
-            (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+            (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
         ]);
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
@@ -320,17 +318,13 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         this.switchChainFromWallet(chain);
     }
     onAccountChange(cb) {
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, (accounts)=>{
-            return cb(accounts);
-        });
+        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, cb);
     }
     onChainChange(cb) {
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async (currentChainId)=>{
-            return cb(currentChainId);
-        });
+        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, cb);
     }
     onAccountDisconnect(cb) {
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, cb);
+        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT, cb);
     }
     onChainDisconnect(cb) {
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT, cb);
@@ -347,12 +341,13 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         const provider = await this._getProvider();
         const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
         ethereum.on("accountsChanged", async (accounts)=>{
+            console.log("accountsChanged", {
+                accounts: accounts
+            });
             this.state.accounts = accounts;
             if (accounts.length === 0) {
+                console.log("signing out");
                 await this.signOut();
-                this.hookRouter.applyHooks([
-                    (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
-                ]);
             } else this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
         });
         ethereum.on("chainChanged", async (chainId)=>{
@@ -362,7 +357,6 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
             this.hookRouter.applyHooks([
                 (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
             ]);
-            this.signOut();
         });
         provider.on("block", (block)=>{
             this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, block);
