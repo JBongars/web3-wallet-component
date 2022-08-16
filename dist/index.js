@@ -147,10 +147,11 @@ let $57b8a5d2d8300786$export$de76a1f31766a0a2;
 })($57b8a5d2d8300786$export$de76a1f31766a0a2 || ($57b8a5d2d8300786$export$de76a1f31766a0a2 = {}));
 let $57b8a5d2d8300786$export$5ee9bf08a91850b9;
 (function(WALLET_HOOK1) {
-    WALLET_HOOK1[WALLET_HOOK1["ACCOUNT_ON_CHANGE"] = 0] = "ACCOUNT_ON_CHANGE";
-    WALLET_HOOK1[WALLET_HOOK1["CHAIN_ON_CHANGE"] = 1] = "CHAIN_ON_CHANGE";
-    WALLET_HOOK1[WALLET_HOOK1["DISCONNECT"] = 2] = "DISCONNECT";
-    WALLET_HOOK1[WALLET_HOOK1["NEW_BLOCK"] = 3] = "NEW_BLOCK";
+    WALLET_HOOK1[WALLET_HOOK1["CHAIN_ON_CHANGE"] = 0] = "CHAIN_ON_CHANGE";
+    WALLET_HOOK1[WALLET_HOOK1["CHAIN_ON_DISCONNECT"] = 1] = "CHAIN_ON_DISCONNECT";
+    WALLET_HOOK1[WALLET_HOOK1["ACCOUNT_ON_CHANGE"] = 2] = "ACCOUNT_ON_CHANGE";
+    WALLET_HOOK1[WALLET_HOOK1["ACCOUNT_ON_DISCONNECT"] = 3] = "ACCOUNT_ON_DISCONNECT";
+    WALLET_HOOK1[WALLET_HOOK1["NEW_BLOCK"] = 4] = "NEW_BLOCK";
 })($57b8a5d2d8300786$export$5ee9bf08a91850b9 || ($57b8a5d2d8300786$export$5ee9bf08a91850b9 = {}));
 
 
@@ -196,9 +197,10 @@ const $2b09ea9ee8d63ad1$var$initialState = Object.freeze({
 });
 class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
     hookRouter = new (0, $a71b91c4d64511bd$export$2e2bcd8739ae039)([
-        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
-        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).DISCONNECT,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
     ]);
     chain = null;
@@ -321,8 +323,8 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         this.switchChainFromWallet(chain);
     }
     onAccountChange(cb) {
-        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, (account)=>{
-            return cb(account);
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, (accounts)=>{
+            return cb(accounts);
         });
     }
     onChainChange(cb) {
@@ -330,8 +332,11 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
             return cb(currentChainId);
         });
     }
-    onDisconnect(cb) {
+    onAccountDisconnect(cb) {
         return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, cb);
+    }
+    onChainDisconnect(cb) {
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT, cb);
     }
     onBlockAdded(cb) {
         return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
@@ -345,16 +350,20 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         const provider = await this._getProvider();
         const ethereum = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)((window)=>window.ethereum);
         ethereum.on("accountsChanged", async (accounts)=>{
-            console.log("account has changed...");
             this.state.accounts = accounts;
-            this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts[0]);
+            if (accounts.length === 0) {
+                await this.signOut();
+                this.hookRouter.applyHooks([
+                    (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
+                ]);
+            } else this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
         });
         ethereum.on("chainChanged", async (chainId)=>{
             this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
         });
         ethereum.on("disconnect", async (err)=>{
             this.hookRouter.applyHooks([
-                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).DISCONNECT
+                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
             ]);
             this.signOut();
         });
@@ -401,8 +410,8 @@ const $a75d728b25ccd0d3$var$initialState = Object.freeze({
 class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     hookRouter = new (0, $a71b91c4d64511bd$export$2e2bcd8739ae039)([
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
-        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
-        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).DISCONNECT, 
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
     ]);
     constructor(state){
         if (state) this.state = {
