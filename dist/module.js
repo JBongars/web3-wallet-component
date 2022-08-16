@@ -341,14 +341,9 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         const provider = await this._getProvider();
         const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
         ethereum.on("accountsChanged", async (accounts)=>{
-            console.log("accountsChanged", {
-                accounts: accounts
-            });
             this.state.accounts = accounts;
-            if (accounts.length === 0) {
-                console.log("signing out");
-                await this.signOut();
-            } else this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
+            if (accounts.length === 0) await this.signOut();
+            else this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
         });
         ethereum.on("chainChanged", async (chainId)=>{
             this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
