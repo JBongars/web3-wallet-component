@@ -344,19 +344,21 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         const provider = await this._getProvider();
         if (window.ethereum) {
             const ethereum = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)((window)=>window.ethereum);
-            ethereum.on("accountsChanged", async (accounts)=>{
-                this.state.accounts = accounts;
-                if (accounts.length === 0) await this.signOut();
-                else this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
-            });
-            ethereum.on("chainChanged", async (chainId)=>{
-                this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
-            });
-            ethereum.on("disconnect", async (err)=>{
-                this.hookRouter.applyHooks([
-                    (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
-                ]);
-            });
+            if (ethereum.on) {
+                ethereum.on("accountsChanged", async (accounts)=>{
+                    this.state.accounts = accounts;
+                    if (accounts.length === 0) await this.signOut();
+                    else this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
+                });
+                ethereum.on("chainChanged", async (chainId)=>{
+                    this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
+                });
+                ethereum.on("disconnect", async (err)=>{
+                    this.hookRouter.applyHooks([
+                        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
+                    ]);
+                });
+            }
         }
         provider.on("block", (block)=>{
             this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, block);

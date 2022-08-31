@@ -247,26 +247,27 @@ class Metamask implements WalletInterface<MetamaskState> {
     const provider = await this._getProvider();
     if (window.ethereum) {
       const ethereum = useWindow((window: any) => window.ethereum);
-
-      ethereum.on("accountsChanged", async (accounts: string[]) => {
-        this.state.accounts = accounts;
-        if (accounts.length === 0) {
-          await this.signOut();
-        } else {
-          this.hookRouter.applyHookWithArgs(
-            WALLET_HOOK.ACCOUNT_ON_CHANGE,
-            accounts
-          );
-        }
-      });
-  
-      ethereum.on("chainChanged", async (chainId: string) => {
-        this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, chainId);
-      });
-  
-      ethereum.on("disconnect", async (err: Error) => {
-        this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
-      });
+      if(ethereum.on) {
+        ethereum.on("accountsChanged", async (accounts: string[]) => {
+          this.state.accounts = accounts;
+          if (accounts.length === 0) {
+            await this.signOut();
+          } else {
+            this.hookRouter.applyHookWithArgs(
+              WALLET_HOOK.ACCOUNT_ON_CHANGE,
+              accounts
+            );
+          }
+        });
+    
+        ethereum.on("chainChanged", async (chainId: string) => {
+          this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, chainId);
+        });
+    
+        ethereum.on("disconnect", async (err: Error) => {
+          this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
+        });
+      }
     }
 
     provider.on("block", (block: number) => {
