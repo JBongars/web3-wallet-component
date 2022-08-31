@@ -339,7 +339,7 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
     }
     async mountEventListeners() {
         const provider = await this._getProvider();
-        if (window.ethereum) {
+        if (typeof window !== "undefined" && "ethereum" in window) {
             const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
             if (ethereum.on) {
                 ethereum.on("accountsChanged", async (accounts)=>{

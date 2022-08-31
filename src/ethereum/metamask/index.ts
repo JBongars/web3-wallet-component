@@ -25,8 +25,6 @@ const initialState: Readonly<MetamaskState> = Object.freeze({
   isConnected: false,
 });
 
-
-declare const window: any;
 class Metamask implements WalletInterface<MetamaskState> {
   private hookRouter: HookRouter = new HookRouter([
     WALLET_HOOK.CHAIN_ON_CHANGE,
@@ -245,7 +243,7 @@ class Metamask implements WalletInterface<MetamaskState> {
 
   public async mountEventListeners() {
     const provider = await this._getProvider();
-    if (window.ethereum) {
+    if (typeof window !== "undefined" && "ethereum" in window) {
       const ethereum = useWindow((window: any) => window.ethereum);
       if(ethereum.on) {
         ethereum.on("accountsChanged", async (accounts: string[]) => {
