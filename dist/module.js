@@ -339,20 +339,24 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
     }
     async mountEventListeners() {
         const provider = await this._getProvider();
-        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
-        ethereum.on("accountsChanged", async (accounts)=>{
-            this.state.accounts = accounts;
-            if (accounts.length === 0) await this.signOut();
-            else this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
-        });
-        ethereum.on("chainChanged", async (chainId)=>{
-            this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
-        });
-        ethereum.on("disconnect", async (err)=>{
-            this.hookRouter.applyHooks([
-                (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
-            ]);
-        });
+        if (typeof window !== "undefined" && "ethereum" in window) {
+            const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
+            if (ethereum.on) {
+                ethereum.on("accountsChanged", async (accounts)=>{
+                    this.state.accounts = accounts;
+                    if (accounts.length === 0) await this.signOut();
+                    else this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
+                });
+                ethereum.on("chainChanged", async (chainId)=>{
+                    this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
+                });
+                ethereum.on("disconnect", async (err)=>{
+                    this.hookRouter.applyHooks([
+                        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
+                    ]);
+                });
+            }
+        }
         provider.on("block", (block)=>{
             this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, block);
         });
@@ -508,5 +512,5 @@ $parcel$exportWildcard($dc4d60a7eb431eef$exports, $b5af4601982a5fe5$exports);
 
 
 
-export {$81c1b644006d48ec$export$412a02074a4127ac as WALLETS, $05db05568a951b86$export$2c78a3b4fc11d8fa as Metamask, $0e4707f80e4e0187$export$6ab354d5c56bf95 as MyAlgo, $b5af4601982a5fe5$export$2a2454b5976b73ac as Algorand, $412a545945027ba9$export$24b8fbafc4b6a151 as useWindow, $28ac839a9eca26f5$export$e162153238934121 as NotImplementedError, $28ac839a9eca26f5$export$72563c16b91dfd16 as WalletNotInstalledError, $28ac839a9eca26f5$export$313d299817c74896 as WalletNotConnectedError, $28ac839a9eca26f5$export$f4d277c155d1965e as HookNotAvailableError};
+export {$81c1b644006d48ec$export$412a02074a4127ac as WALLETS, $28ac839a9eca26f5$export$e162153238934121 as NotImplementedError, $28ac839a9eca26f5$export$72563c16b91dfd16 as WalletNotInstalledError, $28ac839a9eca26f5$export$313d299817c74896 as WalletNotConnectedError, $28ac839a9eca26f5$export$f4d277c155d1965e as HookNotAvailableError, $05db05568a951b86$export$2c78a3b4fc11d8fa as Metamask, $0e4707f80e4e0187$export$6ab354d5c56bf95 as MyAlgo, $b5af4601982a5fe5$export$2a2454b5976b73ac as Algorand, $412a545945027ba9$export$24b8fbafc4b6a151 as useWindow};
 //# sourceMappingURL=module.js.map
