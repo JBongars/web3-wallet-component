@@ -59,11 +59,48 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     toJSON(): MyAlgoState;
     getProvider(): MyAlgoConnect;
 }
+type WalletConnectState = {
+    accounts: string[];
+    isConnected: boolean;
+};
+type WalletConnectSigner = Signer<AlgorandTxn, SignedTx>;
+type WalletConnectAsset = {
+    chainId: String;
+    name: String;
+    unit_name: String;
+    id: String;
+    sourceDecimals: Number;
+};
+export type WalletConnectConfig = {
+    shouldSelectOneAccount?: boolean;
+};
+export class WalletConnect implements WalletInterface<WalletConnectState> {
+    state: WalletConnectState;
+    constructor(state?: WalletConnectState);
+    init(): Promise<WALLET_STATUS>;
+    signIn(options?: WalletConnectConfig): Promise<WALLET_STATUS>;
+    signOut(): Promise<WALLET_STATUS>;
+    getSigner(): Promise<WalletConnectSigner>;
+    getBalance(): Promise<string>;
+    getAssets(): Promise<WalletConnectAsset[]>;
+    getIsWalletInstalled(): boolean;
+    getIsConnected(): boolean;
+    getPrimaryAccount(): string;
+    getAccounts(): string[];
+    fetchCurrentChainID(): Promise<string>;
+    onAccountChange(cb: (accounts: string) => void | Promise<void>): HookEvent;
+    onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
+    onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
+    toJSON(): WalletConnectState;
+    getProvider(): MyAlgoConnect;
+}
 export type AlgorandState = {
     myAlgo?: MyAlgoState;
+    walletConnect?: WalletConnectState;
 };
 export class Algorand {
     myAlgo: MyAlgo;
+    walletConnect: WalletConnect;
     constructor(data?: AlgorandState);
 }
 type MetamaskState = {
@@ -122,10 +159,12 @@ export type ChainID = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14
 export const WALLETS: {
     readonly MYALGO: "MYALGO";
     readonly METAMASK: "METAMASK";
+    readonly WALLETCONNECT: "WALLETCONNECT";
 };
 export interface useWallets {
     use(walletName: "MYALGO"): MyAlgo;
     use(walletName: "METAMASK"): Metamask;
+    use(walletName: "WALLETCONNECT"): WalletConnect;
 }
 export type Signer<T, S> = (transactions: T[]) => Promise<S[]>;
 export interface WalletInterface<T> {

@@ -1,4 +1,4 @@
-import { MyAlgo } from "./algorand";
+import { MyAlgo, WalletConnect } from "./algorand";
 import { Metamask } from "./ethereum";
 import { HookEvent, WALLET_STATUS } from "./utils/HookRouter/types";
 
@@ -23,11 +23,13 @@ declare type ChainID =
 const WALLETS = {
   MYALGO: "MYALGO",
   METAMASK: "METAMASK",
+  WALLETCONNECT: "WALLETCONNECT",
 } as const;
 
 interface useWallets {
   use(walletName: "MYALGO"): MyAlgo;
   use(walletName: "METAMASK"): Metamask;
+  use(walletName: "WALLETCONNECT"): WalletConnect;
 }
 
 type Signer<T, S> = (transactions: T[]) => Promise<S[]>;
