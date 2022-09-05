@@ -1,12 +1,5 @@
-// import {
-//   SignedTx,
-//   AlgorandTxn,
-//   EncodedTransaction,
-//   Accounts,
-// } from "@randlabs/myalgo-connect";
 import { WalletInterface } from "../../types";
 import { WalletConnectAsset, WalletConnectSigner, WalletConnectState } from "./types";
-import MyAlgoConnect from "@randlabs/myalgo-connect";
 import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
 import { CHAINS } from "~/src/config/constants";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
@@ -17,12 +10,8 @@ import {
 } from "~/src/utils/HookRouter/types";
 import WalletConnectClient from "@walletconnect/client";
 import QRCodeModal from "algorand-walletconnect-qrcode-modal";
-// import algosdk from "algosdk";
-import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 
-type WalletConnectConfig = {
-  shouldSelectOneAccount?: boolean;
-};
+type WalletConnectConfig = {};
 
 const initialState: Readonly<WalletConnectState> = Object.freeze({
   accounts: [],
@@ -36,7 +25,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     WALLET_HOOK.CHAIN_ON_CHANGE,
   ]);
   public state: WalletConnectState;
-  private provider: MyAlgoConnect | undefined;
+  private provider: WalletConnect | undefined;
 
   constructor(state?: WalletConnectState) {
     if (state) {
@@ -57,16 +46,6 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public async signIn(options: WalletConnectConfig = {}): Promise<WALLET_STATUS> {
-    const shouldSelectOneAccount = options.shouldSelectOneAccount || true;
-    // const myAlgoConnect = this.getProvider();
-
-    // forces user to only choose one account.
-    // This prevents a lot of edge cases.
-    // this.state.accounts = await myAlgoConnect.connect({
-    //   shouldSelectOneAccount,
-    // });
-    // this.state.isConnected = this.state.accounts.length > 0;
-
     const connector = new WalletConnectClient({
       bridge: "https://bridge.walletconnect.org", // Required
       qrcodeModal: QRCodeModal,
@@ -121,9 +100,9 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
       // @ts-ignore
     ): Promise<SignedTx[]> => {
       this.enforceIsConnected();
-
-      const myAlgoConnect = this.getProvider();
-      const signedTx = await myAlgoConnect.signTransaction(transactions);
+      const walletConnect = this.getProvider();
+      // @ts-ignore
+      const signedTx = await walletConnect.signTransaction(transactions);
 
       return signedTx;
     };
@@ -186,12 +165,12 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     return this.state;
   }
 
-  public getProvider(): MyAlgoConnect {
-    if (this.provider instanceof MyAlgoConnect) {
+  public getProvider(): WalletConnect {
+    if (this.provider instanceof WalletConnect) {
       return this.provider;
     }
 
-    this.provider = new MyAlgoConnect();
+    this.provider = new WalletConnect();
     return this.provider;
   }
 }

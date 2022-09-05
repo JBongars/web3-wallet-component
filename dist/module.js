@@ -509,7 +509,6 @@ $parcel$export($6a9b0d356171a818$exports, "WalletConnect", () => $6a9b0d356171a8
 
 
 
-
 const $6a9b0d356171a818$var$initialState = Object.freeze({
     accounts: [],
     isConnected: false
@@ -535,14 +534,6 @@ class $6a9b0d356171a818$export$ba0ef3a0d99fcc8f {
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async signIn(options = {}) {
-        const shouldSelectOneAccount = options.shouldSelectOneAccount || true;
-        // const myAlgoConnect = this.getProvider();
-        // forces user to only choose one account.
-        // This prevents a lot of edge cases.
-        // this.state.accounts = await myAlgoConnect.connect({
-        //   shouldSelectOneAccount,
-        // });
-        // this.state.isConnected = this.state.accounts.length > 0;
         const connector = new (0, $hgUW1$walletconnectclient)({
             bridge: "https://bridge.walletconnect.org",
             qrcodeModal: (0, $hgUW1$algorandwalletconnectqrcodemodal)
@@ -586,8 +577,9 @@ class $6a9b0d356171a818$export$ba0ef3a0d99fcc8f {
         return async (// @ts-ignore
         transactions)=>{
             this.enforceIsConnected();
-            const myAlgoConnect = this.getProvider();
-            const signedTx = await myAlgoConnect.signTransaction(transactions);
+            const walletConnect = this.getProvider();
+            // @ts-ignore
+            const signedTx = await walletConnect.signTransaction(transactions);
             return signedTx;
         };
     }
@@ -630,8 +622,8 @@ class $6a9b0d356171a818$export$ba0ef3a0d99fcc8f {
         return this.state;
     }
     getProvider() {
-        if (this.provider instanceof (0, $hgUW1$randlabsmyalgoconnect)) return this.provider;
-        this.provider = new (0, $hgUW1$randlabsmyalgoconnect)();
+        if (this.provider instanceof $6a9b0d356171a818$export$ba0ef3a0d99fcc8f) return this.provider;
+        this.provider = new $6a9b0d356171a818$export$ba0ef3a0d99fcc8f();
         return this.provider;
     }
 }

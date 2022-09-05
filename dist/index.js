@@ -512,7 +512,6 @@ $parcel$export($2062ba71daa80b8d$exports, "WalletConnect", () => $2062ba71daa80b
 
 
 
-
 const $2062ba71daa80b8d$var$initialState = Object.freeze({
     accounts: [],
     isConnected: false
@@ -538,14 +537,6 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signIn(options = {}) {
-        const shouldSelectOneAccount = options.shouldSelectOneAccount || true;
-        // const myAlgoConnect = this.getProvider();
-        // forces user to only choose one account.
-        // This prevents a lot of edge cases.
-        // this.state.accounts = await myAlgoConnect.connect({
-        //   shouldSelectOneAccount,
-        // });
-        // this.state.isConnected = this.state.accounts.length > 0;
         const connector = new (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))({
             bridge: "https://bridge.walletconnect.org",
             qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal)))
@@ -589,8 +580,9 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         return async (// @ts-ignore
         transactions)=>{
             this.enforceIsConnected();
-            const myAlgoConnect = this.getProvider();
-            const signedTx = await myAlgoConnect.signTransaction(transactions);
+            const walletConnect = this.getProvider();
+            // @ts-ignore
+            const signedTx = await walletConnect.signTransaction(transactions);
             return signedTx;
         };
     }
@@ -633,8 +625,8 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         return this.state;
     }
     getProvider() {
-        if (this.provider instanceof (0, ($parcel$interopDefault($8zHUo$randlabsmyalgoconnect)))) return this.provider;
-        this.provider = new (0, ($parcel$interopDefault($8zHUo$randlabsmyalgoconnect)))();
+        if (this.provider instanceof $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f) return this.provider;
+        this.provider = new $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f();
         return this.provider;
     }
 }

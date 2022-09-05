@@ -71,9 +71,7 @@ type WalletConnectAsset = {
     id: String;
     sourceDecimals: Number;
 };
-export type WalletConnectConfig = {
-    shouldSelectOneAccount?: boolean;
-};
+export type WalletConnectConfig = {};
 export class WalletConnect implements WalletInterface<WalletConnectState> {
     state: WalletConnectState;
     constructor(state?: WalletConnectState);
@@ -92,7 +90,7 @@ export class WalletConnect implements WalletInterface<WalletConnectState> {
     onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
     toJSON(): WalletConnectState;
-    getProvider(): MyAlgoConnect;
+    getProvider(): WalletConnect;
 }
 export type AlgorandState = {
     myAlgo?: MyAlgoState;
