@@ -1,17 +1,15 @@
-import { WalletInterface } from "../../types";
-import { WalletConnectAsset, WalletConnectSigner, WalletConnectState } from "./types";
+import { SignedTx } from "@randlabs/myalgo-connect";
+import WalletConnectClient from "@walletconnect/client";
+import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
-import { CHAINS } from "~/src/config/constants";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import {
   HookEvent,
   WALLET_HOOK,
-  WALLET_STATUS,
+  WALLET_STATUS
 } from "~/src/utils/HookRouter/types";
-import WalletConnectClient from "@walletconnect/client";
-import QRCodeModal from "algorand-walletconnect-qrcode-modal";
-
-type WalletConnectConfig = {};
+import { WalletInterface } from "../../types";
+import { WalletConnectAsset, WalletConnectSigner, WalletConnectState } from "./types";
 
 const initialState: Readonly<WalletConnectState> = Object.freeze({
   accounts: [],
@@ -25,7 +23,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     WALLET_HOOK.CHAIN_ON_CHANGE,
   ]);
   public state: WalletConnectState;
-  private provider: WalletConnect | undefined;
+  private provider: WalletConnectClient | undefined;
 
   constructor(state?: WalletConnectState) {
     if (state) {
@@ -45,18 +43,18 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     return WALLET_STATUS.OK;
   }
 
-  public async signIn(options: WalletConnectConfig = {}): Promise<WALLET_STATUS> {
+  public async signIn(): Promise<WALLET_STATUS> {
     const connector = new WalletConnectClient({
       bridge: "https://bridge.walletconnect.org", // Required
       qrcodeModal: QRCodeModal,
     });
-    
+
     if (!connector.connected) {
       // create new session
       await connector.createSession();
     } else {
       const { accounts } = connector;
-      
+
       this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
       this.state.accounts = accounts;
       this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
@@ -66,7 +64,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
       if (error) {
         throw error;
       }
-      
+
       // Get provided accounts
       const { accounts } = payload.params[0];
       this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
@@ -95,13 +93,10 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
 
   public async getSigner(): Promise<WalletConnectSigner> {
     return async (
-      // @ts-ignore
-      transactions: AlgorandTxn[] | EncodedTransaction[]
-      // @ts-ignore
+      transactions: any
     ): Promise<SignedTx[]> => {
       this.enforceIsConnected();
       const walletConnect = this.getProvider();
-      // @ts-ignore
       const signedTx = await walletConnect.signTransaction(transactions);
 
       return signedTx;
@@ -165,15 +160,17 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     return this.state;
   }
 
-  public getProvider(): WalletConnect {
-    if (this.provider instanceof WalletConnect) {
+  public getProvider(): WalletConnectClient {
+    if (this.provider instanceof WalletConnectClient) {
       return this.provider;
     }
 
-    this.provider = new WalletConnect();
+    this.provider = new WalletConnectClient({
+      bridge: "https://bridge.walletconnect.org", // Required
+      qrcodeModal: QRCodeModal,
+    });
     return this.provider;
   }
 }
 
 export { WalletConnect };
-export { WalletConnectConfig };
