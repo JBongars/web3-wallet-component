@@ -1,20 +1,16 @@
-import {
-  SignedTx,
-  AlgorandTxn,
-  EncodedTransaction,
-  Accounts,
+import MyAlgoConnect, {
+  Accounts, AlgorandTxn,
+  EncodedTransaction, SignedTx
 } from "@randlabs/myalgo-connect";
-import { WalletInterface, ChainID } from "./../../types";
-import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from "./types";
-import MyAlgoConnect from "@randlabs/myalgo-connect";
 import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
-import { CHAINS } from "~/src/config/constants";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import {
   HookEvent,
   WALLET_HOOK,
-  WALLET_STATUS,
+  WALLET_STATUS
 } from "~/src/utils/HookRouter/types";
+import { WalletInterface } from "./../../types";
+import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from "./types";
 
 type MyAlgoConfig = {
   shouldSelectOneAccount?: boolean;
