@@ -34,7 +34,7 @@ class Wallet implements WalletInterface<State> {
     throw new NotImplementedError();
   }
 
-  public async getSigner(): Promise<Signer> {
+  public async signTxn(): Promise<Signer> {
     throw new NotImplementedError();
   }
 

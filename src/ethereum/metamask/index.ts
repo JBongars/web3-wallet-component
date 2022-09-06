@@ -103,7 +103,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     return WALLET_STATUS.OK;
   }
 
-  public async getSigner(): Promise<MetamaskSigner> {
+  public async signTxn(): Promise<MetamaskSigner> {
     return async (
       transactions: TransactionRequest[]
     ): Promise<TransactionResponse[]> => {

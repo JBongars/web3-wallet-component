@@ -1,18 +1,7 @@
 import MyAlgoConnect, { Accounts, AlgorandTxn, SignedTx } from "@randlabs/myalgo-connect";
+import WalletConnectClient from "@walletconnect/client";
 import { TransactionRequest, TransactionResponse } from "@ethersproject/abstract-provider";
 import { ethers } from "ethers";
-type MyAlgoState = {
-    accounts: Accounts[];
-    isConnected: boolean;
-};
-type MyAlgoSigner = Signer<AlgorandTxn, SignedTx>;
-type MyAlgoAsset = {
-    chainId: String;
-    name: String;
-    unit_name: String;
-    id: String;
-    sourceDecimals: Number;
-};
 export class NotImplementedError extends Error {
     constructor(message?: string);
 }
@@ -36,6 +25,18 @@ type HookEvent = {
     destroy: () => void;
     id: Symbol;
 };
+type MyAlgoState = {
+    accounts: Accounts[];
+    isConnected: boolean;
+};
+type MyAlgoSigner = Signer<AlgorandTxn, SignedTx>;
+type MyAlgoAsset = {
+    chainId: String;
+    name: String;
+    unit_name: String;
+    id: String;
+    sourceDecimals: Number;
+};
 export type MyAlgoConfig = {
     shouldSelectOneAccount?: boolean;
 };
@@ -45,7 +46,7 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     init(): Promise<WALLET_STATUS>;
     signIn(options?: MyAlgoConfig): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
-    getSigner(): Promise<MyAlgoSigner>;
+    signTxn(): Promise<MyAlgoSigner>;
     getBalance(): Promise<string>;
     getAssets(): Promise<MyAlgoAsset[]>;
     getIsWalletInstalled(): boolean;
@@ -71,14 +72,13 @@ type WalletConnectAsset = {
     id: String;
     sourceDecimals: Number;
 };
-export type WalletConnectConfig = {};
 export class WalletConnect implements WalletInterface<WalletConnectState> {
     state: WalletConnectState;
     constructor(state?: WalletConnectState);
     init(): Promise<WALLET_STATUS>;
-    signIn(options?: WalletConnectConfig): Promise<WALLET_STATUS>;
+    signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
-    getSigner(): Promise<WalletConnectSigner>;
+    signTxn(): Promise<WalletConnectSigner>;
     getBalance(): Promise<string>;
     getAssets(): Promise<WalletConnectAsset[]>;
     getIsWalletInstalled(): boolean;
@@ -90,7 +90,7 @@ export class WalletConnect implements WalletInterface<WalletConnectState> {
     onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
     toJSON(): WalletConnectState;
-    getProvider(): WalletConnect;
+    getProvider(): WalletConnectClient;
 }
 export type AlgorandState = {
     myAlgo?: MyAlgoState;
@@ -125,7 +125,7 @@ export class Metamask implements WalletInterface<MetamaskState> {
     init(): Promise<WALLET_STATUS>;
     signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
-    getSigner(): Promise<MetamaskSigner>;
+    signTxn(): Promise<MetamaskSigner>;
     getBalance(): Promise<string>;
     getAssets(): Promise<MetamaskAsset[]>;
     getIsConnected(): boolean;
@@ -169,7 +169,7 @@ export interface WalletInterface<T> {
     init: () => Promise<WALLET_STATUS>;
     signIn: () => Promise<WALLET_STATUS>;
     signOut: () => Promise<WALLET_STATUS>;
-    getSigner: () => Promise<Signer<any, any>>;
+    signTxn: () => Promise<Signer<any, any>>;
     getBalance: () => Promise<string>;
     getAssets: () => Promise<unknown[]>;
     getIsConnected: () => boolean;

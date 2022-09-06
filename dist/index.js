@@ -249,7 +249,7 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         ]);
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
-    async getSigner() {
+    async signTxn() {
         return async (transactions)=>{
             this._enforceChain();
             this._enforceIsConnected();
@@ -446,7 +446,7 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
         ]);
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
-    async getSigner() {
+    async signTxn() {
         return async (transactions)=>{
             this.enforceIsConnected();
             const myAlgoConnect = this.getProvider();
@@ -536,7 +536,7 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
     async init() {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
-    async signIn(options = {}) {
+    async signIn() {
         const connector = new (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))({
             bridge: "https://bridge.walletconnect.org",
             qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal)))
@@ -576,12 +576,10 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         ]);
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
-    async getSigner() {
-        return async (// @ts-ignore
-        transactions)=>{
+    async signTxn() {
+        return async (transactions)=>{
             this.enforceIsConnected();
             const walletConnect = this.getProvider();
-            // @ts-ignore
             const signedTx = await walletConnect.signTransaction(transactions);
             return signedTx;
         };
@@ -625,8 +623,11 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         return this.state;
     }
     getProvider() {
-        if (this.provider instanceof $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f) return this.provider;
-        this.provider = new $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f();
+        if (this.provider instanceof (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))) return this.provider;
+        this.provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))({
+            bridge: "https://bridge.walletconnect.org",
+            qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal)))
+        });
         return this.provider;
     }
 }

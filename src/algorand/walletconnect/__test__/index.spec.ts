@@ -52,7 +52,7 @@ describe("#MyAlgo class", () => {
 
     const myAlgo = new MyAlgo();
 
-    const signer = await myAlgo.getSigner();
+    const signer = await myAlgo.signTxn();
 
     const signedTransaction = await signer([
       "encodedTransaction" as unknown as AlgorandTxn,

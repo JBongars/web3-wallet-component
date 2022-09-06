@@ -91,7 +91,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     return WALLET_STATUS.OK;
   }
 
-  public async getSigner(): Promise<WalletConnectSigner> {
+  public async signTxn(): Promise<WalletConnectSigner> {
     return async (
       transactions: any
     ): Promise<SignedTx[]> => {
