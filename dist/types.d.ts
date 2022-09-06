@@ -1,4 +1,4 @@
-import MyAlgoConnect, { Accounts, AlgorandTxn, SignedTx } from "@randlabs/myalgo-connect";
+import MyAlgoConnect, { Accounts as _Accounts1, AlgorandTxn, SignedTx } from "@randlabs/myalgo-connect";
 import WalletConnectClient from "@walletconnect/client";
 import { TransactionRequest, TransactionResponse } from "@ethersproject/abstract-provider";
 import { ethers } from "ethers";
@@ -26,7 +26,7 @@ type HookEvent = {
     id: Symbol;
 };
 type MyAlgoState = {
-    accounts: Accounts[];
+    accounts: _Accounts1[];
     isConnected: boolean;
 };
 type MyAlgoSigner = Signer<AlgorandTxn, SignedTx>;
@@ -51,10 +51,10 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     getAssets(): Promise<MyAlgoAsset[]>;
     getIsWalletInstalled(): boolean;
     getIsConnected(): boolean;
-    getPrimaryAccount(): Accounts;
-    getAccounts(): Accounts[];
+    getPrimaryAccount(): _Accounts1;
+    getAccounts(): _Accounts1[];
     fetchCurrentChainID(): Promise<string>;
-    onAccountChange(cb: (accounts: Accounts) => void | Promise<void>): HookEvent;
+    onAccountChange(cb: (accounts: _Accounts1) => void | Promise<void>): HookEvent;
     onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
     toJSON(): MyAlgoState;
@@ -72,6 +72,10 @@ type WalletConnectAsset = {
     id: String;
     sourceDecimals: Number;
 };
+type Accounts = {
+    address: string;
+    name: string;
+};
 export class WalletConnect implements WalletInterface<WalletConnectState> {
     state: WalletConnectState;
     constructor(state?: WalletConnectState);
@@ -83,10 +87,10 @@ export class WalletConnect implements WalletInterface<WalletConnectState> {
     getAssets(): Promise<WalletConnectAsset[]>;
     getIsWalletInstalled(): boolean;
     getIsConnected(): boolean;
-    getPrimaryAccount(): string;
-    getAccounts(): string[];
+    getPrimaryAccount(): Accounts;
+    getAccounts(): Accounts[];
     fetchCurrentChainID(): Promise<string>;
-    onAccountChange(cb: (accounts: string) => void | Promise<void>): HookEvent;
+    onAccountChange(cb: (accounts: Accounts) => void | Promise<void>): HookEvent;
     onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
     toJSON(): WalletConnectState;

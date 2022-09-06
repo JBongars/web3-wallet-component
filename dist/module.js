@@ -594,10 +594,16 @@ class $6a9b0d356171a818$export$ba0ef3a0d99fcc8f {
         return this.state.isConnected;
     }
     getPrimaryAccount() {
-        return this.state.accounts[0];
+        return {
+            address: this.state.accounts[0],
+            name: ""
+        };
     }
     getAccounts() {
-        return this.state.accounts;
+        return this.state.accounts.map((ob)=>({
+                address: ob,
+                name: ""
+            }));
     }
     async fetchCurrentChainID() {
         return "0x1";

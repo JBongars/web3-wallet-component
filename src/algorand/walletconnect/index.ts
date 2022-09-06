@@ -1,6 +1,7 @@
 import { SignedTx } from "@randlabs/myalgo-connect";
 import WalletConnectClient from "@walletconnect/client";
 import QRCodeModal from "algorand-walletconnect-qrcode-modal";
+import { Address } from "algosdk/dist/types/src/types";
 import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import {
@@ -10,6 +11,11 @@ import {
 } from "~/src/utils/HookRouter/types";
 import { WalletInterface } from "../../types";
 import { WalletConnectAsset, WalletConnectSigner, WalletConnectState } from "./types";
+
+type Accounts = {
+	address: string;
+	name: string;
+}
 
 const initialState: Readonly<WalletConnectState> = Object.freeze({
   accounts: [],
@@ -119,19 +125,22 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     return this.state.isConnected;
   }
 
-  public getPrimaryAccount(): string {
-    return this.state.accounts[0];
+  public getPrimaryAccount(): Accounts {
+    return {
+      address: this.state.accounts[0],
+      name: ""
+    };
   }
 
-  public getAccounts(): string[] {
-    return this.state.accounts;
+  public getAccounts(): Accounts[] {
+    return this.state.accounts.map(ob => ({ address: ob, name: ""}));
   }
 
   public async fetchCurrentChainID(): Promise<string> {
     return "0x1";
   }
 
-  public onAccountChange(cb: (accounts: string) => void | Promise<void>) {
+  public onAccountChange(cb: (accounts: Accounts) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
       () => {
