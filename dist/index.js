@@ -577,10 +577,10 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signTxn() {
-        return async (transactions)=>{
+        return async (data)=>{
             this.enforceIsConnected();
             const walletConnect = this.getProvider();
-            const signedTx = await walletConnect.signTransaction(transactions);
+            const signedTx = await walletConnect.sendCustomRequest(data);
             return signedTx;
         };
     }

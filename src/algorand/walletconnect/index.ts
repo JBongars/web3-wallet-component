@@ -99,11 +99,11 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
 
   public async signTxn(): Promise<WalletConnectSigner> {
     return async (
-      transactions: any
-    ): Promise<SignedTx[]> => {
+      data: any
+    ): Promise<any> => {
       this.enforceIsConnected();
       const walletConnect = this.getProvider();
-      const signedTx = await walletConnect.signTransaction(transactions);
+      const signedTx = await walletConnect.sendCustomRequest(data);
 
       return signedTx;
     };
