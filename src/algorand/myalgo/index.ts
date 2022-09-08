@@ -72,7 +72,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return WALLET_STATUS.OK;
   }
 
-  public async signTxn(): Promise<MyAlgoSigner> {
+  public async getSigner(): Promise<MyAlgoSigner> {
     return async (
       transactions: AlgorandTxn[] | EncodedTransaction[]
     ): Promise<SignedTx[]> => {

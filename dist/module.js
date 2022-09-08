@@ -246,7 +246,7 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         ]);
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
-    async signTxn() {
+    async getSigner() {
         return async (transactions)=>{
             this._enforceChain();
             this._enforceIsConnected();
@@ -443,7 +443,7 @@ class $0e4707f80e4e0187$export$6ab354d5c56bf95 {
         ]);
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
-    async signTxn() {
+    async getSigner() {
         return async (transactions)=>{
             this.enforceIsConnected();
             const myAlgoConnect = this.getProvider();
@@ -573,7 +573,7 @@ class $6a9b0d356171a818$export$ba0ef3a0d99fcc8f {
         ]);
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
-    async signTxn() {
+    async getSigner() {
         return async (data)=>{
             this.enforceIsConnected();
             const walletConnect = this.getProvider();

@@ -46,7 +46,7 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     init(): Promise<WALLET_STATUS>;
     signIn(options?: MyAlgoConfig): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
-    signTxn(): Promise<MyAlgoSigner>;
+    getSigner(): Promise<MyAlgoSigner>;
     getBalance(): Promise<string>;
     getAssets(): Promise<MyAlgoAsset[]>;
     getIsWalletInstalled(): boolean;
@@ -82,7 +82,7 @@ export class WalletConnect implements WalletInterface<WalletConnectState> {
     init(): Promise<WALLET_STATUS>;
     signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
-    signTxn(): Promise<WalletConnectSigner>;
+    getSigner(): Promise<WalletConnectSigner>;
     getBalance(): Promise<string>;
     getAssets(): Promise<WalletConnectAsset[]>;
     getIsWalletInstalled(): boolean;
@@ -129,7 +129,7 @@ export class Metamask implements WalletInterface<MetamaskState> {
     init(): Promise<WALLET_STATUS>;
     signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
-    signTxn(): Promise<MetamaskSigner>;
+    getSigner(): Promise<MetamaskSigner>;
     getBalance(): Promise<string>;
     getAssets(): Promise<MetamaskAsset[]>;
     getIsConnected(): boolean;
@@ -173,7 +173,7 @@ export interface WalletInterface<T> {
     init: () => Promise<WALLET_STATUS>;
     signIn: () => Promise<WALLET_STATUS>;
     signOut: () => Promise<WALLET_STATUS>;
-    signTxn: () => Promise<Signer<any, any>>;
+    getSigner: () => Promise<Signer<any, any>>;
     getBalance: () => Promise<string>;
     getAssets: () => Promise<unknown[]>;
     getIsConnected: () => boolean;

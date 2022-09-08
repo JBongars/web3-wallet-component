@@ -38,7 +38,7 @@ interface WalletInterface<T> {
   init: () => Promise<WALLET_STATUS>;
   signIn: () => Promise<WALLET_STATUS>;
   signOut: () => Promise<WALLET_STATUS>;
-  signTxn: () => Promise<Signer<any, any>>;
+  getSigner: () => Promise<Signer<any, any>>;
   getBalance: () => Promise<string>;
   getAssets: () => Promise<unknown[]>;
   getIsConnected: () => boolean;

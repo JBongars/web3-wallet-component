@@ -92,7 +92,7 @@ describe("#Metamask Class", () => {
       isConnected: true,
     });
 
-    const signer = await metamask.signTxn();
+    const signer = await metamask.getSigner();
 
     const signedTransaction = await signer([
       "transactions" as TransactionRequest,
