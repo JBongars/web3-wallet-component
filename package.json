@@ -27,6 +27,7 @@
     "@json-rpc-tools/utils": "^1.7.6",
     "@randlabs/myalgo-connect": "^1.2.0",
     "@walletconnect/client": "^1.8.0",
+    "@walletconnect/web3-provider": "^1.8.0",
     "algorand-walletconnect-qrcode-modal": "^1.8.0",
     "algosdk": "^1.19.1",
     "bufferutil": "^4.0.6",

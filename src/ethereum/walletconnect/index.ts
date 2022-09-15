@@ -5,7 +5,7 @@ import {
   WalletConnectSigner,
   WalletConnectState,
 } from "./types";
-import { ethers } from "ethers";
+import { ethers, providers } from "ethers";
 import {
   TransactionRequest,
   TransactionResponse,
@@ -19,8 +19,7 @@ import {
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import { WALLET_HOOK, WALLET_STATUS } from "~/src/utils/HookRouter/types";
 import { getChainConfig } from "./chains";
-import WalletConnectClient from "@walletconnect/client";
-import QRCodeModal from "algorand-walletconnect-qrcode-modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const initialState: Readonly<WalletConnectState> = Object.freeze({
   accounts: [],
@@ -37,10 +36,9 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   ]);
   private chain: string | null = null;
   public state: WalletConnectState;
-  public provider: WalletConnectClient | undefined;
+  public provider?: ethers.providers.Web3Provider;
 
   constructor(state?: WalletConnectState) {
-    console.log("constructor")
     if (state) {
       this.state = { ...state };
     } else {
@@ -49,17 +47,13 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     
   }
 
-  private _getProvider(): WalletConnectClient {
-    if (this.provider instanceof WalletConnectClient) {
-      return this.provider;
-    }
-
-    this.provider = new WalletConnectClient({
-      bridge: "https://bridge.walletconnect.org", // Required
-      qrcodeModal: QRCodeModal,
+  private async _getProvider(): Promise<ethers.providers.Web3Provider> {
+    const walletConnectProvider = new WalletConnectProvider({
+      infuraId: "f83857b162d64708b25a59585f969fbd", // Required
+      qrcode: true
     });
-    
-    return this.provider;
+    await walletConnectProvider.enable();
+    return new providers.Web3Provider(walletConnectProvider)
   }
 
   private async _getWeb3Provider(): Promise<ethers.providers.Web3Provider> {
@@ -100,22 +94,14 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
-    const connector = await this._getProvider();
+    const provider = await this._getWeb3Provider();
+    this.state.accounts = await provider.send("eth_requestAccounts", []);
+    this.state.isConnected = this.state.accounts.length > 0;
 
-    if (!connector.connected) {
-      // create new session
-      await connector.createSession();
-    } else {
-      const { accounts } = connector;
-
-      this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-      this.state.accounts = accounts;
-      this.hookRouter.applyHookWithArgs(
+    this.hookRouter.applyHookWithArgs(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
       this.state.accounts
     );
-    }
-
     return WALLET_STATUS.OK;
   }
 
@@ -315,10 +301,9 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     // provider.removeAllListeners();
   }
 
-  public getProvider(): WalletConnectClient {
-    // await this._enforceChain();
-
-    return this._getProvider();
+  public async getProvider(): Promise<ethers.providers.Web3Provider> {
+    await this._enforceChain();
+    return await this._getProvider();
   }
 
   public async getWeb3Provider():Promise<ethers.providers.Web3Provider> {

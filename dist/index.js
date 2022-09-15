@@ -1,7 +1,8 @@
 var $8zHUo$ethers = require("ethers");
+var $8zHUo$walletconnectweb3provider = require("@walletconnect/web3-provider");
+var $8zHUo$randlabsmyalgoconnect = require("@randlabs/myalgo-connect");
 var $8zHUo$walletconnectclient = require("@walletconnect/client");
 var $8zHUo$algorandwalletconnectqrcodemodal = require("algorand-walletconnect-qrcode-modal");
-var $8zHUo$randlabsmyalgoconnect = require("@randlabs/myalgo-connect");
 
 function $parcel$exportWildcard(dest, source) {
   Object.keys(source).forEach(function(key) {
@@ -425,7 +426,6 @@ const $75b5db72ee15c73c$export$703a843624f42e6c = (chainId)=>{
 
 
 
-
 const $b4976c18f17a124b$var$initialState = Object.freeze({
     accounts: [],
     isConnected: false
@@ -440,7 +440,6 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
     ]);
     chain = null;
     constructor(state){
-        console.log("constructor");
         if (state) this.state = {
             ...state
         };
@@ -448,13 +447,13 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
             ...$b4976c18f17a124b$var$initialState
         };
     }
-    _getProvider() {
-        if (this.provider instanceof (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))) return this.provider;
-        this.provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))({
-            bridge: "https://bridge.walletconnect.org",
-            qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal)))
+    async _getProvider() {
+        const walletConnectProvider = new (0, ($parcel$interopDefault($8zHUo$walletconnectweb3provider)))({
+            infuraId: "f83857b162d64708b25a59585f969fbd",
+            qrcode: true
         });
-        return this.provider;
+        await walletConnectProvider.enable();
+        return new (0, $8zHUo$ethers.providers).Web3Provider(walletConnectProvider);
     }
     async _getWeb3Provider() {
         const ethereum = await (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
@@ -475,15 +474,10 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        const connector = await this._getProvider();
-        if (!connector.connected) // create new session
-        await connector.createSession();
-        else {
-            const { accounts: accounts  } = connector;
-            this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-            this.state.accounts = accounts;
-            this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, this.state.accounts);
-        }
+        const provider = await this._getWeb3Provider();
+        this.state.accounts = await provider.send("eth_requestAccounts", []);
+        this.state.isConnected = this.state.accounts.length > 0;
+        this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, this.state.accounts);
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signOut() {
@@ -633,9 +627,9 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
     // const provider = await this._getProvider();
     // provider.removeAllListeners();
     }
-    getProvider() {
-        // await this._enforceChain();
-        return this._getProvider();
+    async getProvider() {
+        await this._enforceChain();
+        return await this._getProvider();
     }
     async getWeb3Provider() {
         return await this._getWeb3Provider();

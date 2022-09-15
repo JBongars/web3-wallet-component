@@ -168,7 +168,7 @@ type WalletConnectChainConfig = {
 };
 export class EthWalletConnect implements WalletInterface<_WalletConnectState1> {
     state: _WalletConnectState1;
-    provider: WalletConnectClient | undefined;
+    provider?: ethers.providers.Web3Provider;
     constructor(state?: _WalletConnectState1);
     init(): Promise<WALLET_STATUS>;
     signIn(): Promise<WALLET_STATUS>;
@@ -192,7 +192,7 @@ export class EthWalletConnect implements WalletInterface<_WalletConnectState1> {
     toJSON(): _WalletConnectState1;
     mountEventListeners(): Promise<void>;
     unmountEventListeners(): Promise<void>;
-    getProvider(): WalletConnectClient;
+    getProvider(): Promise<ethers.providers.Web3Provider>;
     getWeb3Provider(): Promise<ethers.providers.Web3Provider>;
 }
 export type EthereumState = {
