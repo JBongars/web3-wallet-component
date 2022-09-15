@@ -1,7 +1,7 @@
 var $8zHUo$ethers = require("ethers");
-var $8zHUo$randlabsmyalgoconnect = require("@randlabs/myalgo-connect");
 var $8zHUo$walletconnectclient = require("@walletconnect/client");
 var $8zHUo$algorandwalletconnectqrcodemodal = require("algorand-walletconnect-qrcode-modal");
+var $8zHUo$randlabsmyalgoconnect = require("@randlabs/myalgo-connect");
 
 function $parcel$exportWildcard(dest, source) {
   Object.keys(source).forEach(function(key) {
@@ -380,15 +380,304 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
 
 var $d5d3dec9ab4b7763$exports = {};
 
-class $d5d3dec9ab4b7763$var$Ethereum {
-    constructor(data){
-        this.metaMask = new (0, $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa)(data?.metaMask);
+var $b4976c18f17a124b$exports = {};
+
+$parcel$export($b4976c18f17a124b$exports, "EthWalletConnect", () => $b4976c18f17a124b$export$9741c3aebc6a0fb7);
+
+
+
+
+
+const $75b5db72ee15c73c$export$92de899abf5da75a = {
+    chainName: "Rinkeby Test Network",
+    chainId: "0x4",
+    nativeCurrency: {
+        name: "ETH",
+        decimals: 18,
+        symbol: "ETH"
+    },
+    rpcUrls: [
+        "https://rinkeby.etherscan.io"
+    ]
+};
+const $75b5db72ee15c73c$export$abdf78135f8407bb = {
+    chainName: "Rinkeby Test Network",
+    chainId: "0x1",
+    nativeCurrency: {
+        name: "ETH",
+        decimals: 18,
+        symbol: "ETH"
+    },
+    rpcUrls: [
+        "https://rinkeby.etherscan.io"
+    ]
+};
+const $75b5db72ee15c73c$export$703a843624f42e6c = (chainId)=>{
+    switch(chainId){
+        case 1:
+            return $75b5db72ee15c73c$export$abdf78135f8407bb;
+        case 4:
+            return $75b5db72ee15c73c$export$92de899abf5da75a;
+        default:
+            throw new Error(`ChainId ${chainId} configuration not found`);
+    }
+};
+
+
+
+
+const $b4976c18f17a124b$var$initialState = Object.freeze({
+    accounts: [],
+    isConnected: false
+});
+class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
+    hookRouter = new (0, $a71b91c4d64511bd$export$2e2bcd8739ae039)([
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
+    ]);
+    chain = null;
+    constructor(state){
+        console.log("constructor");
+        if (state) this.state = {
+            ...state
+        };
+        else this.state = {
+            ...$b4976c18f17a124b$var$initialState
+        };
+    }
+    _getProvider() {
+        if (this.provider instanceof (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))) return this.provider;
+        this.provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))({
+            bridge: "https://bridge.walletconnect.org",
+            qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal)))
+        });
+        return this.provider;
+    }
+    async _getWeb3Provider() {
+        const ethereum = await (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
+        if (!Boolean(ethereum)) throw new (0, $d083fd37dae77b99$export$72563c16b91dfd16)();
+        return new (0, $8zHUo$ethers.ethers).providers.Web3Provider(ethereum);
+    }
+    _enforceIsConnected() {
+        if (!this.getIsConnected()) throw new (0, $d083fd37dae77b99$export$313d299817c74896)();
+    }
+    async _enforceChain() {
+        if (this.chain === null) return;
+        const provider = await this._getWeb3Provider();
+        const currentChain = await provider.send("eth_chainId", []);
+        if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
+    }
+    async init() {
+        this.provider = await this._getProvider();
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
+    }
+    async signIn() {
+        // const provider = await this._getProvider();
+        // this.state.accounts = await provider.send("eth_requestAccounts", []);
+        // this.state.isConnected = this.state.accounts.length > 0;
+        // this.hookRouter.applyHookWithArgs(
+        //   WALLET_HOOK.ACCOUNT_ON_CHANGE,
+        //   this.state.accounts
+        // );
+        // return WALLET_STATUS.OK;
+        const connector = await this._getProvider();
+        if (!connector.connected) // create new session
+        await connector.createSession();
+        else {
+            const { accounts: accounts  } = connector;
+            this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
+            this.state.accounts = accounts;
+            this.hookRouter.applyHooks([
+                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+            ]);
+        }
+        // connector.on("connect", ((error, payload) => {
+        //   if (error) {
+        //     throw error;
+        //   }
+        //   // Get provided accounts
+        //   const { accounts } = payload.params[0];
+        //   this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
+        //   this.state.accounts = accounts;
+        //   this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+        // }));
+        // connector.on("disconnect", (error, payload) => {
+        //   if (error) {
+        //     throw error;
+        //   }
+        //   this.signOut();
+        // });
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
+    }
+    async signOut() {
+        this._enforceIsConnected();
+        this.state.accounts = [];
+        this.state.isConnected = false;
+        this.hookRouter.applyHooks([
+            (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
+        ]);
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
+    }
+    async getSigner() {
+        return async (transactions)=>{
+            this._enforceChain();
+            this._enforceIsConnected();
+            const provider = this.provider || await this._getProvider();
+            const transactionResponse = await provider.getSigner().sendTransaction(transactions[0]);
+            return [
+                transactionResponse
+            ];
+        };
+    }
+    async getBalance() {
+        this._enforceChain();
+        this._enforceIsConnected();
+        const provider = await this._getWeb3Provider();
+        const balance = await provider.getBalance(this.state.accounts[0]);
+        return "12000000"; //balance.toString();
+    }
+    async getAssets() {
+        throw new (0, $d083fd37dae77b99$export$e162153238934121)();
+    }
+    getIsConnected() {
+        return this.state.isConnected;
+    }
+    getIsWalletInstalled() {
+        const ethereum = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
+        return Boolean(ethereum);
+    }
+    getPrimaryAccount() {
+        this._enforceChain();
+        this._enforceIsConnected();
+        return this.state.accounts[0];
+    }
+    getAccounts() {
+        this._enforceChain();
+        this._enforceIsConnected();
+        return this.state.accounts;
+    }
+    async fetchCurrentChainID() {
+        const provider = await this._getWeb3Provider();
+        const chainId = await provider.send("eth_chainId", []);
+        return chainId;
+    }
+    async addChainToWallet(chainConfig) {
+        return (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (window)=>window.ethereum?.request({
+                method: "wallet_addEthereumChain",
+                params: [
+                    chainConfig
+                ]
+            }));
+    }
+    async switchChainFromWallet(chain) {
+        const ethereum = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)((window)=>window.ethereum);
+        if (ethereum.networkVersion !== chain) try {
+            await ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [
+                    {
+                        chainId: `0x${chain}`
+                    }
+                ]
+            });
+        } catch (err) {
+            if (err && err.code === 4902) {
+                const chainConfig = (0, $75b5db72ee15c73c$export$703a843624f42e6c)(chain);
+                await this.addChainToWallet(chainConfig);
+            } else throw err;
+        }
+    }
+    async forceCurrentChainID(chain) {
+        if (this.chain !== null && this.chain !== `0x${chain}`) throw new Error(`Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`);
+        this.chain = `0x${chain}`;
+        this.switchChainFromWallet(chain);
+    }
+    onAccountChange(cb) {
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, cb);
+    }
+    onChainChange(cb) {
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, cb);
+    }
+    onAccountDisconnect(cb) {
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT, cb);
+    }
+    onChainDisconnect(cb) {
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT, cb);
+    }
+    onBlockAdded(cb) {
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
+            return cb(block);
+        });
+    }
+    toJSON() {
+        return this.state;
+    }
+    async mountEventListeners() {
+    // const provider = await this._getProvider();
+    // console.log("mountEventListeners")
+    // provider.on("connect", ((error, payload) => {
+    //   if (error) {
+    //     throw error;
+    //   }
+    //   console.log("run on mountEventListeners");
+    //   // Get provided accounts
+    //   const { accounts } = payload.params[0];
+    //   this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
+    //   this.state.accounts = accounts;
+    //   this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+    // }));
+    // if (typeof window !== "undefined" && "ethereum" in window) {
+    //   const ethereum = useWindow((window: any) => window.ethereum);
+    //   if(ethereum.on) {
+    //     ethereum.on("accountsChanged", async (accounts: string[]) => {
+    //       this.state.accounts = accounts;
+    //       if (accounts.length === 0) {
+    //         await this.signOut();
+    //       } else {
+    //         this.hookRouter.applyHookWithArgs(
+    //           WALLET_HOOK.ACCOUNT_ON_CHANGE,
+    //           accounts
+    //         );
+    //       }
+    //     });
+    //     ethereum.on("chainChanged", async (chainId: string) => {
+    //       this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, chainId);
+    //     });
+    //     ethereum.on("disconnect", async (err: Error) => {
+    //       this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
+    //     });
+    //   }
+    // }
+    // provider.on("block", (block: number) => {
+    //   this.hookRouter.applyHookWithArgs(WALLET_HOOK.NEW_BLOCK, block);
+    // });
+    }
+    async unmountEventListeners() {
+    // const provider = await this._getProvider();
+    // provider.removeAllListeners();
+    }
+    getProvider() {
+        // await this._enforceChain();
+        return this._getProvider();
     }
 }
 
 
+class $d5d3dec9ab4b7763$var$Ethereum {
+    constructor(data){
+        this.metaMask = new (0, $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa)(data?.metaMask);
+        this.walletConnect = new (0, $b4976c18f17a124b$export$9741c3aebc6a0fb7)();
+    }
+}
+
+
+
 $parcel$exportWildcard($be737fe08c02d508$exports, $2b09ea9ee8d63ad1$exports);
 $parcel$exportWildcard($be737fe08c02d508$exports, $d5d3dec9ab4b7763$exports);
+$parcel$exportWildcard($be737fe08c02d508$exports, $b4976c18f17a124b$exports);
 
 
 var $b94377bbb94beb7e$exports = {};

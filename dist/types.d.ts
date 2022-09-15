@@ -150,11 +150,57 @@ export class Metamask implements WalletInterface<MetamaskState> {
     unmountEventListeners(): Promise<void>;
     getProvider(): Promise<ethers.providers.Web3Provider>;
 }
+type _WalletConnectState1 = {
+    accounts: string[];
+    isConnected: boolean;
+};
+type _WalletConnectSigner1 = Signer<TransactionRequest, TransactionResponse>;
+type _WalletConnectAsset1 = {};
+type WalletConnectChainConfig = {
+    chainName: string;
+    chainId: string;
+    nativeCurrency: {
+        name: string;
+        decimals: 18;
+        symbol: string;
+    };
+    rpcUrls: string[];
+};
+export class EthWalletConnect implements WalletInterface<_WalletConnectState1> {
+    state: _WalletConnectState1;
+    provider: WalletConnectClient | undefined;
+    constructor(state?: _WalletConnectState1);
+    init(): Promise<WALLET_STATUS>;
+    signIn(): Promise<WALLET_STATUS>;
+    signOut(): Promise<WALLET_STATUS>;
+    getSigner(): Promise<_WalletConnectSigner1>;
+    getBalance(): Promise<string>;
+    getAssets(): Promise<_WalletConnectAsset1[]>;
+    getIsConnected(): boolean;
+    getIsWalletInstalled(): boolean;
+    getPrimaryAccount(): string;
+    getAccounts(): string[];
+    fetchCurrentChainID(): Promise<string>;
+    addChainToWallet(chainConfig: WalletConnectChainConfig): Promise<void>;
+    switchChainFromWallet(chain: number): Promise<void>;
+    forceCurrentChainID(chain: number): Promise<void>;
+    onAccountChange(cb: (accounts: string[]) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onChainChange(cb: (chain: string) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onAccountDisconnect(cb: () => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onChainDisconnect(cb: () => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onBlockAdded(cb: (newBlock: number) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    toJSON(): _WalletConnectState1;
+    mountEventListeners(): Promise<void>;
+    unmountEventListeners(): Promise<void>;
+    getProvider(): WalletConnectClient;
+}
 export type EthereumState = {
     metaMask?: MetamaskState;
+    walletConnect?: _WalletConnectState1;
 };
 export class Ethereum {
     metaMask: Metamask;
+    walletConnect: EthWalletConnect;
     constructor(data?: EthereumState);
 }
 export type ChainID = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 10001;
