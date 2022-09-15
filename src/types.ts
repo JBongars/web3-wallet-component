@@ -1,5 +1,5 @@
 import { MyAlgo, WalletConnect } from "./algorand";
-import { Metamask } from "./ethereum";
+import { Metamask, EthWalletConnect } from "./ethereum";
 import { HookEvent, WALLET_STATUS } from "./utils/HookRouter/types";
 
 declare type ChainID =
