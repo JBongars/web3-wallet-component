@@ -474,8 +474,8 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        const provider = await this._getWeb3Provider();
-        this.state.accounts = await provider.send("eth_requestAccounts", []);
+        const provider = await this._getProvider();
+        this.state.accounts = await provider.listAccounts(); //await provider.send("eth_requestAccounts", []);
         this.state.isConnected = this.state.accounts.length > 0;
         this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, this.state.accounts);
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;

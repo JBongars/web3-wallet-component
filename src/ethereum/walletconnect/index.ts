@@ -94,8 +94,8 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
-    const provider = await this._getWeb3Provider();
-    this.state.accounts = await provider.send("eth_requestAccounts", []);
+    const provider = await this._getProvider();
+    this.state.accounts = await provider.listAccounts(); //await provider.send("eth_requestAccounts", []);
     this.state.isConnected = this.state.accounts.length > 0;
 
     this.hookRouter.applyHookWithArgs(
