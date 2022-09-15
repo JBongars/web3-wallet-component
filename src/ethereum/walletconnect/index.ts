@@ -100,15 +100,6 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
-    // const provider = await this._getProvider();
-    // this.state.accounts = await provider.send("eth_requestAccounts", []);
-    // this.state.isConnected = this.state.accounts.length > 0;
-
-    // this.hookRouter.applyHookWithArgs(
-    //   WALLET_HOOK.ACCOUNT_ON_CHANGE,
-    //   this.state.accounts
-    // );
-    // return WALLET_STATUS.OK;
     const connector = await this._getProvider();
 
     if (!connector.connected) {
@@ -119,27 +110,11 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
 
       this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
       this.state.accounts = accounts;
-      this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+      this.hookRouter.applyHookWithArgs(
+      WALLET_HOOK.ACCOUNT_ON_CHANGE,
+      this.state.accounts
+    );
     }
-
-    // connector.on("connect", ((error, payload) => {
-    //   if (error) {
-    //     throw error;
-    //   }
-
-    //   // Get provided accounts
-    //   const { accounts } = payload.params[0];
-    //   this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-    //   this.state.accounts = accounts;
-    //   this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
-    // }));
-
-    // connector.on("disconnect", (error, payload) => {
-    //   if (error) {
-    //     throw error;
-    //   }
-    //   this.signOut();
-    // });
 
     return WALLET_STATUS.OK;
   }
@@ -344,6 +319,10 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     // await this._enforceChain();
 
     return this._getProvider();
+  }
+
+  public async getWeb3Provider():Promise<ethers.providers.Web3Provider> {
+    return await this._getWeb3Provider();
   }
   
 }

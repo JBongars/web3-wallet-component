@@ -193,6 +193,7 @@ export class EthWalletConnect implements WalletInterface<_WalletConnectState1> {
     mountEventListeners(): Promise<void>;
     unmountEventListeners(): Promise<void>;
     getProvider(): WalletConnectClient;
+    getWeb3Provider(): Promise<ethers.providers.Web3Provider>;
 }
 export type EthereumState = {
     metaMask?: MetamaskState;

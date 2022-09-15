@@ -472,14 +472,6 @@ class $b82f469e02efa91a$export$9741c3aebc6a0fb7 {
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        // const provider = await this._getProvider();
-        // this.state.accounts = await provider.send("eth_requestAccounts", []);
-        // this.state.isConnected = this.state.accounts.length > 0;
-        // this.hookRouter.applyHookWithArgs(
-        //   WALLET_HOOK.ACCOUNT_ON_CHANGE,
-        //   this.state.accounts
-        // );
-        // return WALLET_STATUS.OK;
         const connector = await this._getProvider();
         if (!connector.connected) // create new session
         await connector.createSession();
@@ -487,26 +479,8 @@ class $b82f469e02efa91a$export$9741c3aebc6a0fb7 {
             const { accounts: accounts  } = connector;
             this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
             this.state.accounts = accounts;
-            this.hookRouter.applyHooks([
-                (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
-            ]);
+            this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, this.state.accounts);
         }
-        // connector.on("connect", ((error, payload) => {
-        //   if (error) {
-        //     throw error;
-        //   }
-        //   // Get provided accounts
-        //   const { accounts } = payload.params[0];
-        //   this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-        //   this.state.accounts = accounts;
-        //   this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
-        // }));
-        // connector.on("disconnect", (error, payload) => {
-        //   if (error) {
-        //     throw error;
-        //   }
-        //   this.signOut();
-        // });
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async signOut() {
@@ -659,6 +633,9 @@ class $b82f469e02efa91a$export$9741c3aebc6a0fb7 {
     getProvider() {
         // await this._enforceChain();
         return this._getProvider();
+    }
+    async getWeb3Provider() {
+        return await this._getWeb3Provider();
     }
 }
 
