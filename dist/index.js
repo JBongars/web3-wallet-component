@@ -1,5 +1,9 @@
 var $8zHUo$ethers = require("ethers");
 var $8zHUo$randlabsmyalgoconnect = require("@randlabs/myalgo-connect");
+var $8zHUo$walletconnectclient = require("@walletconnect/client");
+var $8zHUo$algorandwalletconnectqrcodemodal = require("algorand-walletconnect-qrcode-modal");
+var $8zHUo$jsonrpctoolsutils = require("@json-rpc-tools/utils");
+var $8zHUo$buffer = require("buffer");
 
 function $parcel$exportWildcard(dest, source) {
   Object.keys(source).forEach(function(key) {
@@ -28,7 +32,8 @@ var $faefaad95e5fcca0$exports = {};
 $parcel$export($faefaad95e5fcca0$exports, "WALLETS", () => $faefaad95e5fcca0$export$412a02074a4127ac);
 const $faefaad95e5fcca0$export$412a02074a4127ac = {
     MYALGO: "MYALGO",
-    METAMASK: "METAMASK"
+    METAMASK: "METAMASK",
+    WALLETCONNECT: "WALLETCONNECT"
 };
 
 
@@ -68,19 +73,6 @@ var $be737fe08c02d508$exports = {};
 var $2b09ea9ee8d63ad1$exports = {};
 
 $parcel$export($2b09ea9ee8d63ad1$exports, "Metamask", () => $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa);
-
-var $fc578d3576b0d8ef$exports = {};
-var $ff033dcd1750fc9d$exports = {};
-
-$parcel$export($ff033dcd1750fc9d$exports, "useWindow", () => $ff033dcd1750fc9d$export$24b8fbafc4b6a151);
-const $ff033dcd1750fc9d$export$24b8fbafc4b6a151 = (cb)=>{
-    if (Object.keys(globalThis).includes("window")) return cb(globalThis.window);
-    else return null;
-};
-
-
-$parcel$exportWildcard($fc578d3576b0d8ef$exports, $ff033dcd1750fc9d$exports);
-
 
 
 
@@ -152,7 +144,21 @@ let $57b8a5d2d8300786$export$5ee9bf08a91850b9;
     WALLET_HOOK1[WALLET_HOOK1["ACCOUNT_ON_CHANGE"] = 2] = "ACCOUNT_ON_CHANGE";
     WALLET_HOOK1[WALLET_HOOK1["ACCOUNT_ON_DISCONNECT"] = 3] = "ACCOUNT_ON_DISCONNECT";
     WALLET_HOOK1[WALLET_HOOK1["NEW_BLOCK"] = 4] = "NEW_BLOCK";
+    WALLET_HOOK1[WALLET_HOOK1["CONNECT"] = 5] = "CONNECT";
 })($57b8a5d2d8300786$export$5ee9bf08a91850b9 || ($57b8a5d2d8300786$export$5ee9bf08a91850b9 = {}));
+
+
+var $fc578d3576b0d8ef$exports = {};
+var $ff033dcd1750fc9d$exports = {};
+
+$parcel$export($ff033dcd1750fc9d$exports, "useWindow", () => $ff033dcd1750fc9d$export$24b8fbafc4b6a151);
+const $ff033dcd1750fc9d$export$24b8fbafc4b6a151 = (cb)=>{
+    if (Object.keys(globalThis).includes("window")) return cb(globalThis.window);
+    else return null;
+};
+
+
+$parcel$exportWildcard($fc578d3576b0d8ef$exports, $ff033dcd1750fc9d$exports);
 
 
 const $2ea60662ee21d00c$export$92de899abf5da75a = {
@@ -247,15 +253,10 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async getSigner() {
-        return async (transactions)=>{
-            this._enforceChain();
-            this._enforceIsConnected();
-            const provider = this.provider || await this._getProvider();
-            const transactionResponse = await provider.getSigner().sendTransaction(transactions[0]);
-            return [
-                transactionResponse
-            ];
-        };
+        this._enforceChain();
+        this._enforceIsConnected();
+        const provider = this.provider || await this._getProvider();
+        return provider.getSigner();
     }
     async getBalance() {
         this._enforceChain();
@@ -501,15 +502,174 @@ var $f2b728861576b445$exports = {};
 
 $parcel$export($f2b728861576b445$exports, "Algorand", () => $f2b728861576b445$export$2a2454b5976b73ac);
 
-class $f2b728861576b445$export$2a2454b5976b73ac {
-    constructor(data){
-        this.myAlgo = new (0, $a75d728b25ccd0d3$export$6ab354d5c56bf95)(data?.myAlgo);
+var $2062ba71daa80b8d$exports = {};
+
+$parcel$export($2062ba71daa80b8d$exports, "WalletConnect", () => $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f);
+
+
+
+
+
+
+
+var $2062ba71daa80b8d$require$Buffer = $8zHUo$buffer.Buffer;
+const $2062ba71daa80b8d$var$initialState = Object.freeze({
+    accounts: [],
+    isConnected: false
+});
+class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
+    hookRouter = new (0, $a71b91c4d64511bd$export$2e2bcd8739ae039)([
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
+    ]);
+    constructor(state){
+        if (state) this.state = {
+            ...state
+        };
+        else this.state = {
+            ...$2062ba71daa80b8d$var$initialState
+        };
+    }
+    enforceIsConnected() {
+        if (!this.getIsConnected()) throw new (0, $d083fd37dae77b99$export$313d299817c74896)();
+    }
+    async init() {
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
+    }
+    async signIn() {
+        this.provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))({
+            bridge: "https://bridge.walletconnect.org",
+            qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal)))
+        });
+        if (!this.provider.connected) // create new session
+        await this.provider.createSession();
+        else {
+            const { accounts: accounts  } = this.provider;
+            this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
+            this.state.accounts = accounts;
+            this.hookRouter.applyHooks([
+                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+            ]);
+        }
+        this.provider.on("connect", (error, payload)=>{
+            if (error) throw error;
+            // Get provided accounts
+            const { accounts: accounts  } = payload.params[0];
+            this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
+            this.state.accounts = accounts;
+            this.hookRouter.applyHooks([
+                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+            ]);
+        });
+        this.provider.on("disconnect", (error, payload)=>{
+            if (error) throw error;
+            this.signOut();
+        });
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
+    }
+    async signOut() {
+        this.state.accounts = [];
+        this.state.isConnected = false;
+        try {
+            await this.provider?.killSession();
+        } catch (e) {}
+        this.provider = undefined;
+        this.hookRouter.applyHooks([
+            (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+        ]);
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
+    }
+    async getSigner() {
+        return async (transactions)=>{
+            this.enforceIsConnected();
+            const walletConnect = this.getProvider();
+            const txnsToSign = transactions.map((txn)=>({
+                    txn: $2062ba71daa80b8d$require$Buffer.from(txn).toString("base64")
+                }));
+            const jsonRpcRequest = (0, $8zHUo$jsonrpctoolsutils.formatJsonRpcRequest)("algo_signTxn", [
+                txnsToSign
+            ]);
+            let signedTxns = await walletConnect.sendCustomRequest(jsonRpcRequest);
+            let signedTxns2 = [];
+            for(let i = 0; i < signedTxns.length; i++)if (signedTxns[i] !== null) signedTxns2.push({
+                txID: "",
+                blob: new Uint8Array($2062ba71daa80b8d$require$Buffer.from(signedTxns[i], "base64"))
+            });
+            else signedTxns2.push({
+                txId: "",
+                blob: null
+            });
+            return signedTxns2;
+        };
+    }
+    async getBalance() {
+        throw new (0, $d083fd37dae77b99$export$e162153238934121)();
+    }
+    async getAssets() {
+        throw new (0, $d083fd37dae77b99$export$e162153238934121)();
+    }
+    getIsWalletInstalled() {
+        return true; // wallet is web only so is always installed
+    }
+    getIsConnected() {
+        return this.state.isConnected;
+    }
+    getPrimaryAccount() {
+        return {
+            address: this.state.accounts[0],
+            name: ""
+        };
+    }
+    getAccounts() {
+        return this.state.accounts.map((ob)=>({
+                address: ob,
+                name: ""
+            }));
+    }
+    async fetchCurrentChainID() {
+        return "0x1";
+    }
+    onAccountChange(cb) {
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
+            return cb(this.getPrimaryAccount());
+        });
+    }
+    onChainChange(cb) {
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async ()=>{
+            const currentChainId = await this.fetchCurrentChainID();
+            return cb(currentChainId);
+        });
+    }
+    onBlockAdded(cb) {
+        throw new (0, $d083fd37dae77b99$export$e162153238934121)();
+    }
+    toJSON() {
+        return this.state;
+    }
+    getProvider() {
+        if (this.provider instanceof (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))) return this.provider;
+        this.provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))({
+            bridge: "https://bridge.walletconnect.org",
+            qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal)))
+        });
+        return this.provider;
     }
 }
 
 
+class $f2b728861576b445$export$2a2454b5976b73ac {
+    constructor(data){
+        this.myAlgo = new (0, $a75d728b25ccd0d3$export$6ab354d5c56bf95)(data?.myAlgo);
+        this.walletConnect = new (0, $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f)(data?.walletConnect);
+    }
+}
+
+
+
 $parcel$exportWildcard($b94377bbb94beb7e$exports, $a75d728b25ccd0d3$exports);
 $parcel$exportWildcard($b94377bbb94beb7e$exports, $f2b728861576b445$exports);
+$parcel$exportWildcard($b94377bbb94beb7e$exports, $2062ba71daa80b8d$exports);
 
 
 
