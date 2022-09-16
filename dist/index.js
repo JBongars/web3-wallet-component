@@ -29,13 +29,6 @@ function $parcel$interopDefault(a) {
 }
 var $faefaad95e5fcca0$exports = {};
 
-$parcel$export($faefaad95e5fcca0$exports, "WALLETS", () => $faefaad95e5fcca0$export$412a02074a4127ac);
-const $faefaad95e5fcca0$export$412a02074a4127ac = {
-    MYALGO: "MYALGO",
-    METAMASK: "METAMASK",
-    WALLETCONNECT: "WALLETCONNECT"
-};
-
 
 var $d083fd37dae77b99$exports = {};
 
