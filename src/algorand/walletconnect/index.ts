@@ -1,7 +1,7 @@
+import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 import { SignedTx } from "@randlabs/myalgo-connect";
 import WalletConnectClient from "@walletconnect/client";
 import QRCodeModal from "algorand-walletconnect-qrcode-modal";
-import { Address } from "algosdk/dist/types/src/types";
 import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import {
@@ -10,12 +10,15 @@ import {
   WALLET_STATUS
 } from "~/src/utils/HookRouter/types";
 import { WalletInterface } from "../../types";
+import { AlgorandSignerTxn } from "../Algorand";
 import { WalletConnectAsset, WalletConnectSigner, WalletConnectState } from "./types";
 
 type Accounts = {
-	address: string;
-	name: string;
+  address: string;
+  name: string;
 }
+
+type WalletConnectTransaction = Uint8Array[];
 
 const initialState: Readonly<WalletConnectState> = Object.freeze({
   accounts: [],
@@ -50,23 +53,23 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
-    const connector = new WalletConnectClient({
+    this.provider = new WalletConnectClient({
       bridge: "https://bridge.walletconnect.org", // Required
       qrcodeModal: QRCodeModal,
     });
 
-    if (!connector.connected) {
+    if (!this.provider.connected) {
       // create new session
-      await connector.createSession();
+      await this.provider.createSession();
     } else {
-      const { accounts } = connector;
+      const { accounts } = this.provider;
 
       this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
       this.state.accounts = accounts;
       this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     }
 
-    connector.on("connect", ((error, payload) => {
+    this.provider.on("connect", ((error, payload) => {
       if (error) {
         throw error;
       }
@@ -78,7 +81,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
       this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     }));
 
-    connector.on("disconnect", (error, payload) => {
+    this.provider.on("disconnect", (error, payload) => {
       if (error) {
         throw error;
       }
@@ -89,9 +92,13 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public async signOut(): Promise<WALLET_STATUS> {
-    this.enforceIsConnected();
     this.state.accounts = [];
     this.state.isConnected = false;
+
+    try {
+      await this.provider?.killSession();
+    } catch (e) { }
+    this.provider = undefined;
 
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     return WALLET_STATUS.OK;
@@ -99,13 +106,31 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
 
   public async getSigner(): Promise<WalletConnectSigner> {
     return async (
-      data: any
-    ): Promise<any> => {
+      transactions: AlgorandSignerTxn,
+    ): Promise<SignedTx[]> => {
       this.enforceIsConnected();
       const walletConnect = this.getProvider();
-      const signedTx = await walletConnect.sendCustomRequest(data);
+      const txnsToSign = (transactions as WalletConnectTransaction).map(txn => ({
+        txn: Buffer.from(txn).toString("base64")
+      }));
+      const jsonRpcRequest = formatJsonRpcRequest("algo_signTxn", [txnsToSign]);
+      let signedTxns = await walletConnect.sendCustomRequest(jsonRpcRequest);
+      let signedTxns2: any = [];
+      for (let i = 0; i < signedTxns.length; i++) {
+        if (signedTxns[i] !== null) {
+          signedTxns2.push({
+            txID: "",
+            blob: new Uint8Array(Buffer.from(signedTxns[i], "base64"))
+          })
+        } else {
+          signedTxns2.push({
+            txId: "",
+            blob: null
+          })
+        }
+      }
 
-      return signedTx;
+      return signedTxns2;
     };
   }
 
@@ -133,7 +158,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public getAccounts(): Accounts[] {
-    return this.state.accounts.map(ob => ({ address: ob, name: ""}));
+    return this.state.accounts.map(ob => ({ address: ob, name: "" }));
   }
 
   public async fetchCurrentChainID(): Promise<string> {
@@ -182,4 +207,4 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   }
 }
 
-export { WalletConnect };
+export { WalletConnect, WalletConnectTransaction };

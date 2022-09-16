@@ -1,30 +1,8 @@
-import { MyAlgo, WalletConnect } from "./algorand";
-import { Metamask } from "./ethereum";
+import { AlgorandWallet, MyAlgo, WalletConnect } from "./algorand";
+import { EthereumWallet, Metamask } from "./ethereum";
 import { HookEvent, WALLET_STATUS } from "./utils/HookRouter/types";
 
-declare type ChainID =
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 6
-  | 7
-  | 8
-  | 9
-  | 10
-  | 11
-  | 12
-  | 13
-  | 14
-  | 15
-  | 10001;
-
-const WALLETS = {
-  MYALGO: "MYALGO",
-  METAMASK: "METAMASK",
-  WALLETCONNECT: "WALLETCONNECT",
-} as const;
+type WALLET = AlgorandWallet | EthereumWallet;
 
 interface useWallets {
   use(walletName: "MYALGO"): MyAlgo;
@@ -32,13 +10,13 @@ interface useWallets {
   use(walletName: "WALLETCONNECT"): WalletConnect;
 }
 
-type Signer<T, S> = (transactions: T[]) => Promise<S[]>;
+type Signer<T, S> = (transactions: T) => Promise<S[]>;
 
 interface WalletInterface<T> {
   init: () => Promise<WALLET_STATUS>;
   signIn: () => Promise<WALLET_STATUS>;
   signOut: () => Promise<WALLET_STATUS>;
-  getSigner: () => Promise<Signer<any, any>>;
+  getSigner: () => Promise<unknown>;
   getBalance: () => Promise<string>;
   getAssets: () => Promise<unknown[]>;
   getIsConnected: () => boolean;
@@ -54,5 +32,5 @@ interface WalletInterface<T> {
   toJSON: () => T;
 }
 
-export { WALLETS, WalletInterface };
-export type { ChainID, Signer, useWallets };
+export { WALLET, WalletInterface };
+export type { Signer, useWallets };

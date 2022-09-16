@@ -12,6 +12,7 @@ enum WALLET_HOOK {
   ACCOUNT_ON_CHANGE,
   ACCOUNT_ON_DISCONNECT,
   NEW_BLOCK,
+  CONNECT,
 }
 
 type HookEvent = {
