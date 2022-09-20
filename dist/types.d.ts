@@ -1,6 +1,6 @@
+import { ethers } from "ethers";
 import MyAlgoConnect, { Accounts as _Accounts1, SignedTx, AlgorandTxn, EncodedTransaction } from "@randlabs/myalgo-connect";
 import WalletConnectClient from "@walletconnect/client";
-import { ethers } from "ethers";
 export class NotImplementedError extends Error {
     constructor(message?: string);
 }
@@ -24,6 +24,61 @@ type HookEvent = {
     destroy: () => void;
     id: Symbol;
 };
+export const useWindow: <T>(cb: (windowObject: unknown) => T) => T | null;
+type MetamaskState = {
+    accounts: string[];
+    isConnected: boolean;
+};
+type MetamaskSigner = ethers.providers.JsonRpcSigner;
+type MetamaskAsset = {};
+type MetamaskChainConfig = {
+    chainName: string;
+    chainId: string;
+    nativeCurrency: {
+        name: string;
+        decimals: 18;
+        symbol: string;
+    };
+    rpcUrls: string[];
+};
+export class Metamask implements WalletInterface<MetamaskState> {
+    state: MetamaskState;
+    provider?: ethers.providers.Web3Provider;
+    constructor(state?: MetamaskState);
+    init(): Promise<WALLET_STATUS>;
+    signIn(): Promise<WALLET_STATUS>;
+    signOut(): Promise<WALLET_STATUS>;
+    getSigner(): Promise<ethers.providers.JsonRpcSigner>;
+    getBalance(): Promise<string>;
+    getAssets(): Promise<MetamaskAsset[]>;
+    getIsConnected(): boolean;
+    getIsWalletInstalled(): boolean;
+    getPrimaryAccount(): string;
+    getAccounts(): string[];
+    fetchCurrentChainID(): Promise<string>;
+    addChainToWallet(chainConfig: MetamaskChainConfig): Promise<void>;
+    switchChainFromWallet(chain: number): Promise<void>;
+    forceCurrentChainID(chain: number): Promise<void>;
+    onAccountChange(cb: (accounts: string[]) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onChainChange(cb: (chain: string) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onAccountDisconnect(cb: () => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onChainDisconnect(cb: () => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onBlockAdded(cb: (newBlock: number) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    toJSON(): MetamaskState;
+    mountEventListeners(): Promise<void>;
+    unmountEventListeners(): Promise<void>;
+    getProvider(): Promise<ethers.providers.Web3Provider>;
+}
+export type EthereumWallet = Metamask;
+export type EthereumSigner = MetamaskSigner;
+export type EthereumState = {
+    metaMask?: MetamaskState;
+};
+export class Ethereum {
+    metaMask: Metamask;
+    constructor(data?: EthereumState);
+}
+export const CHAIN_ID_ETH = 2;
 type MyAlgoState = {
     accounts: _Accounts1[];
     isConnected: boolean;
@@ -109,60 +164,7 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     toJSON(): MyAlgoState;
     getProvider(): MyAlgoConnect;
 }
-export const useWindow: <T>(cb: (windowObject: unknown) => T) => T | null;
-type MetamaskState = {
-    accounts: string[];
-    isConnected: boolean;
-};
-type MetamaskSigner = ethers.providers.JsonRpcSigner;
-type MetamaskAsset = {};
-type MetamaskChainConfig = {
-    chainName: string;
-    chainId: string;
-    nativeCurrency: {
-        name: string;
-        decimals: 18;
-        symbol: string;
-    };
-    rpcUrls: string[];
-};
-export class Metamask implements WalletInterface<MetamaskState> {
-    state: MetamaskState;
-    provider?: ethers.providers.Web3Provider;
-    constructor(state?: MetamaskState);
-    init(): Promise<WALLET_STATUS>;
-    signIn(): Promise<WALLET_STATUS>;
-    signOut(): Promise<WALLET_STATUS>;
-    getSigner(): Promise<ethers.providers.JsonRpcSigner>;
-    getBalance(): Promise<string>;
-    getAssets(): Promise<MetamaskAsset[]>;
-    getIsConnected(): boolean;
-    getIsWalletInstalled(): boolean;
-    getPrimaryAccount(): string;
-    getAccounts(): string[];
-    fetchCurrentChainID(): Promise<string>;
-    addChainToWallet(chainConfig: MetamaskChainConfig): Promise<void>;
-    switchChainFromWallet(chain: number): Promise<void>;
-    forceCurrentChainID(chain: number): Promise<void>;
-    onAccountChange(cb: (accounts: string[]) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
-    onChainChange(cb: (chain: string) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
-    onAccountDisconnect(cb: () => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
-    onChainDisconnect(cb: () => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
-    onBlockAdded(cb: (newBlock: number) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
-    toJSON(): MetamaskState;
-    mountEventListeners(): Promise<void>;
-    unmountEventListeners(): Promise<void>;
-    getProvider(): Promise<ethers.providers.Web3Provider>;
-}
-export type EthereumWallet = Metamask;
-export type EthereumSigner = MetamaskSigner;
-export type EthereumState = {
-    metaMask?: MetamaskState;
-};
-export class Ethereum {
-    metaMask: Metamask;
-    constructor(data?: EthereumState);
-}
+export const CHAIN_ID_ALGORAND = 8;
 export type WALLET = AlgorandWallet | EthereumWallet;
 export interface useWallets {
     use(walletName: "MYALGO"): MyAlgo;

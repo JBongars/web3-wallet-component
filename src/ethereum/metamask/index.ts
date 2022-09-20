@@ -6,6 +6,8 @@ import {
 } from "~/src/errors";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import { WALLET_HOOK, WALLET_STATUS } from "~/src/utils/HookRouter/types";
+import WalletStateStorage from "~/src/WalletStateStorage";
+import { CHAIN_ID_ETH } from "..";
 import { useWindow } from "../../containers";
 import { WalletInterface } from "../../types";
 import { getChainConfig } from "./chains";
@@ -30,6 +32,7 @@ class Metamask implements WalletInterface<MetamaskState> {
   private chain: string | null = null;
   public state: MetamaskState;
   public provider?: ethers.providers.Web3Provider;
+  private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ID_ETH)
 
   constructor(state?: MetamaskState) {
     if (state) {
@@ -37,6 +40,8 @@ class Metamask implements WalletInterface<MetamaskState> {
     } else {
       this.state = { ...initialState };
     }
+
+    this.setupInitialState()
   }
 
   private async _getProvider(): Promise<ethers.providers.Web3Provider> {
@@ -81,6 +86,8 @@ class Metamask implements WalletInterface<MetamaskState> {
     this.state.accounts = await provider.send("eth_requestAccounts", []);
     this.state.isConnected = this.state.accounts.length > 0;
 
+    this.updateWalletStorageValue()
+
     this.hookRouter.applyHookWithArgs(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
       this.state.accounts
@@ -93,6 +100,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     this.state.accounts = [];
     this.state.isConnected = false;
 
+    this.updateWalletStorageValue()
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
     return WALLET_STATUS.OK;
   }
@@ -243,6 +251,7 @@ class Metamask implements WalletInterface<MetamaskState> {
               accounts
             );
           }
+          this.updateWalletStorageValue()
         });
 
         ethereum.on("chainChanged", async (chainId: string) => {
@@ -269,6 +278,25 @@ class Metamask implements WalletInterface<MetamaskState> {
     await this._enforceChain();
 
     return this._getProvider();
+  }
+
+   private setupInitialState() {
+    const storageValue = this.walletStorage.getValue();
+
+    if (storageValue) {
+      this.state = {
+        isConnected: storageValue.isConnected,
+        accounts: [storageValue.account],
+      };
+    }
+  }
+
+  private updateWalletStorageValue() {
+    if (this.state.isConnected && this.state.accounts.length > 0) {
+      this.walletStorage.updateValue(true, this.state.accounts[0]);
+    } else {
+      this.walletStorage.updateValue(false, "");
+    }
   }
 }
 
