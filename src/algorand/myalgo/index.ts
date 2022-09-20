@@ -9,7 +9,7 @@ import {
   WALLET_STATUS
 } from "~/src/utils/HookRouter/types";
 import WalletStateStorage from "~/src/WalletStateStorage";
-import { CHAIN_ID_ALGORAND } from "..";
+import { CHAIN_ALGORAND } from "..";
 import { AlgorandSignerTxn } from "../Algorand";
 import { WalletInterface } from "./../../types";
 import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from "./types";
@@ -33,7 +33,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   ]);
   public state: MyAlgoState;
   private provider: MyAlgoConnect | undefined;
-  private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ID_ALGORAND);
+  private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ALGORAND);
 
   constructor(state?: MyAlgoState) {
     if (state) {

@@ -78,7 +78,7 @@ export class Ethereum {
     metaMask: Metamask;
     constructor(data?: EthereumState);
 }
-export const CHAIN_ID_ETH = 2;
+export const CHAIN_ETHEREUM = "ETHEREUM";
 type MyAlgoState = {
     accounts: _Accounts1[];
     isConnected: boolean;
@@ -164,7 +164,7 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     toJSON(): MyAlgoState;
     getProvider(): MyAlgoConnect;
 }
-export const CHAIN_ID_ALGORAND = 8;
+export const CHAIN_ALGORAND = "ALGORAND";
 export type WALLET = AlgorandWallet | EthereumWallet;
 export interface useWallets {
     use(walletName: "MYALGO"): MyAlgo;

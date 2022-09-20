@@ -10,7 +10,7 @@ import {
   WALLET_STATUS
 } from "~/src/utils/HookRouter/types";
 import WalletStateStorage from "~/src/WalletStateStorage";
-import { CHAIN_ID_ALGORAND } from "..";
+import { CHAIN_ALGORAND } from "..";
 import { WalletInterface } from "../../types";
 import { AlgorandSignerTxn } from "../Algorand";
 import { WalletConnectAsset, WalletConnectSigner, WalletConnectState } from "./types";
@@ -35,7 +35,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   ]);
   public state: WalletConnectState;
   private provider: WalletConnectClient | undefined;
-  private walletStorage = new WalletStateStorage(CHAIN_ID_ALGORAND);
+  private walletStorage = new WalletStateStorage(CHAIN_ALGORAND);
 
   constructor(state?: WalletConnectState) {
     if (state) {
@@ -102,10 +102,10 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     this.state.accounts = [];
     this.state.isConnected = false;
 
-    if(!this.provider) {
+    if (!this.provider) {
       this.getProvider()
     }
-    
+
     try {
       await this.provider?.killSession();
     } catch (e) { }
@@ -217,7 +217,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     return this.provider;
   }
 
-   private setupInitialState() {
+  private setupInitialState() {
     const storageValue = this.walletStorage.getValue();
 
     if (storageValue) {

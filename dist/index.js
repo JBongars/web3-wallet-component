@@ -2,9 +2,9 @@ var $8zHUo$ethers = require("ethers");
 var $8zHUo$algosdk = require("algosdk");
 var $8zHUo$etherslibutils = require("ethers/lib/utils");
 var $8zHUo$randlabsmyalgoconnect = require("@randlabs/myalgo-connect");
-var $8zHUo$jsonrpctoolsutils = require("@json-rpc-tools/utils");
 var $8zHUo$walletconnectclient = require("@walletconnect/client");
 var $8zHUo$algorandwalletconnectqrcodemodal = require("algorand-walletconnect-qrcode-modal");
+var $8zHUo$jsonrpctoolsutils = require("@json-rpc-tools/utils");
 var $8zHUo$buffer = require("buffer");
 
 function $parcel$exportWildcard(dest, source) {
@@ -66,7 +66,7 @@ class $d083fd37dae77b99$export$f4d277c155d1965e extends Error {
 
 var $be737fe08c02d508$exports = {};
 
-$parcel$export($be737fe08c02d508$exports, "CHAIN_ID_ETH", () => $be737fe08c02d508$export$2f19268d1c51f382);
+$parcel$export($be737fe08c02d508$exports, "CHAIN_ETHEREUM", () => $be737fe08c02d508$export$aef6a8518da1f60c);
 var $2b09ea9ee8d63ad1$exports = {};
 
 $parcel$export($2b09ea9ee8d63ad1$exports, "Metamask", () => $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa);
@@ -149,7 +149,7 @@ let $57b8a5d2d8300786$export$5ee9bf08a91850b9;
 
 var $b94377bbb94beb7e$exports = {};
 
-$parcel$export($b94377bbb94beb7e$exports, "CHAIN_ID_ALGORAND", () => $b94377bbb94beb7e$export$5baaac08f92f532);
+$parcel$export($b94377bbb94beb7e$exports, "CHAIN_ALGORAND", () => $b94377bbb94beb7e$export$2e84527d78ea64a4);
 var $a75d728b25ccd0d3$exports = {};
 
 $parcel$export($a75d728b25ccd0d3$exports, "MyAlgo", () => $a75d728b25ccd0d3$export$6ab354d5c56bf95);
@@ -169,7 +169,7 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
     ]);
-    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$5baaac08f92f532));
+    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4));
     constructor(state){
         if (state) this.state = {
             ...state
@@ -307,7 +307,7 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
     ]);
-    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$5baaac08f92f532));
+    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4));
     constructor(state){
         if (state) this.state = {
             ...state
@@ -470,7 +470,7 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
 
 
 
-const $b94377bbb94beb7e$export$5baaac08f92f532 = 8;
+const $b94377bbb94beb7e$export$2e84527d78ea64a4 = "ALGORAND";
 $parcel$exportWildcard($b94377bbb94beb7e$exports, $a75d728b25ccd0d3$exports);
 $parcel$exportWildcard($b94377bbb94beb7e$exports, $f2b728861576b445$exports);
 $parcel$exportWildcard($b94377bbb94beb7e$exports, $2062ba71daa80b8d$exports);
@@ -492,16 +492,16 @@ $parcel$exportWildcard($fc578d3576b0d8ef$exports, $ff033dcd1750fc9d$exports);
 
 const $430794692bff5f59$var$STORAGE_KEY = "wallet-state-storage";
 class $430794692bff5f59$var$WalletStateStorage {
-    constructor(chainId){
-        this.chainId = chainId;
+    constructor(chain){
+        this.chain = chain;
         this.storage = this._storage();
     }
     getValue() {
-        const value = this.values().find((state)=>state.chainId === this.chainId) || null;
+        const value = this.values().find((state)=>state.chain === this.chain) || null;
         if (value && !this.isValidAddress(value.account)) return {
             isConnected: false,
             account: "",
-            chainId: this.chainId
+            chain: this.chain
         };
         return value;
     }
@@ -509,25 +509,25 @@ class $430794692bff5f59$var$WalletStateStorage {
         const exisitingValues = this.getValue();
         let values = this.values();
         if (exisitingValues) values = values.map((value)=>{
-            if (value.chainId === this.chainId) return {
-                chainId: this.chainId,
+            if (value.chain === this.chain) return {
+                chain: this.chain,
                 isConnected: isConnected,
                 account: account
             };
             return value;
         });
         else values = values.concat({
-            chainId: this.chainId,
+            chain: this.chain,
             isConnected: isConnected,
             account: account
         });
         this.storage?.setItem($430794692bff5f59$var$STORAGE_KEY, JSON.stringify(values));
     }
     isValidAddress(account) {
-        switch(this.chainId){
-            case 0, $be737fe08c02d508$export$2f19268d1c51f382:
+        switch(this.chain){
+            case 0, $be737fe08c02d508$export$aef6a8518da1f60c:
                 return (0, $8zHUo$etherslibutils.isAddress)(account);
-            case 0, $b94377bbb94beb7e$export$5baaac08f92f532:
+            case 0, $b94377bbb94beb7e$export$2e84527d78ea64a4:
                 return (0, $8zHUo$algosdk.isValidAddress)(account);
             default:
                 return false;
@@ -595,7 +595,7 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
     ]);
     chain = null;
-    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $be737fe08c02d508$export$2f19268d1c51f382));
+    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $be737fe08c02d508$export$aef6a8518da1f60c));
     constructor(state){
         if (state) this.state = {
             ...state
@@ -788,7 +788,7 @@ class $d5d3dec9ab4b7763$var$Ethereum {
 }
 
 
-const $be737fe08c02d508$export$2f19268d1c51f382 = 2;
+const $be737fe08c02d508$export$aef6a8518da1f60c = "ETHEREUM";
 $parcel$exportWildcard($be737fe08c02d508$exports, $2b09ea9ee8d63ad1$exports);
 $parcel$exportWildcard($be737fe08c02d508$exports, $d5d3dec9ab4b7763$exports);
 
