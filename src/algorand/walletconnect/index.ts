@@ -9,6 +9,8 @@ import {
   WALLET_HOOK,
   WALLET_STATUS
 } from "~/src/utils/HookRouter/types";
+import WalletStateStorage from "~/src/WalletStateStorage";
+import { CHAIN_ALGORAND } from "..";
 import { WalletInterface } from "../../types";
 import { AlgorandSignerTxn } from "../Algorand";
 import { WalletConnectAsset, WalletConnectSigner, WalletConnectState } from "./types";
@@ -33,6 +35,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   ]);
   public state: WalletConnectState;
   private provider: WalletConnectClient | undefined;
+  private walletStorage = new WalletStateStorage(CHAIN_ALGORAND);
 
   constructor(state?: WalletConnectState) {
     if (state) {
@@ -40,6 +43,8 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     } else {
       this.state = { ...initialState };
     }
+
+    this.setupInitialState()
   }
 
   private enforceIsConnected(): void {
@@ -66,6 +71,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
 
       this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
       this.state.accounts = accounts;
+      this.updateWalletStorageValue()
       this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     }
 
@@ -78,6 +84,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
       const { accounts } = payload.params[0];
       this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
       this.state.accounts = accounts;
+      this.updateWalletStorageValue()
       this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     }));
 
@@ -95,11 +102,15 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     this.state.accounts = [];
     this.state.isConnected = false;
 
+    if (!this.provider) {
+      this.getProvider()
+    }
+
     try {
       await this.provider?.killSession();
     } catch (e) { }
     this.provider = undefined;
-
+    this.updateWalletStorageValue()
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     return WALLET_STATUS.OK;
   }
@@ -147,7 +158,9 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public getIsConnected(): boolean {
-    return this.state.isConnected;
+    const provider = this.getProvider();
+
+    return provider.connected;
   }
 
   public getPrimaryAccount(): Accounts {
@@ -204,6 +217,25 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
       qrcodeModal: QRCodeModal,
     });
     return this.provider;
+  }
+
+  private setupInitialState() {
+    const storageValue = this.walletStorage.getValue();
+
+    if (storageValue) {
+      this.state = {
+        isConnected: this.getIsConnected(),
+        accounts: [storageValue.account],
+      };
+    }
+  }
+
+  private updateWalletStorageValue() {
+    if (this.state.isConnected && this.state.accounts.length > 0) {
+      this.walletStorage.updateValue(true, this.state.accounts[0], true);
+    } else {
+      this.walletStorage.updateValue(false, "", true);
+    }
   }
 }
 
