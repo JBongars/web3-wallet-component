@@ -5,7 +5,7 @@ import {
   WalletNotInstalledError
 } from "~/src/errors";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
-import { WALLET_HOOK, WALLET_STATUS } from "~/src/utils/HookRouter/types";
+import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from "~/src/utils/HookRouter/types";
 import WalletStateStorage from "~/src/WalletStateStorage";
 import { CHAIN_ETHEREUM } from "..";
 import { useWindow } from "../../containers";
@@ -32,7 +32,7 @@ class Metamask implements WalletInterface<MetamaskState> {
   private chain: string | null = null;
   public state: MetamaskState;
   public provider?: ethers.providers.Web3Provider;
-  private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM)
+  private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_METAMASK)
 
   constructor(state?: MetamaskState) {
     if (state) {

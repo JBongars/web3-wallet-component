@@ -131,6 +131,12 @@ let $90bab4f8b8f7e96d$export$de76a1f31766a0a2;
     WALLET_STATUS1[WALLET_STATUS1["EXTENSION_NOT_FOUND"] = 3] = "EXTENSION_NOT_FOUND";
     WALLET_STATUS1[WALLET_STATUS1["ACCOUNT_NOT_FOUND"] = 4] = "ACCOUNT_NOT_FOUND";
 })($90bab4f8b8f7e96d$export$de76a1f31766a0a2 || ($90bab4f8b8f7e96d$export$de76a1f31766a0a2 = {}));
+let $90bab4f8b8f7e96d$export$7c460c214963f696;
+(function(WALLET_ID1) {
+    WALLET_ID1[WALLET_ID1["ETHEREUM_METAMASK"] = 1] = "ETHEREUM_METAMASK";
+    WALLET_ID1[WALLET_ID1["ALGORAND_MYALGO"] = 2] = "ALGORAND_MYALGO";
+    WALLET_ID1[WALLET_ID1["ALGORAND_WALLETCONNECT"] = 3] = "ALGORAND_WALLETCONNECT";
+})($90bab4f8b8f7e96d$export$7c460c214963f696 || ($90bab4f8b8f7e96d$export$7c460c214963f696 = {}));
 let $90bab4f8b8f7e96d$export$5ee9bf08a91850b9;
 (function(WALLET_HOOK1) {
     WALLET_HOOK1[WALLET_HOOK1["CHAIN_ON_CHANGE"] = 0] = "CHAIN_ON_CHANGE";
@@ -166,7 +172,7 @@ class $0e4707f80e4e0187$export$6ab354d5c56bf95 {
         (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
         (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
     ]);
-    walletStorage = new (0, $3b49e6787d3f4e23$export$2e2bcd8739ae039)((0, $dc4d60a7eb431eef$export$2e84527d78ea64a4));
+    walletStorage = new (0, $3b49e6787d3f4e23$export$2e2bcd8739ae039)((0, $dc4d60a7eb431eef$export$2e84527d78ea64a4), (0, $90bab4f8b8f7e96d$export$7c460c214963f696).ALGORAND_MYALGO);
     constructor(state){
         if (state) this.state = {
             ...state
@@ -261,7 +267,7 @@ class $0e4707f80e4e0187$export$6ab354d5c56bf95 {
     setupInitialState() {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
-            isConnected: !storageValue.walletconnect && storageValue.isConnected,
+            isConnected: storageValue.isConnected,
             accounts: [
                 {
                     name: "",
@@ -304,7 +310,7 @@ class $6a9b0d356171a818$export$ba0ef3a0d99fcc8f {
         (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
         (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
     ]);
-    walletStorage = new (0, $3b49e6787d3f4e23$export$2e2bcd8739ae039)((0, $dc4d60a7eb431eef$export$2e84527d78ea64a4));
+    walletStorage = new (0, $3b49e6787d3f4e23$export$2e2bcd8739ae039)((0, $dc4d60a7eb431eef$export$2e84527d78ea64a4), (0, $90bab4f8b8f7e96d$export$7c460c214963f696).ALGORAND_WALLETCONNECT);
     constructor(state){
         if (state) this.state = {
             ...state
@@ -453,8 +459,8 @@ class $6a9b0d356171a818$export$ba0ef3a0d99fcc8f {
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0], true);
-        else this.walletStorage.updateValue(false, "", true);
+        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0]);
+        else this.walletStorage.updateValue(false, "");
     }
 }
 
@@ -490,29 +496,30 @@ $parcel$exportWildcard($8c78a71587639d7a$exports, $412a545945027ba9$exports);
 
 const $3b49e6787d3f4e23$var$STORAGE_KEY = "wallet-state-storage";
 class $3b49e6787d3f4e23$var$WalletStateStorage {
-    constructor(chain){
+    constructor(chain, walletid){
         this.chain = chain;
+        this.walletid = walletid;
         this.storage = this._storage();
     }
     getValue() {
-        const value = this.values().find((state)=>state.chain === this.chain) || null;
+        const value = this.values().find((state)=>state.chain === this.chain && this.walletid == state.walletid) || null;
         if (value && !this.isValidAddress(value.account)) return {
             isConnected: false,
             account: "",
             chain: this.chain,
-            walletconnect: false
+            walletid: this.walletid
         };
         return value;
     }
-    updateValue(isConnected, account, walletconnect = false) {
+    updateValue(isConnected, account) {
         const exisitingValues = this.getValue();
         let values = this.values();
         if (exisitingValues) values = values.map((value)=>{
-            if (value.chain === this.chain) return {
+            if (value.chain === this.chain && value.walletid === this.walletid) return {
                 chain: this.chain,
                 isConnected: isConnected,
                 account: account,
-                walletconnect: walletconnect
+                walletid: this.walletid
             };
             return value;
         });
@@ -520,7 +527,7 @@ class $3b49e6787d3f4e23$var$WalletStateStorage {
             chain: this.chain,
             isConnected: isConnected,
             account: account,
-            walletconnect: walletconnect
+            walletid: this.walletid
         });
         this.storage?.setItem($3b49e6787d3f4e23$var$STORAGE_KEY, JSON.stringify(values));
     }
@@ -596,7 +603,7 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, 
     ]);
     chain = null;
-    walletStorage = new (0, $3b49e6787d3f4e23$export$2e2bcd8739ae039)((0, $61dc865ce14f4bf4$export$aef6a8518da1f60c));
+    walletStorage = new (0, $3b49e6787d3f4e23$export$2e2bcd8739ae039)((0, $61dc865ce14f4bf4$export$aef6a8518da1f60c), (0, $90bab4f8b8f7e96d$export$7c460c214963f696).ETHEREUM_METAMASK);
     constructor(state){
         if (state) this.state = {
             ...state
