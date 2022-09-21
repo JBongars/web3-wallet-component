@@ -163,7 +163,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
 
     if (storageValue) {
       this.state = {
-        isConnected: storageValue.isConnected,
+        isConnected: !storageValue.walletconnect && storageValue.isConnected,
         accounts: [{ name: "", address: storageValue.account }],
       };
     }

@@ -8,6 +8,7 @@ type StorageValue = {
   isConnected: boolean;
   account: string;
   chain: string;
+  walletconnect: boolean
 };
 
 const STORAGE_KEY = "wallet-state-storage";
@@ -28,14 +29,15 @@ class WalletStateStorage {
       return {
         isConnected: false,
         account: "",
-        chain: this.chain
+        chain: this.chain,
+        walletconnect: false,
       };
     }
 
     return value
   }
 
-  public updateValue(isConnected: boolean, account: string): void {
+  public updateValue(isConnected: boolean, account: string, walletconnect: boolean = false): void {
     const exisitingValues = this.getValue();
     let values = this.values();
 
@@ -46,6 +48,7 @@ class WalletStateStorage {
             chain: this.chain,
             isConnected,
             account,
+            walletconnect
           };
         }
         return value;
@@ -55,6 +58,7 @@ class WalletStateStorage {
         chain: this.chain,
         isConnected,
         account,
+        walletconnect
       });
     }
 

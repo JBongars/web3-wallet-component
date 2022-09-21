@@ -2,9 +2,9 @@ import {ethers as $hgUW1$ethers} from "ethers";
 import {isValidAddress as $hgUW1$isValidAddress} from "algosdk";
 import {isAddress as $hgUW1$isAddress} from "ethers/lib/utils";
 import $hgUW1$randlabsmyalgoconnect from "@randlabs/myalgo-connect";
+import {formatJsonRpcRequest as $hgUW1$formatJsonRpcRequest} from "@json-rpc-tools/utils";
 import $hgUW1$walletconnectclient from "@walletconnect/client";
 import $hgUW1$algorandwalletconnectqrcodemodal from "algorand-walletconnect-qrcode-modal";
-import {formatJsonRpcRequest as $hgUW1$formatJsonRpcRequest} from "@json-rpc-tools/utils";
 import {Buffer as $hgUW1$Buffer} from "buffer";
 
 function $parcel$export(e, n, v, s) {
@@ -261,7 +261,7 @@ class $0e4707f80e4e0187$export$6ab354d5c56bf95 {
     setupInitialState() {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
-            isConnected: storageValue.isConnected,
+            isConnected: !storageValue.walletconnect && storageValue.isConnected,
             accounts: [
                 {
                     name: "",
@@ -400,7 +400,8 @@ class $6a9b0d356171a818$export$ba0ef3a0d99fcc8f {
         return true; // wallet is web only so is always installed
     }
     getIsConnected() {
-        return this.state.isConnected;
+        const provider = this.getProvider();
+        return provider.connected;
     }
     getPrimaryAccount() {
         return {
@@ -445,15 +446,15 @@ class $6a9b0d356171a818$export$ba0ef3a0d99fcc8f {
     setupInitialState() {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
-            isConnected: storageValue.isConnected,
+            isConnected: this.getIsConnected(),
             accounts: [
                 storageValue.account
             ]
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0]);
-        else this.walletStorage.updateValue(false, "");
+        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0], true);
+        else this.walletStorage.updateValue(false, "", true);
     }
 }
 
@@ -498,25 +499,28 @@ class $3b49e6787d3f4e23$var$WalletStateStorage {
         if (value && !this.isValidAddress(value.account)) return {
             isConnected: false,
             account: "",
-            chain: this.chain
+            chain: this.chain,
+            walletconnect: false
         };
         return value;
     }
-    updateValue(isConnected, account) {
+    updateValue(isConnected, account, walletconnect = false) {
         const exisitingValues = this.getValue();
         let values = this.values();
         if (exisitingValues) values = values.map((value)=>{
             if (value.chain === this.chain) return {
                 chain: this.chain,
                 isConnected: isConnected,
-                account: account
+                account: account,
+                walletconnect: walletconnect
             };
             return value;
         });
         else values = values.concat({
             chain: this.chain,
             isConnected: isConnected,
-            account: account
+            account: account,
+            walletconnect: walletconnect
         });
         this.storage?.setItem($3b49e6787d3f4e23$var$STORAGE_KEY, JSON.stringify(values));
     }
@@ -794,5 +798,5 @@ $parcel$exportWildcard($61dc865ce14f4bf4$exports, $85bc198bca370cae$exports);
 
 
 
-export {$61dc865ce14f4bf4$export$aef6a8518da1f60c as CHAIN_ETHEREUM, $05db05568a951b86$export$2c78a3b4fc11d8fa as Metamask, $dc4d60a7eb431eef$export$2e84527d78ea64a4 as CHAIN_ALGORAND, $0e4707f80e4e0187$export$6ab354d5c56bf95 as MyAlgo, $b5af4601982a5fe5$export$2a2454b5976b73ac as Algorand, $6a9b0d356171a818$export$ba0ef3a0d99fcc8f as WalletConnect, $412a545945027ba9$export$24b8fbafc4b6a151 as useWindow, $28ac839a9eca26f5$export$e162153238934121 as NotImplementedError, $28ac839a9eca26f5$export$72563c16b91dfd16 as WalletNotInstalledError, $28ac839a9eca26f5$export$313d299817c74896 as WalletNotConnectedError, $28ac839a9eca26f5$export$f4d277c155d1965e as HookNotAvailableError};
+export {$28ac839a9eca26f5$export$e162153238934121 as NotImplementedError, $28ac839a9eca26f5$export$72563c16b91dfd16 as WalletNotInstalledError, $28ac839a9eca26f5$export$313d299817c74896 as WalletNotConnectedError, $28ac839a9eca26f5$export$f4d277c155d1965e as HookNotAvailableError, $61dc865ce14f4bf4$export$aef6a8518da1f60c as CHAIN_ETHEREUM, $05db05568a951b86$export$2c78a3b4fc11d8fa as Metamask, $dc4d60a7eb431eef$export$2e84527d78ea64a4 as CHAIN_ALGORAND, $0e4707f80e4e0187$export$6ab354d5c56bf95 as MyAlgo, $b5af4601982a5fe5$export$2a2454b5976b73ac as Algorand, $6a9b0d356171a818$export$ba0ef3a0d99fcc8f as WalletConnect, $412a545945027ba9$export$24b8fbafc4b6a151 as useWindow};
 //# sourceMappingURL=module.js.map

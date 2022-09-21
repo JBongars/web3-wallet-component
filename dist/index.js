@@ -2,9 +2,9 @@ var $8zHUo$ethers = require("ethers");
 var $8zHUo$algosdk = require("algosdk");
 var $8zHUo$etherslibutils = require("ethers/lib/utils");
 var $8zHUo$randlabsmyalgoconnect = require("@randlabs/myalgo-connect");
+var $8zHUo$jsonrpctoolsutils = require("@json-rpc-tools/utils");
 var $8zHUo$walletconnectclient = require("@walletconnect/client");
 var $8zHUo$algorandwalletconnectqrcodemodal = require("algorand-walletconnect-qrcode-modal");
-var $8zHUo$jsonrpctoolsutils = require("@json-rpc-tools/utils");
 var $8zHUo$buffer = require("buffer");
 
 function $parcel$exportWildcard(dest, source) {
@@ -264,7 +264,7 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     setupInitialState() {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
-            isConnected: storageValue.isConnected,
+            isConnected: !storageValue.walletconnect && storageValue.isConnected,
             accounts: [
                 {
                     name: "",
@@ -403,7 +403,8 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         return true; // wallet is web only so is always installed
     }
     getIsConnected() {
-        return this.state.isConnected;
+        const provider = this.getProvider();
+        return provider.connected;
     }
     getPrimaryAccount() {
         return {
@@ -448,15 +449,15 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
     setupInitialState() {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
-            isConnected: storageValue.isConnected,
+            isConnected: this.getIsConnected(),
             accounts: [
                 storageValue.account
             ]
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0]);
-        else this.walletStorage.updateValue(false, "");
+        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0], true);
+        else this.walletStorage.updateValue(false, "", true);
     }
 }
 
@@ -501,25 +502,28 @@ class $430794692bff5f59$var$WalletStateStorage {
         if (value && !this.isValidAddress(value.account)) return {
             isConnected: false,
             account: "",
-            chain: this.chain
+            chain: this.chain,
+            walletconnect: false
         };
         return value;
     }
-    updateValue(isConnected, account) {
+    updateValue(isConnected, account, walletconnect = false) {
         const exisitingValues = this.getValue();
         let values = this.values();
         if (exisitingValues) values = values.map((value)=>{
             if (value.chain === this.chain) return {
                 chain: this.chain,
                 isConnected: isConnected,
-                account: account
+                account: account,
+                walletconnect: walletconnect
             };
             return value;
         });
         else values = values.concat({
             chain: this.chain,
             isConnected: isConnected,
-            account: account
+            account: account,
+            walletconnect: walletconnect
         });
         this.storage?.setItem($430794692bff5f59$var$STORAGE_KEY, JSON.stringify(values));
     }
@@ -796,10 +800,10 @@ $parcel$exportWildcard($be737fe08c02d508$exports, $d5d3dec9ab4b7763$exports);
 
 
 $parcel$exportWildcard(module.exports, $faefaad95e5fcca0$exports);
+$parcel$exportWildcard(module.exports, $d083fd37dae77b99$exports);
 $parcel$exportWildcard(module.exports, $be737fe08c02d508$exports);
 $parcel$exportWildcard(module.exports, $b94377bbb94beb7e$exports);
 $parcel$exportWildcard(module.exports, $fc578d3576b0d8ef$exports);
-$parcel$exportWildcard(module.exports, $d083fd37dae77b99$exports);
 
 
 //# sourceMappingURL=index.js.map

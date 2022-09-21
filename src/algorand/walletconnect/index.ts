@@ -158,7 +158,9 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public getIsConnected(): boolean {
-    return this.state.isConnected;
+    const provider = this.getProvider();
+
+    return provider.connected;
   }
 
   public getPrimaryAccount(): Accounts {
@@ -222,7 +224,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
 
     if (storageValue) {
       this.state = {
-        isConnected: storageValue.isConnected,
+        isConnected: this.getIsConnected(),
         accounts: [storageValue.account],
       };
     }
@@ -230,9 +232,9 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
 
   private updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-      this.walletStorage.updateValue(true, this.state.accounts[0]);
+      this.walletStorage.updateValue(true, this.state.accounts[0], true);
     } else {
-      this.walletStorage.updateValue(false, "");
+      this.walletStorage.updateValue(false, "", true);
     }
   }
 }
