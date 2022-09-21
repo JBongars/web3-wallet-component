@@ -477,16 +477,24 @@ class $b82f469e02efa91a$export$9741c3aebc6a0fb7 {
         ]);
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
+    // public async getSigner(): Promise<WalletConnectSigner> {
+    //   return async (
+    //     transactions: TransactionRequest[]
+    //   ): Promise<TransactionResponse[]> => {
+    //     this._enforceChain();
+    //     this._enforceIsConnected();
+    //     const provider = this.provider || (await this._getProvider());
+    //     const transactionResponse = await provider
+    //       .getSigner()
+    //       .sendTransaction(transactions[0]);
+    //     return [transactionResponse];
+    //   };
+    // }
     async getSigner() {
-        return async (transactions)=>{
-            this._enforceChain();
-            this._enforceIsConnected();
-            const provider = this.provider || await this._getProvider();
-            const transactionResponse = await provider.getSigner().sendTransaction(transactions[0]);
-            return [
-                transactionResponse
-            ];
-        };
+        this._enforceChain();
+        this._enforceIsConnected();
+        const provider = this.provider || await this._getProvider();
+        return provider.getSigner();
     }
     async getBalance() {
         this._enforceChain();
@@ -925,5 +933,5 @@ $parcel$exportWildcard($dc4d60a7eb431eef$exports, $6a9b0d356171a818$exports);
 
 
 
-export {$05db05568a951b86$export$2c78a3b4fc11d8fa as Metamask, $0e4707f80e4e0187$export$6ab354d5c56bf95 as MyAlgo, $b5af4601982a5fe5$export$2a2454b5976b73ac as Algorand, $6a9b0d356171a818$export$ba0ef3a0d99fcc8f as WalletConnect, $412a545945027ba9$export$24b8fbafc4b6a151 as useWindow, $28ac839a9eca26f5$export$e162153238934121 as NotImplementedError, $28ac839a9eca26f5$export$72563c16b91dfd16 as WalletNotInstalledError, $28ac839a9eca26f5$export$313d299817c74896 as WalletNotConnectedError, $28ac839a9eca26f5$export$f4d277c155d1965e as HookNotAvailableError};
+export {$28ac839a9eca26f5$export$e162153238934121 as NotImplementedError, $28ac839a9eca26f5$export$72563c16b91dfd16 as WalletNotInstalledError, $28ac839a9eca26f5$export$313d299817c74896 as WalletNotConnectedError, $28ac839a9eca26f5$export$f4d277c155d1965e as HookNotAvailableError, $05db05568a951b86$export$2c78a3b4fc11d8fa as Metamask, $b82f469e02efa91a$export$9741c3aebc6a0fb7 as EthWalletConnect, $0e4707f80e4e0187$export$6ab354d5c56bf95 as MyAlgo, $b5af4601982a5fe5$export$2a2454b5976b73ac as Algorand, $6a9b0d356171a818$export$ba0ef3a0d99fcc8f as WalletConnect, $412a545945027ba9$export$24b8fbafc4b6a151 as useWindow};
 //# sourceMappingURL=module.js.map

@@ -154,7 +154,51 @@ export class Metamask implements WalletInterface<MetamaskState> {
     unmountEventListeners(): Promise<void>;
     getProvider(): Promise<ethers.providers.Web3Provider>;
 }
-export type EthereumWallet = Metamask;
+type _WalletConnectState1 = {
+    accounts: string[];
+    isConnected: boolean;
+};
+type _WalletConnectAsset1 = {};
+type WalletConnectChainConfig = {
+    chainName: string;
+    chainId: string;
+    nativeCurrency: {
+        name: string;
+        decimals: 18;
+        symbol: string;
+    };
+    rpcUrls: string[];
+};
+export class EthWalletConnect implements WalletInterface<_WalletConnectState1> {
+    state: _WalletConnectState1;
+    provider?: ethers.providers.Web3Provider;
+    constructor(state?: _WalletConnectState1);
+    init(): Promise<WALLET_STATUS>;
+    signIn(): Promise<WALLET_STATUS>;
+    signOut(): Promise<WALLET_STATUS>;
+    getSigner(): Promise<ethers.providers.JsonRpcSigner>;
+    getBalance(): Promise<string>;
+    getAssets(): Promise<_WalletConnectAsset1[]>;
+    getIsConnected(): boolean;
+    getIsWalletInstalled(): boolean;
+    getPrimaryAccount(): string;
+    getAccounts(): string[];
+    fetchCurrentChainID(): Promise<string>;
+    addChainToWallet(chainConfig: WalletConnectChainConfig): Promise<void>;
+    switchChainFromWallet(chain: number): Promise<void>;
+    forceCurrentChainID(chain: number): Promise<void>;
+    onAccountChange(cb: (accounts: string[]) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onChainChange(cb: (chain: string) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onAccountDisconnect(cb: () => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onChainDisconnect(cb: () => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onBlockAdded(cb: (newBlock: number) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    toJSON(): _WalletConnectState1;
+    mountEventListeners(): Promise<void>;
+    unmountEventListeners(): Promise<void>;
+    getProvider(): Promise<ethers.providers.Web3Provider>;
+    getWeb3Provider(): Promise<ethers.providers.Web3Provider>;
+}
+export type EthereumWallet = Metamask | EthWalletConnect;
 export type EthereumSigner = MetamaskSigner;
 export type EthereumState = {
     metaMask?: MetamaskState;

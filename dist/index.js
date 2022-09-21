@@ -480,16 +480,24 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         ]);
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
+    // public async getSigner(): Promise<WalletConnectSigner> {
+    //   return async (
+    //     transactions: TransactionRequest[]
+    //   ): Promise<TransactionResponse[]> => {
+    //     this._enforceChain();
+    //     this._enforceIsConnected();
+    //     const provider = this.provider || (await this._getProvider());
+    //     const transactionResponse = await provider
+    //       .getSigner()
+    //       .sendTransaction(transactions[0]);
+    //     return [transactionResponse];
+    //   };
+    // }
     async getSigner() {
-        return async (transactions)=>{
-            this._enforceChain();
-            this._enforceIsConnected();
-            const provider = this.provider || await this._getProvider();
-            const transactionResponse = await provider.getSigner().sendTransaction(transactions[0]);
-            return [
-                transactionResponse
-            ];
-        };
+        this._enforceChain();
+        this._enforceIsConnected();
+        const provider = this.provider || await this._getProvider();
+        return provider.getSigner();
     }
     async getBalance() {
         this._enforceChain();
@@ -927,10 +935,10 @@ $parcel$exportWildcard($b94377bbb94beb7e$exports, $2062ba71daa80b8d$exports);
 
 
 $parcel$exportWildcard(module.exports, $faefaad95e5fcca0$exports);
+$parcel$exportWildcard(module.exports, $d083fd37dae77b99$exports);
 $parcel$exportWildcard(module.exports, $be737fe08c02d508$exports);
 $parcel$exportWildcard(module.exports, $b94377bbb94beb7e$exports);
 $parcel$exportWildcard(module.exports, $fc578d3576b0d8ef$exports);
-$parcel$exportWildcard(module.exports, $d083fd37dae77b99$exports);
 
 
 //# sourceMappingURL=index.js.map

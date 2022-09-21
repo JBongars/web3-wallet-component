@@ -4,7 +4,7 @@ import { EthWalletConnect } from "./walletconnect";
 import { WalletConnectState } from "./walletconnect/types";
 import { MetamaskState, MetamaskSigner } from "./metamask/types";
 
-type EthereumWallet = Metamask;
+type EthereumWallet = Metamask | EthWalletConnect;
 
 type EthereumSigner = MetamaskSigner;
 

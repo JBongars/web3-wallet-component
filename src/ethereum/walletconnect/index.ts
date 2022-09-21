@@ -1,4 +1,4 @@
-import { WalletInterface, ChainID } from "../../types";
+import { WalletInterface } from "../../types";
 import {
   WalletConnectAsset,
   WalletConnectChainConfig,
@@ -114,20 +114,28 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     return WALLET_STATUS.OK;
   }
 
-  public async getSigner(): Promise<WalletConnectSigner> {
-    return async (
-      transactions: TransactionRequest[]
-    ): Promise<TransactionResponse[]> => {
-      this._enforceChain();
-      this._enforceIsConnected();
+  // public async getSigner(): Promise<WalletConnectSigner> {
+  //   return async (
+  //     transactions: TransactionRequest[]
+  //   ): Promise<TransactionResponse[]> => {
+  //     this._enforceChain();
+  //     this._enforceIsConnected();
 
-      const provider = this.provider || (await this._getProvider());
-      const transactionResponse = await provider
-        .getSigner()
-        .sendTransaction(transactions[0]);
+  //     const provider = this.provider || (await this._getProvider());
+  //     const transactionResponse = await provider
+  //       .getSigner()
+  //       .sendTransaction(transactions[0]);
 
-      return [transactionResponse];
-    };
+  //     return [transactionResponse];
+  //   };
+  // }
+  public async getSigner(): Promise<ethers.providers.JsonRpcSigner> {
+    this._enforceChain();
+    this._enforceIsConnected();
+
+    const provider = this.provider || (await this._getProvider());
+
+    return provider.getSigner();
   }
 
   public async getBalance(): Promise<string> {
