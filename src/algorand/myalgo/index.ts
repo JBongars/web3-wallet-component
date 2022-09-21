@@ -6,8 +6,11 @@ import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import {
   HookEvent,
   WALLET_HOOK,
+  WALLET_ID,
   WALLET_STATUS
 } from "~/src/utils/HookRouter/types";
+import WalletStateStorage from "~/src/WalletStateStorage";
+import { CHAIN_ALGORAND } from "..";
 import { AlgorandSignerTxn } from "../Algorand";
 import { WalletInterface } from "./../../types";
 import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from "./types";
@@ -31,6 +34,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   ]);
   public state: MyAlgoState;
   private provider: MyAlgoConnect | undefined;
+  private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_MYALGO);
 
   constructor(state?: MyAlgoState) {
     if (state) {
@@ -38,6 +42,8 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     } else {
       this.state = { ...initialState };
     }
+
+    this.setupInitialState()
   }
 
   private enforceIsConnected(): void {
@@ -60,7 +66,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
       shouldSelectOneAccount,
     });
     this.state.isConnected = this.state.accounts.length > 0;
-
+    this.updateWalletStorageValue();
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     return WALLET_STATUS.OK;
   }
@@ -69,19 +75,19 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     this.enforceIsConnected();
     this.state.accounts = [];
     this.state.isConnected = false;
-
+    this.updateWalletStorageValue();
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     return WALLET_STATUS.OK;
   }
 
   public async getSigner(): Promise<MyAlgoSigner> {
-    return async (
-      transactions: AlgorandSignerTxn
-    ): Promise<SignedTx[]> => {
+    return async (transactions: AlgorandSignerTxn): Promise<SignedTx[]> => {
       this.enforceIsConnected();
 
       const myAlgoConnect = this.getProvider();
-      const signedTx = await myAlgoConnect.signTransaction(transactions as MyAlgoTransaction);
+      const signedTx = await myAlgoConnect.signTransaction(
+        transactions as MyAlgoTransaction
+      );
 
       return signedTx;
     };
@@ -151,6 +157,25 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
 
     this.provider = new MyAlgoConnect();
     return this.provider;
+  }
+
+  private setupInitialState() {
+    const storageValue = this.walletStorage.getValue();
+
+    if (storageValue) {
+      this.state = {
+        isConnected: storageValue.isConnected,
+        accounts: [{ name: "", address: storageValue.account }],
+      };
+    }
+  }
+
+  private updateWalletStorageValue() {
+    if (this.state.isConnected && this.state.accounts.length > 0) {
+      this.walletStorage.updateValue(true, this.state.accounts[0].address);
+    } else {
+      this.walletStorage.updateValue(false, "");
+    }
   }
 }
 
