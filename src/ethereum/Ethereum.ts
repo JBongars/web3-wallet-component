@@ -1,5 +1,4 @@
 import { Metamask } from "./metamask";
-// import { MetamaskState } from "./metamask/types";
 import { EthWalletConnect } from "./walletconnect";
 import { WalletConnectState } from "./walletconnect/types";
 import { MetamaskState, MetamaskSigner } from "./metamask/types";

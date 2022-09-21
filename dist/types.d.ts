@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import MyAlgoConnect, { Accounts as _Accounts1, SignedTx, AlgorandTxn, EncodedTransaction } from "@randlabs/myalgo-connect";
+import MyAlgoConnect, { Accounts as _Accounts2, SignedTx, AlgorandTxn, EncodedTransaction } from "@randlabs/myalgo-connect";
 import WalletConnectClient from "@walletconnect/client";
 export class NotImplementedError extends Error {
     constructor(message?: string);
@@ -69,18 +69,68 @@ export class Metamask implements WalletInterface<MetamaskState> {
     unmountEventListeners(): Promise<void>;
     getProvider(): Promise<ethers.providers.Web3Provider>;
 }
-export type EthereumWallet = Metamask;
+type WalletConnectState = {
+    accounts: string[];
+    isConnected: boolean;
+};
+type WalletConnectAsset = {};
+type WalletConnectChainConfig = {
+    chainName: string;
+    chainId: string;
+    nativeCurrency: {
+        name: string;
+        decimals: 18;
+        symbol: string;
+    };
+    rpcUrls: string[];
+};
+type Accounts = {
+    address: string;
+    name: string;
+};
+export class EthWalletConnect implements WalletInterface<WalletConnectState> {
+    state: WalletConnectState;
+    provider?: ethers.providers.Web3Provider;
+    constructor(state?: WalletConnectState);
+    init(): Promise<WALLET_STATUS>;
+    signIn(): Promise<WALLET_STATUS>;
+    signOut(): Promise<WALLET_STATUS>;
+    getSigner(): Promise<ethers.providers.JsonRpcSigner>;
+    getBalance(): Promise<string>;
+    getAssets(): Promise<WalletConnectAsset[]>;
+    getIsConnected(): boolean;
+    getIsWalletInstalled(): boolean;
+    getPrimaryAccount(): Accounts;
+    getAccounts(): string[];
+    fetchCurrentChainID(): Promise<string>;
+    addChainToWallet(chainConfig: WalletConnectChainConfig): Promise<void>;
+    switchChainFromWallet(chain: number): Promise<void>;
+    forceCurrentChainID(chain: number): Promise<void>;
+    onAccountChange(cb: (accounts: string[]) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onChainChange(cb: (chain: string) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onAccountDisconnect(cb: () => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onChainDisconnect(cb: () => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    onBlockAdded(cb: (newBlock: number) => void | Promise<void>): import("~/src/utils/HookRouter/types").HookEvent;
+    toJSON(): WalletConnectState;
+    mountEventListeners(): Promise<void>;
+    unmountEventListeners(): Promise<void>;
+    getProvider(): Promise<ethers.providers.Web3Provider>;
+    getWeb3Provider(): Promise<ethers.providers.Web3Provider>;
+}
+export type EthereumWallet = Metamask | EthWalletConnect;
 export type EthereumSigner = MetamaskSigner;
 export type EthereumState = {
     metaMask?: MetamaskState;
+    walletConnect?: WalletConnectState;
 };
 export class Ethereum {
     metaMask: Metamask;
+    walletConnect: EthWalletConnect;
     constructor(data?: EthereumState);
 }
 export const CHAIN_ETHEREUM = "ETHEREUM";
 type MyAlgoState = {
-    accounts: _Accounts1[];
+    accounts: _Accounts2[];
     isConnected: boolean;
 };
 type MyAlgoSigner = Signer<AlgorandSignerTxn, SignedTx>;
@@ -91,41 +141,41 @@ type MyAlgoAsset = {
     id: String;
     sourceDecimals: Number;
 };
-type WalletConnectState = {
+type _WalletConnectState1 = {
     accounts: string[];
     isConnected: boolean;
 };
 type WalletConnectSigner = Signer<AlgorandSignerTxn, SignedTx>;
-type WalletConnectAsset = {
+type _WalletConnectAsset1 = {
     chainId: String;
     name: String;
     unit_name: String;
     id: String;
     sourceDecimals: Number;
 };
-type Accounts = {
+type _Accounts1 = {
     address: string;
     name: string;
 };
 export type WalletConnectTransaction = Uint8Array[];
-export class WalletConnect implements WalletInterface<WalletConnectState> {
-    state: WalletConnectState;
-    constructor(state?: WalletConnectState);
+export class WalletConnect implements WalletInterface<_WalletConnectState1> {
+    state: _WalletConnectState1;
+    constructor(state?: _WalletConnectState1);
     init(): Promise<WALLET_STATUS>;
     signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
     getSigner(): Promise<WalletConnectSigner>;
     getBalance(): Promise<string>;
-    getAssets(): Promise<WalletConnectAsset[]>;
+    getAssets(): Promise<_WalletConnectAsset1[]>;
     getIsWalletInstalled(): boolean;
     getIsConnected(): boolean;
-    getPrimaryAccount(): Accounts;
-    getAccounts(): Accounts[];
+    getPrimaryAccount(): _Accounts1;
+    getAccounts(): _Accounts1[];
     fetchCurrentChainID(): Promise<string>;
-    onAccountChange(cb: (accounts: Accounts) => void | Promise<void>): HookEvent;
+    onAccountChange(cb: (accounts: _Accounts1) => void | Promise<void>): HookEvent;
     onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
-    toJSON(): WalletConnectState;
+    toJSON(): _WalletConnectState1;
     getProvider(): WalletConnectClient;
 }
 export type AlgorandWallet = MyAlgo | WalletConnect;
@@ -133,7 +183,7 @@ export type AlgorandSignerTxn = MyAlgoTransaction | WalletConnectTransaction;
 export type AlgorandSigner = MyAlgoSigner | WalletConnectSigner;
 export type AlgorandState = {
     myAlgo?: MyAlgoState;
-    walletConnect?: WalletConnectState;
+    walletConnect?: _WalletConnectState1;
 };
 export class Algorand {
     myAlgo: MyAlgo;
@@ -155,10 +205,10 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     getAssets(): Promise<MyAlgoAsset[]>;
     getIsWalletInstalled(): boolean;
     getIsConnected(): boolean;
-    getPrimaryAccount(): _Accounts1;
-    getAccounts(): _Accounts1[];
+    getPrimaryAccount(): _Accounts2;
+    getAccounts(): _Accounts2[];
     fetchCurrentChainID(): Promise<string>;
-    onAccountChange(cb: (accounts: _Accounts1) => void | Promise<void>): HookEvent;
+    onAccountChange(cb: (accounts: _Accounts2) => void | Promise<void>): HookEvent;
     onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
     toJSON(): MyAlgoState;

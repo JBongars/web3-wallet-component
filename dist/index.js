@@ -2,10 +2,11 @@ var $8zHUo$ethers = require("ethers");
 var $8zHUo$algosdk = require("algosdk");
 var $8zHUo$etherslibutils = require("ethers/lib/utils");
 var $8zHUo$randlabsmyalgoconnect = require("@randlabs/myalgo-connect");
-var $8zHUo$jsonrpctoolsutils = require("@json-rpc-tools/utils");
 var $8zHUo$walletconnectclient = require("@walletconnect/client");
 var $8zHUo$algorandwalletconnectqrcodemodal = require("algorand-walletconnect-qrcode-modal");
+var $8zHUo$jsonrpctoolsutils = require("@json-rpc-tools/utils");
 var $8zHUo$buffer = require("buffer");
+var $8zHUo$walletconnectweb3provider = require("@walletconnect/web3-provider");
 
 function $parcel$exportWildcard(dest, source) {
   Object.keys(source).forEach(function(key) {
@@ -830,6 +831,8 @@ const $75b5db72ee15c73c$export$703a843624f42e6c = (chainId)=>{
 
 
 
+
+
 const $b4976c18f17a124b$var$initialState = Object.freeze({
     accounts: [],
     isConnected: false
@@ -843,6 +846,7 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
     ]);
     chain = null;
+    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $be737fe08c02d508$export$aef6a8518da1f60c));
     constructor(state){
         if (state) this.state = {
             ...state
@@ -881,6 +885,7 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         const provider = await this._getProvider();
         this.state.accounts = await provider.listAccounts(); //await provider.send("eth_requestAccounts", []);
         this.state.isConnected = this.state.accounts.length > 0;
+        this.updateWalletStorageValue();
         this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, this.state.accounts);
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
@@ -888,6 +893,8 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         this._enforceIsConnected();
         this.state.accounts = [];
         this.state.isConnected = false;
+        this.provider = undefined;
+        this.updateWalletStorageValue();
         this.hookRouter.applyHooks([
             (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
         ]);
@@ -932,7 +939,11 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
     getPrimaryAccount() {
         this._enforceChain();
         this._enforceIsConnected();
-        return this.state.accounts[0];
+        // return this.state.accounts[0];
+        return {
+            address: this.state.accounts[0],
+            name: ""
+        };
     }
     getAccounts() {
         this._enforceChain();
@@ -1046,7 +1057,20 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
     async getWeb3Provider() {
         return await this._getWeb3Provider();
     }
+    updateWalletStorageValue() {
+        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0], true);
+        else this.walletStorage.updateValue(false, "", true);
+    }
 }
+
+
+class $d5d3dec9ab4b7763$var$Ethereum {
+    constructor(data){
+        this.metaMask = new (0, $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa)(data?.metaMask);
+        this.walletConnect = new (0, $b4976c18f17a124b$export$9741c3aebc6a0fb7)();
+    }
+}
+
 
 
 const $be737fe08c02d508$export$aef6a8518da1f60c = "ETHEREUM";

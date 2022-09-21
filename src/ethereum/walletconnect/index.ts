@@ -20,11 +20,19 @@ import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import { WALLET_HOOK, WALLET_STATUS } from "~/src/utils/HookRouter/types";
 import { getChainConfig } from "./chains";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import WalletStateStorage from "~/src/WalletStateStorage";
+import { CHAIN_ETHEREUM } from ".."
 
 const initialState: Readonly<WalletConnectState> = Object.freeze({
   accounts: [],
   isConnected: false,
 });
+
+type Accounts = {
+  address: string;
+  name: string;
+}
+
 
 class EthWalletConnect implements WalletInterface<WalletConnectState> {
   private hookRouter: HookRouter = new HookRouter([
@@ -37,6 +45,7 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   private chain: string | null = null;
   public state: WalletConnectState;
   public provider?: ethers.providers.Web3Provider;
+  private walletStorage = new WalletStateStorage(CHAIN_ETHEREUM);
 
   constructor(state?: WalletConnectState) {
     if (state) {
@@ -97,7 +106,7 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     const provider = await this._getProvider();
     this.state.accounts = await provider.listAccounts(); //await provider.send("eth_requestAccounts", []);
     this.state.isConnected = this.state.accounts.length > 0;
-
+    this.updateWalletStorageValue();
     this.hookRouter.applyHookWithArgs(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
       this.state.accounts
@@ -109,6 +118,8 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     this._enforceIsConnected();
     this.state.accounts = [];
     this.state.isConnected = false;
+    this.provider = undefined;
+    this.updateWalletStorageValue();
 
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
     return WALLET_STATUS.OK;
@@ -163,11 +174,15 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     return Boolean(ethereum);
   }
 
-  public getPrimaryAccount(): string {
+  public getPrimaryAccount(): Accounts {
     this._enforceChain();
     this._enforceIsConnected();
 
-    return this.state.accounts[0];
+    // return this.state.accounts[0];
+    return {
+      address: this.state.accounts[0],
+      name: ""
+    };
   }
 
   public getAccounts(): string[] {
@@ -316,6 +331,14 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
 
   public async getWeb3Provider():Promise<ethers.providers.Web3Provider> {
     return await this._getWeb3Provider();
+  }
+
+  private updateWalletStorageValue() {
+    if (this.state.isConnected && this.state.accounts.length > 0) {
+      this.walletStorage.updateValue(true, this.state.accounts[0], true);
+    } else {
+      this.walletStorage.updateValue(false, "", true);
+    }
   }
   
 }
