@@ -1,6 +1,5 @@
 import MyAlgoConnect, {
-  Accounts, AlgorandTxn,
-  EncodedTransaction, SignedTx
+  Accounts, AlgorandTxn, EncodedTransaction, SignedTx
 } from "@randlabs/myalgo-connect";
 import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
@@ -9,12 +8,15 @@ import {
   WALLET_HOOK,
   WALLET_STATUS
 } from "~/src/utils/HookRouter/types";
+import { AlgorandSignerTxn } from "../Algorand";
 import { WalletInterface } from "./../../types";
 import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from "./types";
 
 type MyAlgoConfig = {
   shouldSelectOneAccount?: boolean;
 };
+
+type MyAlgoTransaction = AlgorandTxn[] | EncodedTransaction[];
 
 const initialState: Readonly<MyAlgoState> = Object.freeze({
   accounts: [],
@@ -74,12 +76,12 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
 
   public async getSigner(): Promise<MyAlgoSigner> {
     return async (
-      transactions: AlgorandTxn[] | EncodedTransaction[]
+      transactions: AlgorandSignerTxn
     ): Promise<SignedTx[]> => {
       this.enforceIsConnected();
 
       const myAlgoConnect = this.getProvider();
-      const signedTx = await myAlgoConnect.signTransaction(transactions);
+      const signedTx = await myAlgoConnect.signTransaction(transactions as MyAlgoTransaction);
 
       return signedTx;
     };
@@ -153,4 +155,4 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
 }
 
 export { MyAlgo };
-export { MyAlgoConfig };
+export type { MyAlgoConfig, MyAlgoTransaction };

@@ -1,24 +1,18 @@
-import { WalletInterface, ChainID } from "../../types";
-import {
-  MetamaskAsset,
-  MetamaskChainConfig,
-  MetamaskSigner,
-  MetamaskState,
-} from "./types";
 import { ethers } from "ethers";
-import {
-  TransactionRequest,
-  TransactionResponse,
-} from "@ethersproject/abstract-provider";
-import { useWindow } from "../../containers";
 import {
   NotImplementedError,
   WalletNotConnectedError,
-  WalletNotInstalledError,
+  WalletNotInstalledError
 } from "~/src/errors";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import { WALLET_HOOK, WALLET_STATUS } from "~/src/utils/HookRouter/types";
+import { useWindow } from "../../containers";
+import { WalletInterface } from "../../types";
 import { getChainConfig } from "./chains";
+import {
+  MetamaskAsset,
+  MetamaskChainConfig, MetamaskState
+} from "./types";
 
 const initialState: Readonly<MetamaskState> = Object.freeze({
   accounts: [],
@@ -103,20 +97,13 @@ class Metamask implements WalletInterface<MetamaskState> {
     return WALLET_STATUS.OK;
   }
 
-  public async getSigner(): Promise<MetamaskSigner> {
-    return async (
-      transactions: TransactionRequest[]
-    ): Promise<TransactionResponse[]> => {
-      this._enforceChain();
-      this._enforceIsConnected();
+  public async getSigner(): Promise<ethers.providers.JsonRpcSigner> {
+    this._enforceChain();
+    this._enforceIsConnected();
 
-      const provider = this.provider || (await this._getProvider());
-      const transactionResponse = await provider
-        .getSigner()
-        .sendTransaction(transactions[0]);
+    const provider = this.provider || (await this._getProvider());
 
-      return [transactionResponse];
-    };
+    return provider.getSigner();
   }
 
   public async getBalance(): Promise<string> {
@@ -245,7 +232,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     const provider = await this._getProvider();
     if (typeof window !== "undefined" && "ethereum" in window) {
       const ethereum = useWindow((window: any) => window.ethereum);
-      if(ethereum.on) {
+      if (ethereum.on) {
         ethereum.on("accountsChanged", async (accounts: string[]) => {
           this.state.accounts = accounts;
           if (accounts.length === 0) {
@@ -257,11 +244,11 @@ class Metamask implements WalletInterface<MetamaskState> {
             );
           }
         });
-    
+
         ethereum.on("chainChanged", async (chainId: string) => {
           this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, chainId);
         });
-    
+
         ethereum.on("disconnect", async (err: Error) => {
           this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
         });

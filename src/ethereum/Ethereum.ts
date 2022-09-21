@@ -1,7 +1,12 @@
 import { Metamask } from "./metamask";
-import { MetamaskState } from "./metamask/types";
+// import { MetamaskState } from "./metamask/types";
 import { EthWalletConnect } from "./walletconnect";
 import { WalletConnectState } from "./walletconnect/types";
+import { MetamaskState, MetamaskSigner } from "./metamask/types";
+
+type EthereumWallet = Metamask;
+
+type EthereumSigner = MetamaskSigner;
 
 type EthereumState = {
   metaMask?: MetamaskState;
@@ -18,4 +23,4 @@ class Ethereum {
   }
 }
 
-export type { Ethereum, EthereumState };
+export type { EthereumWallet, EthereumSigner, Ethereum, EthereumState };
