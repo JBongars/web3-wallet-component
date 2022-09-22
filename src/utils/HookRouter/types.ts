@@ -6,6 +6,12 @@ enum WALLET_STATUS {
   ACCOUNT_NOT_FOUND,
 }
 
+enum WALLET_ID {
+  ETHEREUM_METAMASK = 1,
+  ALGORAND_MYALGO = 2,
+  ALGORAND_WALLETCONNECT = 3
+}
+
 enum WALLET_HOOK {
   CHAIN_ON_CHANGE,
   CHAIN_ON_DISCONNECT,
@@ -20,5 +26,5 @@ type HookEvent = {
   id: Symbol;
 };
 
-export { WALLET_HOOK, WALLET_STATUS };
+export { WALLET_HOOK, WALLET_STATUS, WALLET_ID };
 export type { HookEvent };

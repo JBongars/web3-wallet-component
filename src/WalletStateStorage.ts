@@ -3,12 +3,13 @@ import { isAddress } from "ethers/lib/utils";
 import { CHAIN_ALGORAND } from "./algorand";
 import { useWindow } from "./containers";
 import { CHAIN_ETHEREUM } from "./ethereum";
+import { WALLET_ID } from "./utils/HookRouter/types";
 
 type StorageValue = {
   isConnected: boolean;
   account: string;
   chain: string;
-  walletconnect: boolean
+  walletid: WALLET_ID
 };
 
 const STORAGE_KEY = "wallet-state-storage";
@@ -16,39 +17,41 @@ const STORAGE_KEY = "wallet-state-storage";
 class WalletStateStorage {
   private chain: string;
   private storage: Storage | null;
+  private walletid: WALLET_ID
 
-  constructor(chain: string) {
+  constructor(chain: string, walletid: WALLET_ID) {
     this.chain = chain;
+    this.walletid = walletid
     this.storage = this._storage();
   }
 
   public getValue(): StorageValue | null {
-    const value = this.values().find((state) => state.chain === this.chain) || null;
+    const value = this.values().find((state) => state.chain === this.chain && this.walletid == state.walletid) || null;
 
     if (value && !this.isValidAddress(value.account)) {
       return {
         isConnected: false,
         account: "",
         chain: this.chain,
-        walletconnect: false,
+        walletid: this.walletid
       };
     }
 
     return value
   }
 
-  public updateValue(isConnected: boolean, account: string, walletconnect: boolean = false): void {
+  public updateValue(isConnected: boolean, account: string): void {
     const exisitingValues = this.getValue();
     let values = this.values();
 
     if (exisitingValues) {
       values = values.map((value) => {
-        if (value.chain === this.chain) {
+        if (value.chain === this.chain && value.walletid === this.walletid) {
           return {
             chain: this.chain,
             isConnected,
             account,
-            walletconnect
+            walletid: this.walletid
           };
         }
         return value;
@@ -58,7 +61,7 @@ class WalletStateStorage {
         chain: this.chain,
         isConnected,
         account,
-        walletconnect
+        walletid: this.walletid
       });
     }
 

@@ -6,6 +6,7 @@ import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import {
   HookEvent,
   WALLET_HOOK,
+  WALLET_ID,
   WALLET_STATUS
 } from "~/src/utils/HookRouter/types";
 import WalletStateStorage from "~/src/WalletStateStorage";
@@ -33,7 +34,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   ]);
   public state: MyAlgoState;
   private provider: MyAlgoConnect | undefined;
-  private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ALGORAND);
+  private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_MYALGO);
 
   constructor(state?: MyAlgoState) {
     if (state) {
@@ -163,7 +164,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
 
     if (storageValue) {
       this.state = {
-        isConnected: !storageValue.walletconnect && storageValue.isConnected,
+        isConnected: storageValue.isConnected,
         accounts: [{ name: "", address: storageValue.account }],
       };
     }
