@@ -47,7 +47,7 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     } else {
       this.state = { ...initialState };
     }
-    
+    this.setupInitialState();
   }
 
   private async _getProvider(): Promise<ethers.providers.Web3Provider> {
@@ -252,6 +252,17 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   public async getProvider(): Promise<ethers.providers.Web3Provider> {
     await this._enforceChain();
     return await this._getProvider();
+  }
+
+  private setupInitialState() {
+    const storageValue = this.walletStorage.getValue();
+
+    if (storageValue) {
+      this.state = {
+        isConnected: storageValue.isConnected,
+        accounts: [storageValue.account],
+      };
+    }
   }
 
   private updateWalletStorageValue() {

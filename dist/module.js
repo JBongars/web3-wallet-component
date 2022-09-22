@@ -859,6 +859,7 @@ class $b82f469e02efa91a$export$9741c3aebc6a0fb7 {
         else this.state = {
             ...$b82f469e02efa91a$var$initialState
         };
+        this.setupInitialState();
     }
     async _getProvider() {
         const provider = await this.getWCProvider();
@@ -869,7 +870,6 @@ class $b82f469e02efa91a$export$9741c3aebc6a0fb7 {
     }
     async _enforceChain() {
         if (this.chain === null) return;
-        // const provider = await this._getWeb3Provider();
         const provider = await this._getProvider();
         const currentChain = await provider.send("eth_chainId", []);
         if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
@@ -1000,6 +1000,15 @@ class $b82f469e02efa91a$export$9741c3aebc6a0fb7 {
     async getProvider() {
         await this._enforceChain();
         return await this._getProvider();
+    }
+    setupInitialState() {
+        const storageValue = this.walletStorage.getValue();
+        if (storageValue) this.state = {
+            isConnected: storageValue.isConnected,
+            accounts: [
+                storageValue.account
+            ]
+        };
     }
     updateWalletStorageValue() {
         if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0]);
