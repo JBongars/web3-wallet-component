@@ -140,6 +140,7 @@ let $57b8a5d2d8300786$export$7c460c214963f696;
     WALLET_ID1[WALLET_ID1["ETHEREUM_METAMASK"] = 1] = "ETHEREUM_METAMASK";
     WALLET_ID1[WALLET_ID1["ALGORAND_MYALGO"] = 2] = "ALGORAND_MYALGO";
     WALLET_ID1[WALLET_ID1["ALGORAND_WALLETCONNECT"] = 3] = "ALGORAND_WALLETCONNECT";
+    WALLET_ID1[WALLET_ID1["ETHEREUM_WALLETCONNECT"] = 4] = "ETHEREUM_WALLETCONNECT";
 })($57b8a5d2d8300786$export$7c460c214963f696 || ($57b8a5d2d8300786$export$7c460c214963f696 = {}));
 let $57b8a5d2d8300786$export$5ee9bf08a91850b9;
 (function(WALLET_HOOK1) {
@@ -176,7 +177,7 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
     ]);
-    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4), (0, $57b8a5d2d8300786$export$7c460c214963f696).ALGORAND_MYALGO);
+    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4));
     constructor(state){
         if (state) this.state = {
             ...state
@@ -271,7 +272,7 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     setupInitialState() {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
-            isConnected: storageValue.isConnected,
+            isConnected: !storageValue.walletconnect && storageValue.isConnected,
             accounts: [
                 {
                     name: "",
@@ -314,7 +315,7 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
     ]);
-    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4), (0, $57b8a5d2d8300786$export$7c460c214963f696).ALGORAND_WALLETCONNECT);
+    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4));
     constructor(state){
         if (state) this.state = {
             ...state
@@ -463,8 +464,8 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0]);
-        else this.walletStorage.updateValue(false, "");
+        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0], true);
+        else this.walletStorage.updateValue(false, "", true);
     }
 }
 
@@ -853,7 +854,7 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
     ]);
     chain = null;
-    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $be737fe08c02d508$export$aef6a8518da1f60c));
+    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $be737fe08c02d508$export$aef6a8518da1f60c), (0, $57b8a5d2d8300786$export$7c460c214963f696).ETHEREUM_WALLETCONNECT);
     constructor(state){
         if (state) this.state = {
             ...state
@@ -863,26 +864,41 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         };
     }
     async _getProvider() {
-        const walletConnectProvider = new (0, ($parcel$interopDefault($8zHUo$walletconnectweb3provider)))({
-            infuraId: "f83857b162d64708b25a59585f969fbd",
-            qrcode: true
-        });
-        await walletConnectProvider.enable();
-        return new (0, $8zHUo$ethers.providers).Web3Provider(walletConnectProvider);
+        // const walletConnectProvider = new WalletConnectProvider({
+        //   infuraId: "f83857b162d64708b25a59585f969fbd", // Required
+        //   qrcode: true
+        // });
+        // await walletConnectProvider.enable();
+        // return new providers.Web3Provider(walletConnectProvider)
+        const provider = await this.getWCProvider();
+        return new (0, $8zHUo$ethers.providers).Web3Provider(provider);
     }
-    async _getWeb3Provider() {
-        const ethereum = await (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
-        if (!Boolean(ethereum)) throw new (0, $d083fd37dae77b99$export$72563c16b91dfd16)();
-        return new (0, $8zHUo$ethers.ethers).providers.Web3Provider(ethereum);
-    }
+    // private async _getWeb3Provider(): Promise<ethers.providers.Web3Provider> {
+    //   const ethereum = (await useWindow(
+    //     async (windowObject) => (windowObject as any).ethereum
+    //   )) as any;
+    //   if (!Boolean(ethereum)) {
+    //     throw new WalletNotInstalledError();
+    //   }
+    //   return new ethers.providers.Web3Provider(ethereum);
+    // }
     _enforceIsConnected() {
         if (!this.getIsConnected()) throw new (0, $d083fd37dae77b99$export$313d299817c74896)();
     }
     async _enforceChain() {
         if (this.chain === null) return;
-        const provider = await this._getWeb3Provider();
+        // const provider = await this._getWeb3Provider();
+        const provider = await this._getProvider();
         const currentChain = await provider.send("eth_chainId", []);
         if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
+    }
+    async getWCProvider() {
+        const walletConnectProvider = new (0, ($parcel$interopDefault($8zHUo$walletconnectweb3provider)))({
+            infuraId: "f83857b162d64708b25a59585f969fbd",
+            qrcode: true
+        });
+        await walletConnectProvider.enable();
+        return walletConnectProvider;
     }
     async init() {
         this.provider = await this._getProvider();
@@ -902,6 +918,7 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         this.state.isConnected = false;
         this.provider = undefined;
         this.updateWalletStorageValue();
+        (await this.getWCProvider()).disconnect();
         this.hookRouter.applyHooks([
             (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
         ]);
@@ -929,9 +946,10 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
     async getBalance() {
         this._enforceChain();
         this._enforceIsConnected();
-        const provider = await this._getWeb3Provider();
+        // const provider = await this._getWeb3Provider();
+        const provider = await this._getProvider();
         const balance = await provider.getBalance(this.state.accounts[0]);
-        return "12000000"; //balance.toString();
+        return balance.toString();
     }
     async getAssets() {
         throw new (0, $d083fd37dae77b99$export$e162153238934121)();
@@ -958,7 +976,8 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         return this.state.accounts;
     }
     async fetchCurrentChainID() {
-        const provider = await this._getWeb3Provider();
+        // const provider: ethers.providers.Web3Provider = await this._getWeb3Provider();
+        const provider = await this._getProvider();
         const chainId = await provider.send("eth_chainId", []);
         return chainId;
     }
@@ -1061,12 +1080,12 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         await this._enforceChain();
         return await this._getProvider();
     }
-    async getWeb3Provider() {
-        return await this._getWeb3Provider();
-    }
+    // public async getWeb3Provider():Promise<ethers.providers.Web3Provider> {
+    //   return await this._getWeb3Provider();
+    // }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0], true);
-        else this.walletStorage.updateValue(false, "", true);
+        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0]);
+        else this.walletStorage.updateValue(false, "");
     }
 }
 
@@ -1089,10 +1108,10 @@ $parcel$exportWildcard($be737fe08c02d508$exports, $b4976c18f17a124b$exports);
 
 
 $parcel$exportWildcard(module.exports, $faefaad95e5fcca0$exports);
+$parcel$exportWildcard(module.exports, $d083fd37dae77b99$exports);
 $parcel$exportWildcard(module.exports, $be737fe08c02d508$exports);
 $parcel$exportWildcard(module.exports, $b94377bbb94beb7e$exports);
 $parcel$exportWildcard(module.exports, $fc578d3576b0d8ef$exports);
-$parcel$exportWildcard(module.exports, $d083fd37dae77b99$exports);
 
 
 //# sourceMappingURL=index.js.map

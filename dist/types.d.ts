@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 import MyAlgoConnect, { Accounts as _Accounts2, SignedTx, AlgorandTxn, EncodedTransaction } from "@randlabs/myalgo-connect";
 import WalletConnectClient from "@walletconnect/client";
 export class NotImplementedError extends Error {
@@ -92,6 +93,7 @@ export class EthWalletConnect implements WalletInterface<WalletConnectState> {
     state: WalletConnectState;
     provider?: ethers.providers.Web3Provider;
     constructor(state?: WalletConnectState);
+    getWCProvider(): Promise<WalletConnectProvider>;
     init(): Promise<WALLET_STATUS>;
     signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
@@ -115,7 +117,6 @@ export class EthWalletConnect implements WalletInterface<WalletConnectState> {
     mountEventListeners(): Promise<void>;
     unmountEventListeners(): Promise<void>;
     getProvider(): Promise<ethers.providers.Web3Provider>;
-    getWeb3Provider(): Promise<ethers.providers.Web3Provider>;
 }
 export type EthereumWallet = Metamask | EthWalletConnect;
 export type EthereumSigner = MetamaskSigner;

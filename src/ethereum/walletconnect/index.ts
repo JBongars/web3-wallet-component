@@ -17,7 +17,7 @@ import {
   WalletNotInstalledError,
 } from "~/src/errors";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
-import { WALLET_HOOK, WALLET_STATUS } from "~/src/utils/HookRouter/types";
+import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from "~/src/utils/HookRouter/types";
 import { getChainConfig } from "./chains";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import WalletStateStorage from "~/src/WalletStateStorage";
@@ -45,7 +45,7 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   private chain: string | null = null;
   public state: WalletConnectState;
   public provider?: ethers.providers.Web3Provider;
-  private walletStorage = new WalletStateStorage(CHAIN_ETHEREUM);
+  private walletStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_WALLETCONNECT);
 
   constructor(state?: WalletConnectState) {
     if (state) {
@@ -57,25 +57,27 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   private async _getProvider(): Promise<ethers.providers.Web3Provider> {
-    const walletConnectProvider = new WalletConnectProvider({
-      infuraId: "f83857b162d64708b25a59585f969fbd", // Required
-      qrcode: true
-    });
-    await walletConnectProvider.enable();
-    return new providers.Web3Provider(walletConnectProvider)
+    // const walletConnectProvider = new WalletConnectProvider({
+    //   infuraId: "f83857b162d64708b25a59585f969fbd", // Required
+    //   qrcode: true
+    // });
+    // await walletConnectProvider.enable();
+    // return new providers.Web3Provider(walletConnectProvider)
+    const provider = await this.getWCProvider();
+    return new providers.Web3Provider(provider);
   }
 
-  private async _getWeb3Provider(): Promise<ethers.providers.Web3Provider> {
-    const ethereum = (await useWindow(
-      async (windowObject) => (windowObject as any).ethereum
-    )) as any;
+  // private async _getWeb3Provider(): Promise<ethers.providers.Web3Provider> {
+  //   const ethereum = (await useWindow(
+  //     async (windowObject) => (windowObject as any).ethereum
+  //   )) as any;
 
-    if (!Boolean(ethereum)) {
-      throw new WalletNotInstalledError();
-    }
+  //   if (!Boolean(ethereum)) {
+  //     throw new WalletNotInstalledError();
+  //   }
 
-    return new ethers.providers.Web3Provider(ethereum);
-  }
+  //   return new ethers.providers.Web3Provider(ethereum);
+  // }
 
   private _enforceIsConnected(): void {
     if (!this.getIsConnected()) {
@@ -86,7 +88,8 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   private async _enforceChain(): Promise<void> {
     if (this.chain === null) return;
 
-    const provider = await this._getWeb3Provider();
+    // const provider = await this._getWeb3Provider();
+    const provider = await this._getProvider();
     const currentChain: string = await provider.send("eth_chainId", []);
 
     if (currentChain !== this.chain) {
@@ -94,6 +97,16 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
         `Chain has changed to ${currentChain} when it should be ${this.chain}`
       );
     }
+  }
+
+  public async getWCProvider(): Promise<WalletConnectProvider> {
+    const walletConnectProvider = new WalletConnectProvider({
+      infuraId: "f83857b162d64708b25a59585f969fbd", // Required
+      qrcode: true
+    });
+    await walletConnectProvider.enable();
+
+    return walletConnectProvider;
   }
 
   public async init(): Promise<WALLET_STATUS> {
@@ -120,6 +133,7 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     this.state.isConnected = false;
     this.provider = undefined;
     this.updateWalletStorageValue();
+    (await this.getWCProvider()).disconnect();
 
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
     return WALLET_STATUS.OK;
@@ -153,9 +167,10 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     this._enforceChain();
     this._enforceIsConnected();
 
-    const provider = await this._getWeb3Provider();
+    // const provider = await this._getWeb3Provider();
+    const provider = await this._getProvider();
     const balance = await provider.getBalance(this.state.accounts[0]);
-    return '12000000'; //balance.toString();
+    return balance.toString();
   }
 
   public async getAssets(): Promise<WalletConnectAsset[]> {
@@ -193,7 +208,8 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public async fetchCurrentChainID(): Promise<string> {
-    const provider: ethers.providers.Web3Provider = await this._getWeb3Provider();
+    // const provider: ethers.providers.Web3Provider = await this._getWeb3Provider();
+    const provider: ethers.providers.Web3Provider = await this._getProvider();
     const chainId = await provider.send("eth_chainId", []);
 
     return chainId;
@@ -329,15 +345,15 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     return await this._getProvider();
   }
 
-  public async getWeb3Provider():Promise<ethers.providers.Web3Provider> {
-    return await this._getWeb3Provider();
-  }
+  // public async getWeb3Provider():Promise<ethers.providers.Web3Provider> {
+  //   return await this._getWeb3Provider();
+  // }
 
   private updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-      this.walletStorage.updateValue(true, this.state.accounts[0], true);
+      this.walletStorage.updateValue(true, this.state.accounts[0]);
     } else {
-      this.walletStorage.updateValue(false, "", true);
+      this.walletStorage.updateValue(false, "");
     }
   }
   
