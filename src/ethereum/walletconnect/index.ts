@@ -64,7 +64,6 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   private async _enforceChain(): Promise<void> {
     if (this.chain === null) return;
 
-    // const provider = await this._getWeb3Provider();
     const provider = await this._getProvider();
     const currentChain: string = await provider.send("eth_chainId", []);
 
