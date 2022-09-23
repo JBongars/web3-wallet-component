@@ -56,15 +56,12 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return WALLET_STATUS.OK;
   }
 
-  public async signIn(options: MyAlgoConfig = {}): Promise<WALLET_STATUS> {
-    const shouldSelectOneAccount = options.shouldSelectOneAccount || true;
+  public async signIn(): Promise<WALLET_STATUS> {
     const myAlgoConnect = this.getProvider();
 
     // forces user to only choose one account.
     // This prevents a lot of edge cases.
-    this.state.accounts = await myAlgoConnect.connect({
-      shouldSelectOneAccount,
-    });
+    this.state.accounts = await myAlgoConnect.connect();
     this.state.isConnected = this.state.accounts.length > 0;
     this.updateWalletStorageValue();
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
