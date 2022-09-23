@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@json-rpc-tools/utils": "^1.7.6",
+    "@perawallet/connect": "^0.2.3",
     "@randlabs/myalgo-connect": "^1.2.0",
     "@walletconnect/client": "^1.8.0",
     "algorand-walletconnect-qrcode-modal": "^1.8.0",
