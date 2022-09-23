@@ -35,6 +35,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   public state: MyAlgoState;
   private provider: MyAlgoConnect | undefined;
   private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_MYALGO);
+  public currentActiveAccountAddress:string = "";
 
   constructor(state?: MyAlgoState) {
     if (state) {
@@ -62,7 +63,9 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     // forces user to only choose one account.
     // This prevents a lot of edge cases.
     this.state.accounts = await myAlgoConnect.connect();
+
     this.state.isConnected = this.state.accounts.length > 0;
+
     this.updateWalletStorageValue();
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     return WALLET_STATUS.OK;
@@ -107,6 +110,19 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   }
 
   public getPrimaryAccount(): Accounts {
+    if(!this.getIsConnected()) {
+      return {
+        name: "",
+        address: "",
+      }
+    }
+    
+    const account = this.state.accounts.find(acc => acc.address === this.currentActiveAccountAddress);
+
+    if(this.currentActiveAccountAddress && account) {
+      return account
+    }
+
     return this.state.accounts[0];
   }
 
@@ -154,6 +170,14 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
 
     this.provider = new MyAlgoConnect();
     return this.provider;
+  }
+
+  public switchAccount(address: string) {
+    const account = this.state.accounts.find(acc => acc.address === address);
+
+    if(account) {
+      this.currentActiveAccountAddress = account.address
+    }
   }
 
   private setupInitialState() {
