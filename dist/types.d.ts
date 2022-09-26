@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
-import MyAlgoConnect, { Accounts as _Accounts1, SignedTx, AlgorandTxn, EncodedTransaction } from "@randlabs/myalgo-connect";
+import MyAlgoConnect, { Accounts as _Accounts2, SignedTx, AlgorandTxn, EncodedTransaction } from "@randlabs/myalgo-connect";
 import WalletConnectClient from "@walletconnect/client";
+import { PeraWalletConnect } from "@perawallet/connect";
 export class NotImplementedError extends Error {
     constructor(message?: string);
 }
@@ -80,7 +81,7 @@ export class Ethereum {
 }
 export const CHAIN_ETHEREUM = "ETHEREUM";
 type MyAlgoState = {
-    accounts: _Accounts1[];
+    accounts: _Accounts2[];
     isConnected: boolean;
 };
 type MyAlgoSigner = Signer<AlgorandSignerTxn, SignedTx>;
@@ -128,16 +129,55 @@ export class WalletConnect implements WalletInterface<WalletConnectState> {
     toJSON(): WalletConnectState;
     getProvider(): WalletConnectClient;
 }
-export type AlgorandWallet = MyAlgo | WalletConnect;
-export type AlgorandSignerTxn = MyAlgoTransaction | WalletConnectTransaction;
-export type AlgorandSigner = MyAlgoSigner | WalletConnectSigner;
+type PeraWalletState = {
+    accounts: string[];
+    isConnected: boolean;
+};
+type PeraWalletSigner = Signer<AlgorandSignerTxn, SignedTx>;
+type PeraWalletAsset = {
+    chainId: String;
+    name: String;
+    unit_name: String;
+    id: String;
+    sourceDecimals: Number;
+};
+type _Accounts1 = {
+    address: string;
+    name: string;
+};
+export type PeraWalletTransaction = Uint8Array[];
+export class PeraWallet implements WalletInterface<PeraWalletState> {
+    state: PeraWalletState;
+    constructor(state?: PeraWalletState);
+    init(): Promise<WALLET_STATUS>;
+    signIn(): Promise<WALLET_STATUS>;
+    signOut(): Promise<WALLET_STATUS>;
+    getSigner(): Promise<PeraWalletSigner>;
+    getBalance(): Promise<string>;
+    getAssets(): Promise<PeraWalletAsset[]>;
+    getIsWalletInstalled(): boolean;
+    getIsConnected(): boolean;
+    getPrimaryAccount(): _Accounts1;
+    getAccounts(): _Accounts1[];
+    fetchCurrentChainID(): Promise<string>;
+    onAccountChange(cb: (accounts: _Accounts1) => void | Promise<void>): HookEvent;
+    onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
+    onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
+    toJSON(): PeraWalletState;
+    getProvider(): PeraWalletConnect;
+}
+export type AlgorandWallet = MyAlgo | WalletConnect | PeraWallet;
+export type AlgorandSignerTxn = MyAlgoTransaction | WalletConnectTransaction | PeraWalletTransaction;
+export type AlgorandSigner = MyAlgoSigner | WalletConnectSigner | PeraWalletSigner;
 export type AlgorandState = {
     myAlgo?: MyAlgoState;
     walletConnect?: WalletConnectState;
+    peraWallet?: PeraWalletState;
 };
 export class Algorand {
     myAlgo: MyAlgo;
     walletConnect: WalletConnect;
+    peraWallet: PeraWallet;
     constructor(data?: AlgorandState);
 }
 export type MyAlgoConfig = {
@@ -156,10 +196,10 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     getAssets(): Promise<MyAlgoAsset[]>;
     getIsWalletInstalled(): boolean;
     getIsConnected(): boolean;
-    getPrimaryAccount(): _Accounts1;
-    getAccounts(): _Accounts1[];
+    getPrimaryAccount(): _Accounts2;
+    getAccounts(): _Accounts2[];
     fetchCurrentChainID(): Promise<string>;
-    onAccountChange(cb: (accounts: _Accounts1) => void | Promise<void>): HookEvent;
+    onAccountChange(cb: (accounts: _Accounts2) => void | Promise<void>): HookEvent;
     onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
     toJSON(): MyAlgoState;
