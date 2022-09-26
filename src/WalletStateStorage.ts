@@ -7,9 +7,10 @@ import { WALLET_ID } from "./utils/HookRouter/types";
 
 type StorageValue = {
   isConnected: boolean;
-  account: string;
+  connectedAccount: string;
   chain: string;
-  walletid: WALLET_ID
+  walletid: WALLET_ID,
+  accounts: string[]
 };
 
 const STORAGE_KEY = "wallet-state-storage";
@@ -28,19 +29,20 @@ class WalletStateStorage {
   public getValue(): StorageValue | null {
     const value = this.values().find((state) => state.chain === this.chain && this.walletid == state.walletid) || null;
 
-    if (value && !this.isValidAddress(value.account)) {
+    if (value && !this.isValidAddress(value.connectedAccount)) {
       return {
         isConnected: false,
-        account: "",
+        connectedAccount: "",
         chain: this.chain,
-        walletid: this.walletid
+        walletid: this.walletid,
+        accounts: value.accounts,
       };
     }
 
     return value
   }
 
-  public updateValue(isConnected: boolean, account: string): void {
+  public updateValue(isConnected: boolean, connectedAccount: string, accounts: string[]): void {
     const exisitingValues = this.getValue();
     let values = this.values();
 
@@ -50,8 +52,9 @@ class WalletStateStorage {
           return {
             chain: this.chain,
             isConnected,
-            account,
-            walletid: this.walletid
+            connectedAccount,
+            walletid: this.walletid,
+            accounts,
           };
         }
         return value;
@@ -60,8 +63,9 @@ class WalletStateStorage {
       values = values.concat({
         chain: this.chain,
         isConnected,
-        account,
-        walletid: this.walletid
+        connectedAccount,
+        walletid: this.walletid,
+        accounts
       });
     }
 

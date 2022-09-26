@@ -178,6 +178,8 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     if(account) {
       this.currentActiveAccountAddress = account.address
     }
+
+    this.updateWalletStorageValue()
   }
 
   private setupInitialState() {
@@ -186,16 +188,29 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     if (storageValue) {
       this.state = {
         isConnected: storageValue.isConnected,
-        accounts: [{ name: "", address: storageValue.account }],
+        accounts: storageValue.accounts
+          ? storageValue.accounts.map((address) => ({
+              name: "",
+              address,
+            }))
+          : [],
       };
+
+      this.currentActiveAccountAddress = storageValue.connectedAccount;
     }
   }
 
   private updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-      this.walletStorage.updateValue(true, this.state.accounts[0].address);
+      const accounts = this.getAccounts().map((acc) => acc.address);
+      const connectedAccount = this.getPrimaryAccount().address;
+      this.walletStorage.updateValue(
+        true,
+        connectedAccount,
+        accounts
+      );
     } else {
-      this.walletStorage.updateValue(false, "");
+      this.walletStorage.updateValue(false, "", []);
     }
   }
 }

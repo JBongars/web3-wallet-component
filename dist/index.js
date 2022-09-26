@@ -2,9 +2,9 @@ var $8zHUo$ethers = require("ethers");
 var $8zHUo$algosdk = require("algosdk");
 var $8zHUo$etherslibutils = require("ethers/lib/utils");
 var $8zHUo$randlabsmyalgoconnect = require("@randlabs/myalgo-connect");
+var $8zHUo$jsonrpctoolsutils = require("@json-rpc-tools/utils");
 var $8zHUo$walletconnectclient = require("@walletconnect/client");
 var $8zHUo$algorandwalletconnectqrcodemodal = require("algorand-walletconnect-qrcode-modal");
-var $8zHUo$jsonrpctoolsutils = require("@json-rpc-tools/utils");
 var $8zHUo$buffer = require("buffer");
 
 function $parcel$exportWildcard(dest, source) {
@@ -274,22 +274,27 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     switchAccount(address) {
         const account = this.state.accounts.find((acc)=>acc.address === address);
         if (account) this.currentActiveAccountAddress = account.address;
+        this.updateWalletStorageValue();
     }
     setupInitialState() {
         const storageValue = this.walletStorage.getValue();
-        if (storageValue) this.state = {
-            isConnected: storageValue.isConnected,
-            accounts: [
-                {
-                    name: "",
-                    address: storageValue.account
-                }
-            ]
-        };
+        if (storageValue) {
+            this.state = {
+                isConnected: storageValue.isConnected,
+                accounts: storageValue.accounts ? storageValue.accounts.map((address)=>({
+                        name: "",
+                        address: address
+                    })) : []
+            };
+            this.currentActiveAccountAddress = storageValue.connectedAccount;
+        }
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0].address);
-        else this.walletStorage.updateValue(false, "");
+        if (this.state.isConnected && this.state.accounts.length > 0) {
+            const accounts = this.getAccounts().map((acc)=>acc.address);
+            const connectedAccount = this.getPrimaryAccount().address;
+            this.walletStorage.updateValue(true, connectedAccount, accounts);
+        } else this.walletStorage.updateValue(false, "", []);
     }
 }
 
@@ -464,14 +469,15 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
             isConnected: this.getIsConnected(),
-            accounts: [
-                storageValue.account
-            ]
+            accounts: storageValue.accounts
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0]);
-        else this.walletStorage.updateValue(false, "");
+        if (this.state.isConnected && this.state.accounts.length > 0) {
+            const accounts = this.getAccounts().map((acc)=>acc.address);
+            const connectedAccount = this.getPrimaryAccount().address;
+            this.walletStorage.updateValue(true, connectedAccount, accounts);
+        } else this.walletStorage.updateValue(false, "", []);
     }
 }
 
@@ -514,31 +520,34 @@ class $430794692bff5f59$var$WalletStateStorage {
     }
     getValue() {
         const value = this.values().find((state)=>state.chain === this.chain && this.walletid == state.walletid) || null;
-        if (value && !this.isValidAddress(value.account)) return {
+        if (value && !this.isValidAddress(value.connectedAccount)) return {
             isConnected: false,
-            account: "",
+            connectedAccount: "",
             chain: this.chain,
-            walletid: this.walletid
+            walletid: this.walletid,
+            accounts: value.accounts
         };
         return value;
     }
-    updateValue(isConnected, account) {
+    updateValue(isConnected, connectedAccount, accounts) {
         const exisitingValues = this.getValue();
         let values = this.values();
         if (exisitingValues) values = values.map((value)=>{
             if (value.chain === this.chain && value.walletid === this.walletid) return {
                 chain: this.chain,
                 isConnected: isConnected,
-                account: account,
-                walletid: this.walletid
+                connectedAccount: connectedAccount,
+                walletid: this.walletid,
+                accounts: accounts
             };
             return value;
         });
         else values = values.concat({
             chain: this.chain,
             isConnected: isConnected,
-            account: account,
-            walletid: this.walletid
+            connectedAccount: connectedAccount,
+            walletid: this.walletid,
+            accounts: accounts
         });
         this.storage?.setItem($430794692bff5f59$var$STORAGE_KEY, JSON.stringify(values));
     }
@@ -786,14 +795,12 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
             isConnected: storageValue.isConnected,
-            accounts: [
-                storageValue.account
-            ]
+            accounts: storageValue.accounts
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0]);
-        else this.walletStorage.updateValue(false, "");
+        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.getPrimaryAccount(), this.getAccounts());
+        else this.walletStorage.updateValue(false, "", []);
     }
 }
 
@@ -815,10 +822,10 @@ $parcel$exportWildcard($be737fe08c02d508$exports, $d5d3dec9ab4b7763$exports);
 
 
 $parcel$exportWildcard(module.exports, $faefaad95e5fcca0$exports);
+$parcel$exportWildcard(module.exports, $d083fd37dae77b99$exports);
 $parcel$exportWildcard(module.exports, $be737fe08c02d508$exports);
 $parcel$exportWildcard(module.exports, $b94377bbb94beb7e$exports);
 $parcel$exportWildcard(module.exports, $fc578d3576b0d8ef$exports);
-$parcel$exportWildcard(module.exports, $d083fd37dae77b99$exports);
 
 
 //# sourceMappingURL=index.js.map

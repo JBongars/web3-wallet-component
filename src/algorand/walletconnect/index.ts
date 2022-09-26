@@ -226,16 +226,18 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     if (storageValue) {
       this.state = {
         isConnected: this.getIsConnected(),
-        accounts: [storageValue.account],
+        accounts: storageValue.accounts,
       };
     }
   }
 
   private updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-      this.walletStorage.updateValue(true, this.state.accounts[0]);
+       const accounts = this.getAccounts().map(acc => acc.address);
+       const connectedAccount = this.getPrimaryAccount().address;
+      this.walletStorage.updateValue(true, connectedAccount, accounts);
     } else {
-      this.walletStorage.updateValue(false, "");
+      this.walletStorage.updateValue(false, "", []);
     }
   }
 }
