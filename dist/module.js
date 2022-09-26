@@ -520,10 +520,6 @@ class $b5560c6a127e9264$export$6a733d504587e4b0 {
         this.hookRouter.applyHooks([
             (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
         ]);
-        console.log({
-            accounts: this.state.accounts,
-            isConnected: this.state.isConnected
-        });
         // if (!this.provider.connected) {
         //   // create new session
         //   await this.provider.createSession();
@@ -603,7 +599,7 @@ class $b5560c6a127e9264$export$6a733d504587e4b0 {
         return true; // wallet is web only so is always installed
     }
     getIsConnected() {
-        return this.provider?.connector?.connected || false;
+        return Boolean(this.getAccounts().length);
     }
     getPrimaryAccount() {
         return {

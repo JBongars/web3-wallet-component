@@ -59,11 +59,6 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
     this.updateWalletStorageValue()
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
 
-    console.log({
-      accounts: this.state.accounts,
-      isConnected: this.state.isConnected,
-    })
-
     // if (!this.provider.connected) {
     //   // create new session
     //   await this.provider.createSession();
@@ -111,7 +106,7 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
     try {
       await this.provider?.disconnect();
     } catch (e) { }
-    
+
     this.provider = undefined;
     this.updateWalletStorageValue()
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
@@ -162,7 +157,7 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
   }
 
   public getIsConnected(): boolean {
-    return this.provider?.connector?.connected || false;
+    return Boolean(this.getAccounts().length)
   }
 
   public getPrimaryAccount(): Accounts {
@@ -214,8 +209,7 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
       return this.provider;
     }
 
-    this.provider = new PeraWalletConnect()
-    ;
+    this.provider = new PeraWalletConnect();
     return this.provider;
   }
 
