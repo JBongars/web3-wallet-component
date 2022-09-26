@@ -286,16 +286,16 @@ class Metamask implements WalletInterface<MetamaskState> {
     if (storageValue) {
       this.state = {
         isConnected: storageValue.isConnected,
-        accounts: [storageValue.account],
+        accounts: storageValue.accounts,
       };
     }
   }
 
   private updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-      this.walletStorage.updateValue(true, this.state.accounts[0]);
+      this.walletStorage.updateValue(true, this.getPrimaryAccount(), this.getAccounts());
     } else {
-      this.walletStorage.updateValue(false, "");
+      this.walletStorage.updateValue(false, "", []);
     }
   }
 }
