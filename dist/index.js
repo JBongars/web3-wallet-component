@@ -176,6 +176,7 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
     ]);
     walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4), (0, $57b8a5d2d8300786$export$7c460c214963f696).ALGORAND_MYALGO);
+    currentActiveAccountAddress = "";
     constructor(state){
         if (state) this.state = {
             ...state
@@ -191,14 +192,11 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     async init() {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
-    async signIn(options = {}) {
-        const shouldSelectOneAccount = options.shouldSelectOneAccount || true;
+    async signIn() {
         const myAlgoConnect = this.getProvider();
         // forces user to only choose one account.
         // This prevents a lot of edge cases.
-        this.state.accounts = await myAlgoConnect.connect({
-            shouldSelectOneAccount: shouldSelectOneAccount
-        });
+        this.state.accounts = await myAlgoConnect.connect();
         this.state.isConnected = this.state.accounts.length > 0;
         this.updateWalletStorageValue();
         this.hookRouter.applyHooks([
@@ -237,6 +235,12 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
         return this.state.isConnected;
     }
     getPrimaryAccount() {
+        if (!this.getIsConnected()) return {
+            name: "",
+            address: ""
+        };
+        const account = this.state.accounts.find((acc)=>acc.address === this.currentActiveAccountAddress);
+        if (this.currentActiveAccountAddress && account) return account;
         return this.state.accounts[0];
     }
     getAccounts() {
@@ -266,6 +270,10 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
         if (this.provider instanceof (0, ($parcel$interopDefault($8zHUo$randlabsmyalgoconnect)))) return this.provider;
         this.provider = new (0, ($parcel$interopDefault($8zHUo$randlabsmyalgoconnect)))();
         return this.provider;
+    }
+    switchAccount(address) {
+        const account = this.state.accounts.find((acc)=>acc.address === address);
+        if (account) this.currentActiveAccountAddress = account.address;
     }
     setupInitialState() {
         const storageValue = this.walletStorage.getValue();

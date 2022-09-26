@@ -146,9 +146,10 @@ export type MyAlgoConfig = {
 export type MyAlgoTransaction = AlgorandTxn[] | EncodedTransaction[];
 export class MyAlgo implements WalletInterface<MyAlgoState> {
     state: MyAlgoState;
+    currentActiveAccountAddress: string;
     constructor(state?: MyAlgoState);
     init(): Promise<WALLET_STATUS>;
-    signIn(options?: MyAlgoConfig): Promise<WALLET_STATUS>;
+    signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
     getSigner(): Promise<MyAlgoSigner>;
     getBalance(): Promise<string>;
@@ -163,6 +164,7 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
     toJSON(): MyAlgoState;
     getProvider(): MyAlgoConnect;
+    switchAccount(address: string): void;
 }
 export const CHAIN_ALGORAND = "ALGORAND";
 export type WALLET = AlgorandWallet | EthereumWallet;
