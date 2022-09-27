@@ -6,7 +6,9 @@ import { PeraWalletAsset, PeraWalletSigner, PeraWalletState } from "./types";
 import { PeraWalletConnect } from "@perawallet/connect";
 import WalletStateStorage from "~/src/WalletStateStorage";
 import { AlgorandSignerTxn, CHAIN_ALGORAND } from "..";
-import { SignedTx } from "@randlabs/myalgo-connect";
+import { AlgorandTxn, EncodedTransaction, SignedTx } from "@randlabs/myalgo-connect";
+import { SignerTransaction } from "@perawallet/connect/dist/util/model/peraWalletModels";
+import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 
 type Accounts = {
   address: string;
@@ -14,6 +16,7 @@ type Accounts = {
 }
 
 type PeraWalletTransaction = Uint8Array[];
+// type PeraWalletTransaction = AlgorandTxn[] | EncodedTransaction[];
 
 const initialState: Readonly<PeraWalletState> = Object.freeze({
   accounts: [],
@@ -59,31 +62,6 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
     this.updateWalletStorageValue()
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
 
-    // if (!this.provider.connected) {
-    //   // create new session
-    //   await this.provider.createSession();
-    // } else {
-    //   const { accounts } = this.provider;
-
-    //   this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-    //   this.state.accounts = accounts;
-    //   this.updateWalletStorageValue()
-    //   this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
-    // }
-
-    // this.provider.on("connect", ((error, payload) => {
-    //   if (error) {
-    //     throw error;
-    //   }
-
-    //   // Get provided accounts
-    //   const { accounts } = payload.params[0];
-    //   this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-    //   this.state.accounts = accounts;
-    //   this.updateWalletStorageValue()
-    //   this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
-    // }));
-
     this.provider?.connector?.on("disconnect", (error, payload) => {
       if (error) {
         throw error;
@@ -118,29 +96,35 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
       transactions: AlgorandSignerTxn,
     ): Promise<SignedTx[]> => {
       this.enforceIsConnected();
-      const walletConnect = this.getProvider();
-      // const txnsToSign = (transactions as WalletConnectTransaction).map(txn => ({
-      //   txn: Buffer.from(txn).toString("base64")
-      // }));
-      // const jsonRpcRequest = formatJsonRpcRequest("algo_signTxn", [txnsToSign]);
-      // let signedTxns = await walletConnect.sendCustomRequest(jsonRpcRequest);
-      // let signedTxns2: any = [];
-      // for (let i = 0; i < signedTxns.length; i++) {
-      //   if (signedTxns[i] !== null) {
-      //     signedTxns2.push({
-      //       txID: "",
-      //       blob: new Uint8Array(Buffer.from(signedTxns[i], "base64"))
-      //     })
-      //   } else {
-      //     signedTxns2.push({
-      //       txId: "",
-      //       blob: null
-      //     })
-      //   }
-      // }
+      const peraWallet = this.getProvider();
 
-      // return signedTxns2;
-      return []
+      if (!peraWallet.connector) {
+        await peraWallet.reconnectSession();
+      }
+
+      const txnsToSign = (transactions as PeraWalletTransaction).map(txn => ({
+        txn: Buffer.from(txn).toString("base64")
+      }));
+      const jsonRpcRequest = formatJsonRpcRequest("algo_signTxn", [txnsToSign]);
+      let signedTxns = await peraWallet?.connector?.sendCustomRequest(jsonRpcRequest);
+      console.log ({signedTxns})
+
+      let signedTxns2: any = [];
+      for (let i = 0; i < signedTxns.length; i++) {
+        if (signedTxns[i] !== null) {
+          signedTxns2.push({
+            txID: "",
+            blob: new Uint8Array(Buffer.from(signedTxns[i], "base64"))
+          })
+        } else {
+          signedTxns2.push({
+            txId: "",
+            blob: null
+          })
+        }
+      }
+      
+      return signedTxns2;
     };
   }
 

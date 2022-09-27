@@ -484,6 +484,10 @@ $parcel$export($b5560c6a127e9264$exports, "PeraWallet", () => $b5560c6a127e9264$
 
 
 
+
+
+var $b5560c6a127e9264$require$Buffer = $hgUW1$Buffer;
+// type PeraWalletTransaction = AlgorandTxn[] | EncodedTransaction[];
 const $b5560c6a127e9264$var$initialState = Object.freeze({
     accounts: [],
     isConnected: false
@@ -520,27 +524,6 @@ class $b5560c6a127e9264$export$6a733d504587e4b0 {
         this.hookRouter.applyHooks([
             (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
         ]);
-        // if (!this.provider.connected) {
-        //   // create new session
-        //   await this.provider.createSession();
-        // } else {
-        //   const { accounts } = this.provider;
-        //   this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-        //   this.state.accounts = accounts;
-        //   this.updateWalletStorageValue()
-        //   this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
-        // }
-        // this.provider.on("connect", ((error, payload) => {
-        //   if (error) {
-        //     throw error;
-        //   }
-        //   // Get provided accounts
-        //   const { accounts } = payload.params[0];
-        //   this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-        //   this.state.accounts = accounts;
-        //   this.updateWalletStorageValue()
-        //   this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
-        // }));
         this.provider?.connector?.on("disconnect", (error, payload)=>{
             if (error) throw error;
             console.log("disconnect here");
@@ -565,28 +548,28 @@ class $b5560c6a127e9264$export$6a733d504587e4b0 {
     async getSigner() {
         return async (transactions)=>{
             this.enforceIsConnected();
-            const walletConnect = this.getProvider();
-            // const txnsToSign = (transactions as WalletConnectTransaction).map(txn => ({
-            //   txn: Buffer.from(txn).toString("base64")
-            // }));
-            // const jsonRpcRequest = formatJsonRpcRequest("algo_signTxn", [txnsToSign]);
-            // let signedTxns = await walletConnect.sendCustomRequest(jsonRpcRequest);
-            // let signedTxns2: any = [];
-            // for (let i = 0; i < signedTxns.length; i++) {
-            //   if (signedTxns[i] !== null) {
-            //     signedTxns2.push({
-            //       txID: "",
-            //       blob: new Uint8Array(Buffer.from(signedTxns[i], "base64"))
-            //     })
-            //   } else {
-            //     signedTxns2.push({
-            //       txId: "",
-            //       blob: null
-            //     })
-            //   }
-            // }
-            // return signedTxns2;
-            return [];
+            const peraWallet = this.getProvider();
+            if (!peraWallet.connector) await peraWallet.reconnectSession();
+            const txnsToSign = transactions.map((txn)=>({
+                    txn: $b5560c6a127e9264$require$Buffer.from(txn).toString("base64")
+                }));
+            const jsonRpcRequest = (0, $hgUW1$formatJsonRpcRequest)("algo_signTxn", [
+                txnsToSign
+            ]);
+            let signedTxns = await peraWallet?.connector?.sendCustomRequest(jsonRpcRequest);
+            console.log({
+                signedTxns: signedTxns
+            });
+            let signedTxns2 = [];
+            for(let i = 0; i < signedTxns.length; i++)if (signedTxns[i] !== null) signedTxns2.push({
+                txID: "",
+                blob: new Uint8Array($b5560c6a127e9264$require$Buffer.from(signedTxns[i], "base64"))
+            });
+            else signedTxns2.push({
+                txId: "",
+                blob: null
+            });
+            return signedTxns2;
         };
     }
     async getBalance() {
