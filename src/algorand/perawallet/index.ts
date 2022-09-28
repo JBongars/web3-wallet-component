@@ -1,44 +1,38 @@
-import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
-import { SignedTx } from "@randlabs/myalgo-connect";
-import WalletConnectClient from "@walletconnect/client";
-import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
+import { WalletInterface } from "~/src/types";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
-import {
-  HookEvent,
-  WALLET_HOOK,
-  WALLET_ID,
-  WALLET_STATUS
-} from "~/src/utils/HookRouter/types";
+import { HookEvent, WALLET_HOOK, WALLET_ID, WALLET_STATUS } from "~/src/utils/HookRouter/types";
+import { PeraWalletAsset, PeraWalletSigner, PeraWalletState } from "./types";
+import { PeraWalletConnect } from "@perawallet/connect";
 import WalletStateStorage from "~/src/WalletStateStorage";
-import { CHAIN_ALGORAND } from "..";
-import { WalletInterface } from "../../types";
-import { AlgorandSignerTxn } from "../Algorand";
-import { WalletConnectAsset, WalletConnectSigner, WalletConnectState } from "./types";
+import { AlgorandSignerTxn, CHAIN_ALGORAND } from "..";
+import { AlgorandTxn, EncodedTransaction, SignedTx } from "@randlabs/myalgo-connect";
+import { SignerTransaction } from "@perawallet/connect/dist/util/model/peraWalletModels";
+import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 
 type Accounts = {
   address: string;
   name: string;
 }
 
-type WalletConnectTransaction = Uint8Array[];
+type PeraWalletTransaction = Uint8Array[];
 
-const initialState: Readonly<WalletConnectState> = Object.freeze({
+const initialState: Readonly<PeraWalletState> = Object.freeze({
   accounts: [],
   isConnected: false,
 });
 
-class WalletConnect implements WalletInterface<WalletConnectState> {
+class PeraWallet implements WalletInterface<PeraWalletState> {
   private hookRouter: HookRouter = new HookRouter([
     WALLET_HOOK.ACCOUNT_ON_CHANGE,
     WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
     WALLET_HOOK.CHAIN_ON_CHANGE,
   ]);
-  public state: WalletConnectState;
-  private provider: WalletConnectClient | undefined;
-  private walletStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_WALLETCONNECT);
+  public state: PeraWalletState;
+  private provider: PeraWalletConnect | undefined;
+  private walletStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_PERAWALLET);
 
-  constructor(state?: WalletConnectState) {
+  constructor(state?: PeraWalletState) {
     if (state) {
       this.state = { ...state };
     } else {
@@ -59,40 +53,22 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public async signIn(): Promise<WALLET_STATUS> {
-    this.provider = new WalletConnectClient({
-      bridge: "https://bridge.walletconnect.org", // Required
-      qrcodeModal: QRCodeModal,
-    });
-
-    if (!this.provider.connected) {
-      // create new session
-      await this.provider.createSession();
-    } else {
-      const { accounts } = this.provider;
-
-      this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-      this.state.accounts = accounts;
-      this.updateWalletStorageValue()
-      this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
-    }
-
-    this.provider.on("connect", ((error, payload) => {
-      if (error) {
-        throw error;
-      }
-
-      // Get provided accounts
-      const { accounts } = payload.params[0];
-      this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-      this.state.accounts = accounts;
-      this.updateWalletStorageValue()
-      this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+    this.provider = this.getProvider();
+    const accounts = await this.provider.connect();
+    
+    this.state.accounts = accounts.map(account => ({
+      name: "",
+      address: account
     }));
+    this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
+    this.updateWalletStorageValue()
+    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
 
-    this.provider.on("disconnect", (error, payload) => {
+    this.provider?.connector?.on("disconnect", (error, payload) => {
       if (error) {
         throw error;
       }
+      
       this.signOut();
     });
 
@@ -104,29 +80,41 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     this.state.isConnected = false;
 
     if (!this.provider) {
-      this.getProvider()
+      this.provider = this.getProvider()
+    }
+
+    if (!this.provider.connector) {
+      await this.provider.reconnectSession();
     }
 
     try {
-      await this.provider?.killSession();
+      await this.provider?.disconnect();
     } catch (e) { }
+
     this.provider = undefined;
     this.updateWalletStorageValue()
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     return WALLET_STATUS.OK;
   }
 
-  public async getSigner(): Promise<WalletConnectSigner> {
+  public async getSigner(): Promise<PeraWalletSigner> {
     return async (
       transactions: AlgorandSignerTxn,
     ): Promise<SignedTx[]> => {
       this.enforceIsConnected();
-      const walletConnect = this.getProvider();
-      const txnsToSign = (transactions as WalletConnectTransaction).map(txn => ({
+      const peraWallet = this.getProvider();
+
+      if (!peraWallet.connector) {
+        await peraWallet.reconnectSession();
+      }
+
+      const txnsToSign = (transactions as PeraWalletTransaction).map(txn => ({
         txn: Buffer.from(txn).toString("base64")
       }));
       const jsonRpcRequest = formatJsonRpcRequest("algo_signTxn", [txnsToSign]);
-      let signedTxns = await walletConnect.sendCustomRequest(jsonRpcRequest);
+      let signedTxns = await peraWallet?.connector?.sendCustomRequest(jsonRpcRequest);
+      console.log ({signedTxns})
+
       let signedTxns2: any = [];
       for (let i = 0; i < signedTxns.length; i++) {
         if (signedTxns[i] !== null) {
@@ -141,7 +129,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
           })
         }
       }
-
+      
       return signedTxns2;
     };
   }
@@ -150,7 +138,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     throw new NotImplementedError();
   }
 
-  public async getAssets(): Promise<WalletConnectAsset[]> {
+  public async getAssets(): Promise<PeraWalletAsset[]> {
     throw new NotImplementedError();
   }
 
@@ -159,20 +147,15 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public getIsConnected(): boolean {
-    const provider = this.getProvider();
-
-    return provider.connected;
+    return Boolean(this.getAccounts().length)
   }
 
   public getPrimaryAccount(): Accounts {
-    return {
-      address: this.state.accounts[0],
-      name: ""
-    };
+    return this.state.accounts[0];
   }
 
   public getAccounts(): Accounts[] {
-    return this.state.accounts.map(ob => ({ address: ob, name: "" }));
+    return Array.isArray(this.state.accounts) ? this.state.accounts : [];
   }
 
   public async fetchCurrentChainID(): Promise<string> {
@@ -204,19 +187,16 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     throw new NotImplementedError();
   }
 
-  public toJSON(): WalletConnectState {
+  public toJSON(): PeraWalletState {
     return this.state;
   }
 
-  public getProvider(): WalletConnectClient {
-    if (this.provider instanceof WalletConnectClient) {
+  public getProvider(): PeraWalletConnect {
+    if (this.provider instanceof PeraWalletConnect) {
       return this.provider;
     }
 
-    this.provider = new WalletConnectClient({
-      bridge: "https://bridge.walletconnect.org", // Required
-      qrcodeModal: QRCodeModal,
-    });
+    this.provider = new PeraWalletConnect();
     return this.provider;
   }
 
@@ -226,15 +206,18 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     if (storageValue) {
       this.state = {
         isConnected: this.getIsConnected(),
-        accounts: storageValue.accounts,
+        accounts: storageValue.accounts.map(account => ({
+          name: "",
+          address: account
+        })),
       };
     }
   }
 
   private updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-       const accounts = this.getAccounts().map(acc => acc.address);
-       const connectedAccount = this.getPrimaryAccount().address;
+      const accounts = this.getAccounts().map(acc => acc.address);
+      const connectedAccount = this.getPrimaryAccount().address;
       this.walletStorage.updateValue(true, connectedAccount, accounts);
     } else {
       this.walletStorage.updateValue(false, "", []);
@@ -242,4 +225,5 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   }
 }
 
-export { WalletConnect, WalletConnectTransaction };
+
+export { PeraWallet, PeraWalletTransaction };

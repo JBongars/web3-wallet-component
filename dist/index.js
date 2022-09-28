@@ -2,10 +2,11 @@ var $8zHUo$ethers = require("ethers");
 var $8zHUo$algosdk = require("algosdk");
 var $8zHUo$etherslibutils = require("ethers/lib/utils");
 var $8zHUo$randlabsmyalgoconnect = require("@randlabs/myalgo-connect");
+var $8zHUo$jsonrpctoolsutils = require("@json-rpc-tools/utils");
 var $8zHUo$walletconnectclient = require("@walletconnect/client");
 var $8zHUo$algorandwalletconnectqrcodemodal = require("algorand-walletconnect-qrcode-modal");
-var $8zHUo$jsonrpctoolsutils = require("@json-rpc-tools/utils");
 var $8zHUo$buffer = require("buffer");
+var $8zHUo$perawalletconnect = require("@perawallet/connect");
 var $8zHUo$walletconnectweb3provider = require("@walletconnect/web3-provider");
 
 function $parcel$exportWildcard(dest, source) {
@@ -141,6 +142,7 @@ let $57b8a5d2d8300786$export$7c460c214963f696;
     WALLET_ID1[WALLET_ID1["ALGORAND_MYALGO"] = 2] = "ALGORAND_MYALGO";
     WALLET_ID1[WALLET_ID1["ALGORAND_WALLETCONNECT"] = 3] = "ALGORAND_WALLETCONNECT";
     WALLET_ID1[WALLET_ID1["ETHEREUM_WALLETCONNECT"] = 4] = "ETHEREUM_WALLETCONNECT";
+    WALLET_ID1[WALLET_ID1["ALGORAND_PERAWALLET"] = 5] = "ALGORAND_PERAWALLET";
 })($57b8a5d2d8300786$export$7c460c214963f696 || ($57b8a5d2d8300786$export$7c460c214963f696 = {}));
 let $57b8a5d2d8300786$export$5ee9bf08a91850b9;
 (function(WALLET_HOOK1) {
@@ -177,7 +179,8 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
     ]);
-    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4));
+    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4), (0, $57b8a5d2d8300786$export$7c460c214963f696).ALGORAND_MYALGO);
+    currentActiveAccountAddress = "";
     constructor(state){
         if (state) this.state = {
             ...state
@@ -193,14 +196,11 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     async init() {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
-    async signIn(options = {}) {
-        const shouldSelectOneAccount = options.shouldSelectOneAccount || true;
+    async signIn() {
         const myAlgoConnect = this.getProvider();
         // forces user to only choose one account.
         // This prevents a lot of edge cases.
-        this.state.accounts = await myAlgoConnect.connect({
-            shouldSelectOneAccount: shouldSelectOneAccount
-        });
+        this.state.accounts = await myAlgoConnect.connect();
         this.state.isConnected = this.state.accounts.length > 0;
         this.updateWalletStorageValue();
         this.hookRouter.applyHooks([
@@ -239,6 +239,12 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
         return this.state.isConnected;
     }
     getPrimaryAccount() {
+        if (!this.getIsConnected()) return {
+            name: "",
+            address: ""
+        };
+        const account = this.state.accounts.find((acc)=>acc.address === this.currentActiveAccountAddress);
+        if (this.currentActiveAccountAddress && account) return account;
         return this.state.accounts[0];
     }
     getAccounts() {
@@ -269,21 +275,30 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
         this.provider = new (0, ($parcel$interopDefault($8zHUo$randlabsmyalgoconnect)))();
         return this.provider;
     }
+    switchAccount(address) {
+        const account = this.state.accounts.find((acc)=>acc.address === address);
+        if (account) this.currentActiveAccountAddress = account.address;
+        this.updateWalletStorageValue();
+    }
     setupInitialState() {
         const storageValue = this.walletStorage.getValue();
-        if (storageValue) this.state = {
-            isConnected: !storageValue.walletconnect && storageValue.isConnected,
-            accounts: [
-                {
-                    name: "",
-                    address: storageValue.account
-                }
-            ]
-        };
+        if (storageValue) {
+            this.state = {
+                isConnected: storageValue.isConnected,
+                accounts: storageValue.accounts ? storageValue.accounts.map((address)=>({
+                        name: "",
+                        address: address
+                    })) : []
+            };
+            this.currentActiveAccountAddress = storageValue.connectedAccount;
+        }
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0].address);
-        else this.walletStorage.updateValue(false, "");
+        if (this.state.isConnected && this.state.accounts.length > 0) {
+            const accounts = this.getAccounts().map((acc)=>acc.address);
+            const connectedAccount = this.getPrimaryAccount().address;
+            this.walletStorage.updateValue(true, connectedAccount, accounts);
+        } else this.walletStorage.updateValue(false, "", []);
     }
 }
 
@@ -315,7 +330,7 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
     ]);
-    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4));
+    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4), (0, $57b8a5d2d8300786$export$7c460c214963f696).ALGORAND_WALLETCONNECT);
     constructor(state){
         if (state) this.state = {
             ...state
@@ -458,14 +473,176 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
             isConnected: this.getIsConnected(),
-            accounts: [
-                storageValue.account
-            ]
+            accounts: storageValue.accounts
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0], true);
-        else this.walletStorage.updateValue(false, "", true);
+        if (this.state.isConnected && this.state.accounts.length > 0) {
+            const accounts = this.getAccounts().map((acc)=>acc.address);
+            const connectedAccount = this.getPrimaryAccount().address;
+            this.walletStorage.updateValue(true, connectedAccount, accounts);
+        } else this.walletStorage.updateValue(false, "", []);
+    }
+}
+
+
+var $3c9851a538a51e5f$exports = {};
+
+$parcel$export($3c9851a538a51e5f$exports, "PeraWallet", () => $3c9851a538a51e5f$export$6a733d504587e4b0);
+
+
+
+
+
+
+
+
+var $3c9851a538a51e5f$require$Buffer = $8zHUo$buffer.Buffer;
+const $3c9851a538a51e5f$var$initialState = Object.freeze({
+    accounts: [],
+    isConnected: false
+});
+class $3c9851a538a51e5f$export$6a733d504587e4b0 {
+    hookRouter = new (0, $a71b91c4d64511bd$export$2e2bcd8739ae039)([
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
+    ]);
+    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4), (0, $57b8a5d2d8300786$export$7c460c214963f696).ALGORAND_PERAWALLET);
+    constructor(state){
+        if (state) this.state = {
+            ...state
+        };
+        else this.state = {
+            ...$3c9851a538a51e5f$var$initialState
+        };
+        this.setupInitialState();
+    }
+    enforceIsConnected() {
+        if (!this.getIsConnected()) throw new (0, $d083fd37dae77b99$export$313d299817c74896)();
+    }
+    async init() {
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
+    }
+    async signIn() {
+        this.provider = this.getProvider();
+        const accounts = await this.provider.connect();
+        this.state.accounts = accounts.map((account)=>({
+                name: "",
+                address: account
+            }));
+        this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
+        this.updateWalletStorageValue();
+        this.hookRouter.applyHooks([
+            (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+        ]);
+        this.provider?.connector?.on("disconnect", (error, payload)=>{
+            if (error) throw error;
+            this.signOut();
+        });
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
+    }
+    async signOut() {
+        this.state.accounts = [];
+        this.state.isConnected = false;
+        if (!this.provider) this.provider = this.getProvider();
+        if (!this.provider.connector) await this.provider.reconnectSession();
+        try {
+            await this.provider?.disconnect();
+        } catch (e) {}
+        this.provider = undefined;
+        this.updateWalletStorageValue();
+        this.hookRouter.applyHooks([
+            (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE
+        ]);
+        return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
+    }
+    async getSigner() {
+        return async (transactions)=>{
+            this.enforceIsConnected();
+            const peraWallet = this.getProvider();
+            if (!peraWallet.connector) await peraWallet.reconnectSession();
+            const txnsToSign = transactions.map((txn)=>({
+                    txn: $3c9851a538a51e5f$require$Buffer.from(txn).toString("base64")
+                }));
+            const jsonRpcRequest = (0, $8zHUo$jsonrpctoolsutils.formatJsonRpcRequest)("algo_signTxn", [
+                txnsToSign
+            ]);
+            let signedTxns = await peraWallet?.connector?.sendCustomRequest(jsonRpcRequest);
+            console.log({
+                signedTxns: signedTxns
+            });
+            let signedTxns2 = [];
+            for(let i = 0; i < signedTxns.length; i++)if (signedTxns[i] !== null) signedTxns2.push({
+                txID: "",
+                blob: new Uint8Array($3c9851a538a51e5f$require$Buffer.from(signedTxns[i], "base64"))
+            });
+            else signedTxns2.push({
+                txId: "",
+                blob: null
+            });
+            return signedTxns2;
+        };
+    }
+    async getBalance() {
+        throw new (0, $d083fd37dae77b99$export$e162153238934121)();
+    }
+    async getAssets() {
+        throw new (0, $d083fd37dae77b99$export$e162153238934121)();
+    }
+    getIsWalletInstalled() {
+        return true; // wallet is web only so is always installed
+    }
+    getIsConnected() {
+        return Boolean(this.getAccounts().length);
+    }
+    getPrimaryAccount() {
+        return this.state.accounts[0];
+    }
+    getAccounts() {
+        return Array.isArray(this.state.accounts) ? this.state.accounts : [];
+    }
+    async fetchCurrentChainID() {
+        return "0x1";
+    }
+    onAccountChange(cb) {
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
+            return cb(this.getPrimaryAccount());
+        });
+    }
+    onChainChange(cb) {
+        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async ()=>{
+            const currentChainId = await this.fetchCurrentChainID();
+            return cb(currentChainId);
+        });
+    }
+    onBlockAdded(cb) {
+        throw new (0, $d083fd37dae77b99$export$e162153238934121)();
+    }
+    toJSON() {
+        return this.state;
+    }
+    getProvider() {
+        if (this.provider instanceof (0, $8zHUo$perawalletconnect.PeraWalletConnect)) return this.provider;
+        this.provider = new (0, $8zHUo$perawalletconnect.PeraWalletConnect)();
+        return this.provider;
+    }
+    setupInitialState() {
+        const storageValue = this.walletStorage.getValue();
+        if (storageValue) this.state = {
+            isConnected: this.getIsConnected(),
+            accounts: storageValue.accounts.map((account)=>({
+                    name: "",
+                    address: account
+                }))
+        };
+    }
+    updateWalletStorageValue() {
+        if (this.state.isConnected && this.state.accounts.length > 0) {
+            const accounts = this.getAccounts().map((acc)=>acc.address);
+            const connectedAccount = this.getPrimaryAccount().address;
+            this.walletStorage.updateValue(true, connectedAccount, accounts);
+        } else this.walletStorage.updateValue(false, "", []);
     }
 }
 
@@ -474,8 +651,10 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
     constructor(data){
         this.myAlgo = new (0, $a75d728b25ccd0d3$export$6ab354d5c56bf95)(data?.myAlgo);
         this.walletConnect = new (0, $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f)(data?.walletConnect);
+        this.peraWallet = new (0, $3c9851a538a51e5f$export$6a733d504587e4b0)(data?.peraWallet);
     }
 }
+
 
 
 
@@ -483,6 +662,7 @@ const $b94377bbb94beb7e$export$2e84527d78ea64a4 = "ALGORAND";
 $parcel$exportWildcard($b94377bbb94beb7e$exports, $a75d728b25ccd0d3$exports);
 $parcel$exportWildcard($b94377bbb94beb7e$exports, $f2b728861576b445$exports);
 $parcel$exportWildcard($b94377bbb94beb7e$exports, $2062ba71daa80b8d$exports);
+$parcel$exportWildcard($b94377bbb94beb7e$exports, $3c9851a538a51e5f$exports);
 
 
 var $fc578d3576b0d8ef$exports = {};
@@ -508,31 +688,34 @@ class $430794692bff5f59$var$WalletStateStorage {
     }
     getValue() {
         const value = this.values().find((state)=>state.chain === this.chain && this.walletid == state.walletid) || null;
-        if (value && !this.isValidAddress(value.account)) return {
+        if (value && !this.isValidAddress(value.connectedAccount)) return {
             isConnected: false,
-            account: "",
+            connectedAccount: "",
             chain: this.chain,
-            walletid: this.walletid
+            walletid: this.walletid,
+            accounts: value.accounts
         };
         return value;
     }
-    updateValue(isConnected, account) {
+    updateValue(isConnected, connectedAccount, accounts) {
         const exisitingValues = this.getValue();
         let values = this.values();
         if (exisitingValues) values = values.map((value)=>{
             if (value.chain === this.chain && value.walletid === this.walletid) return {
                 chain: this.chain,
                 isConnected: isConnected,
-                account: account,
-                walletid: this.walletid
+                connectedAccount: connectedAccount,
+                walletid: this.walletid,
+                accounts: accounts
             };
             return value;
         });
         else values = values.concat({
             chain: this.chain,
             isConnected: isConnected,
-            account: account,
-            walletid: this.walletid
+            connectedAccount: connectedAccount,
+            walletid: this.walletid,
+            accounts: accounts
         });
         this.storage?.setItem($430794692bff5f59$var$STORAGE_KEY, JSON.stringify(values));
     }
@@ -780,14 +963,12 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
             isConnected: storageValue.isConnected,
-            accounts: [
-                storageValue.account
-            ]
+            accounts: storageValue.accounts
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0]);
-        else this.walletStorage.updateValue(false, "");
+        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.getPrimaryAccount(), this.getAccounts());
+        else this.walletStorage.updateValue(false, "", []);
     }
 }
 

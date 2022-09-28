@@ -35,6 +35,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   public state: MyAlgoState;
   private provider: MyAlgoConnect | undefined;
   private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_MYALGO);
+  public currentActiveAccountAddress:string = "";
 
   constructor(state?: MyAlgoState) {
     if (state) {
@@ -56,16 +57,15 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return WALLET_STATUS.OK;
   }
 
-  public async signIn(options: MyAlgoConfig = {}): Promise<WALLET_STATUS> {
-    const shouldSelectOneAccount = options.shouldSelectOneAccount || true;
+  public async signIn(): Promise<WALLET_STATUS> {
     const myAlgoConnect = this.getProvider();
 
     // forces user to only choose one account.
     // This prevents a lot of edge cases.
-    this.state.accounts = await myAlgoConnect.connect({
-      shouldSelectOneAccount,
-    });
+    this.state.accounts = await myAlgoConnect.connect();
+
     this.state.isConnected = this.state.accounts.length > 0;
+
     this.updateWalletStorageValue();
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     return WALLET_STATUS.OK;
@@ -110,6 +110,19 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   }
 
   public getPrimaryAccount(): Accounts {
+    if(!this.getIsConnected()) {
+      return {
+        name: "",
+        address: "",
+      }
+    }
+    
+    const account = this.state.accounts.find(acc => acc.address === this.currentActiveAccountAddress);
+
+    if(this.currentActiveAccountAddress && account) {
+      return account
+    }
+
     return this.state.accounts[0];
   }
 
@@ -159,22 +172,45 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return this.provider;
   }
 
+  public switchAccount(address: string) {
+    const account = this.state.accounts.find(acc => acc.address === address);
+
+    if(account) {
+      this.currentActiveAccountAddress = account.address
+    }
+
+    this.updateWalletStorageValue()
+  }
+
   private setupInitialState() {
     const storageValue = this.walletStorage.getValue();
 
     if (storageValue) {
       this.state = {
         isConnected: storageValue.isConnected,
-        accounts: [{ name: "", address: storageValue.account }],
+        accounts: storageValue.accounts
+          ? storageValue.accounts.map((address) => ({
+              name: "",
+              address,
+            }))
+          : [],
       };
+
+      this.currentActiveAccountAddress = storageValue.connectedAccount;
     }
   }
 
   private updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-      this.walletStorage.updateValue(true, this.state.accounts[0].address);
+      const accounts = this.getAccounts().map((acc) => acc.address);
+      const connectedAccount = this.getPrimaryAccount().address;
+      this.walletStorage.updateValue(
+        true,
+        connectedAccount,
+        accounts
+      );
     } else {
-      this.walletStorage.updateValue(false, "");
+      this.walletStorage.updateValue(false, "", []);
     }
   }
 }

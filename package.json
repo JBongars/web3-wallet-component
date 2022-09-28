@@ -1,6 +1,6 @@
 {
   "name": "wallet-component",
-  "version": "2.1.0",
+  "version": "2.3.0",
   "source": "src/index.ts",
   "main": "dist/index.js",
   "module": "dist/module.js",
@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@json-rpc-tools/utils": "^1.7.6",
+    "@perawallet/connect": "^0.2.3",
     "@randlabs/myalgo-connect": "^1.2.0",
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/web3-provider": "^1.8.0",
@@ -32,6 +33,8 @@
     "algosdk": "^1.19.1",
     "bufferutil": "^4.0.6",
     "ethers": "^5.6.9",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "utf-8-validate": "^5.0.9",
     "ws": "^8.8.1"
   },
