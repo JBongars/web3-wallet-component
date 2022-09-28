@@ -2,8 +2,13 @@ import { SignedTx } from "@randlabs/myalgo-connect";
 import { Signer as RootSigner } from "~/src/types";
 import { AlgorandSignerTxn } from "../Algorand";
 
+type Accounts = {
+  address: string;
+  name: string;
+}
+
 type PeraWalletState = {
-  accounts: string[];
+  accounts: Accounts[];
   isConnected: boolean;
 };
 

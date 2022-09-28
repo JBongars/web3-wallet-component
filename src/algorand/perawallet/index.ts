@@ -16,7 +16,6 @@ type Accounts = {
 }
 
 type PeraWalletTransaction = Uint8Array[];
-// type PeraWalletTransaction = AlgorandTxn[] | EncodedTransaction[];
 
 const initialState: Readonly<PeraWalletState> = Object.freeze({
   accounts: [],
@@ -56,8 +55,11 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
   public async signIn(): Promise<WALLET_STATUS> {
     this.provider = this.getProvider();
     const accounts = await this.provider.connect();
-    // console.log({accounts});
-    this.state.accounts = accounts;
+    
+    this.state.accounts = accounts.map(account => ({
+      name: "",
+      address: account
+    }));
     this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
     this.updateWalletStorageValue()
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
@@ -66,7 +68,7 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
       if (error) {
         throw error;
       }
-      console.log("disconnect here");
+      
       this.signOut();
     });
 
@@ -79,6 +81,10 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
 
     if (!this.provider) {
       this.provider = this.getProvider()
+    }
+
+    if (!this.provider.connector) {
+      await this.provider.reconnectSession();
     }
 
     try {
@@ -145,14 +151,11 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
   }
 
   public getPrimaryAccount(): Accounts {
-    return {
-      address: this.state.accounts[0],
-      name: ""
-    };
+    return this.state.accounts[0];
   }
 
   public getAccounts(): Accounts[] {
-    return this.state.accounts.map(ob => ({ address: ob, name: "" }));
+    return Array.isArray(this.state.accounts) ? this.state.accounts : [];
   }
 
   public async fetchCurrentChainID(): Promise<string> {
@@ -203,16 +206,21 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
     if (storageValue) {
       this.state = {
         isConnected: this.getIsConnected(),
-        accounts: [storageValue.account],
+        accounts: storageValue.accounts.map(account => ({
+          name: "",
+          address: account
+        })),
       };
     }
   }
 
   private updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-      this.walletStorage.updateValue(true, this.state.accounts[0]);
+      const accounts = this.getAccounts().map(acc => acc.address);
+      const connectedAccount = this.getPrimaryAccount().address;
+      this.walletStorage.updateValue(true, connectedAccount, accounts);
     } else {
-      this.walletStorage.updateValue(false, "");
+      this.walletStorage.updateValue(false, "", []);
     }
   }
 }

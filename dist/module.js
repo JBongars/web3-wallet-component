@@ -493,7 +493,6 @@ $parcel$export($b5560c6a127e9264$exports, "PeraWallet", () => $b5560c6a127e9264$
 
 
 var $b5560c6a127e9264$require$Buffer = $hgUW1$Buffer;
-// type PeraWalletTransaction = AlgorandTxn[] | EncodedTransaction[];
 const $b5560c6a127e9264$var$initialState = Object.freeze({
     accounts: [],
     isConnected: false
@@ -523,8 +522,10 @@ class $b5560c6a127e9264$export$6a733d504587e4b0 {
     async signIn() {
         this.provider = this.getProvider();
         const accounts = await this.provider.connect();
-        // console.log({accounts});
-        this.state.accounts = accounts;
+        this.state.accounts = accounts.map((account)=>({
+                name: "",
+                address: account
+            }));
         this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
         this.updateWalletStorageValue();
         this.hookRouter.applyHooks([
@@ -532,7 +533,6 @@ class $b5560c6a127e9264$export$6a733d504587e4b0 {
         ]);
         this.provider?.connector?.on("disconnect", (error, payload)=>{
             if (error) throw error;
-            console.log("disconnect here");
             this.signOut();
         });
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
@@ -541,6 +541,7 @@ class $b5560c6a127e9264$export$6a733d504587e4b0 {
         this.state.accounts = [];
         this.state.isConnected = false;
         if (!this.provider) this.provider = this.getProvider();
+        if (!this.provider.connector) await this.provider.reconnectSession();
         try {
             await this.provider?.disconnect();
         } catch (e) {}
@@ -591,16 +592,10 @@ class $b5560c6a127e9264$export$6a733d504587e4b0 {
         return Boolean(this.getAccounts().length);
     }
     getPrimaryAccount() {
-        return {
-            address: this.state.accounts[0],
-            name: ""
-        };
+        return this.state.accounts[0];
     }
     getAccounts() {
-        return this.state.accounts.map((ob)=>({
-                address: ob,
-                name: ""
-            }));
+        return Array.isArray(this.state.accounts) ? this.state.accounts : [];
     }
     async fetchCurrentChainID() {
         return "0x1";
@@ -631,14 +626,18 @@ class $b5560c6a127e9264$export$6a733d504587e4b0 {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
             isConnected: this.getIsConnected(),
-            accounts: [
-                storageValue.account
-            ]
+            accounts: storageValue.accounts.map((account)=>({
+                    name: "",
+                    address: account
+                }))
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0]);
-        else this.walletStorage.updateValue(false, "");
+        if (this.state.isConnected && this.state.accounts.length > 0) {
+            const accounts = this.getAccounts().map((acc)=>acc.address);
+            const connectedAccount = this.getPrimaryAccount().address;
+            this.walletStorage.updateValue(true, connectedAccount, accounts);
+        } else this.walletStorage.updateValue(false, "", []);
     }
 }
 

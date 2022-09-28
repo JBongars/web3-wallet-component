@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import MyAlgoConnect, { Accounts as _Accounts2, SignedTx, AlgorandTxn, EncodedTransaction } from "@randlabs/myalgo-connect";
+import MyAlgoConnect, { Accounts as _Accounts3, SignedTx, AlgorandTxn, EncodedTransaction } from "@randlabs/myalgo-connect";
 import WalletConnectClient from "@walletconnect/client";
 import { PeraWalletConnect } from "@perawallet/connect";
 export class NotImplementedError extends Error {
@@ -81,7 +81,7 @@ export class Ethereum {
 }
 export const CHAIN_ETHEREUM = "ETHEREUM";
 type MyAlgoState = {
-    accounts: _Accounts2[];
+    accounts: _Accounts3[];
     isConnected: boolean;
 };
 type MyAlgoSigner = Signer<AlgorandSignerTxn, SignedTx>;
@@ -129,8 +129,12 @@ export class WalletConnect implements WalletInterface<WalletConnectState> {
     toJSON(): WalletConnectState;
     getProvider(): WalletConnectClient;
 }
+type _Accounts1 = {
+    address: string;
+    name: string;
+};
 type PeraWalletState = {
-    accounts: string[];
+    accounts: _Accounts1[];
     isConnected: boolean;
 };
 type PeraWalletSigner = Signer<AlgorandSignerTxn, SignedTx>;
@@ -141,7 +145,7 @@ type PeraWalletAsset = {
     id: String;
     sourceDecimals: Number;
 };
-type _Accounts1 = {
+type _Accounts2 = {
     address: string;
     name: string;
 };
@@ -157,10 +161,10 @@ export class PeraWallet implements WalletInterface<PeraWalletState> {
     getAssets(): Promise<PeraWalletAsset[]>;
     getIsWalletInstalled(): boolean;
     getIsConnected(): boolean;
-    getPrimaryAccount(): _Accounts1;
-    getAccounts(): _Accounts1[];
+    getPrimaryAccount(): _Accounts2;
+    getAccounts(): _Accounts2[];
     fetchCurrentChainID(): Promise<string>;
-    onAccountChange(cb: (accounts: _Accounts1) => void | Promise<void>): HookEvent;
+    onAccountChange(cb: (accounts: _Accounts2) => void | Promise<void>): HookEvent;
     onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
     toJSON(): PeraWalletState;
@@ -196,10 +200,10 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     getAssets(): Promise<MyAlgoAsset[]>;
     getIsWalletInstalled(): boolean;
     getIsConnected(): boolean;
-    getPrimaryAccount(): _Accounts2;
-    getAccounts(): _Accounts2[];
+    getPrimaryAccount(): _Accounts3;
+    getAccounts(): _Accounts3[];
     fetchCurrentChainID(): Promise<string>;
-    onAccountChange(cb: (accounts: _Accounts2) => void | Promise<void>): HookEvent;
+    onAccountChange(cb: (accounts: _Accounts3) => void | Promise<void>): HookEvent;
     onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
     toJSON(): MyAlgoState;
