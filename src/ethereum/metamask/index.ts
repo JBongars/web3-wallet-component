@@ -2,19 +2,20 @@ import { ethers } from "ethers";
 import {
   NotImplementedError,
   WalletNotConnectedError,
-  WalletNotInstalledError
+  WalletNotInstalledError,
 } from "~/src/errors";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
-import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from "~/src/utils/HookRouter/types";
+import {
+  WALLET_HOOK,
+  WALLET_ID,
+  WALLET_STATUS,
+} from "~/src/utils/HookRouter/types";
 import WalletStateStorage from "~/src/WalletStateStorage";
-import { CHAIN_ETHEREUM } from "..";
+import { CHAIN_ETHEREUM, EthereumWalletType } from "..";
 import { useWindow } from "../../containers";
 import { WalletInterface } from "../../types";
 import { getChainConfig } from "./chains";
-import {
-  MetamaskAsset,
-  MetamaskChainConfig, MetamaskState
-} from "./types";
+import { MetamaskAsset, MetamaskChainConfig, MetamaskState } from "./types";
 
 const initialState: Readonly<MetamaskState> = Object.freeze({
   accounts: [],
@@ -32,7 +33,12 @@ class Metamask implements WalletInterface<MetamaskState> {
   private chain: string | null = null;
   public state: MetamaskState;
   public provider?: ethers.providers.Web3Provider;
-  private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_METAMASK)
+  private walletStorage: WalletStateStorage = new WalletStateStorage(
+    CHAIN_ETHEREUM,
+    WALLET_ID.ETHEREUM_METAMASK
+  );
+  public name: string = "METAMASK";
+  public type: EthereumWalletType = EthereumWalletType.METMASK;
 
   constructor(state?: MetamaskState) {
     if (state) {
@@ -41,7 +47,7 @@ class Metamask implements WalletInterface<MetamaskState> {
       this.state = { ...initialState };
     }
 
-    this.setupInitialState()
+    this.setupInitialState();
   }
 
   private async _getProvider(): Promise<ethers.providers.Web3Provider> {
@@ -86,7 +92,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     this.state.accounts = await provider.send("eth_requestAccounts", []);
     this.state.isConnected = this.state.accounts.length > 0;
 
-    this.updateWalletStorageValue()
+    this.updateWalletStorageValue();
 
     this.hookRouter.applyHookWithArgs(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
@@ -100,7 +106,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     this.state.accounts = [];
     this.state.isConnected = false;
 
-    this.updateWalletStorageValue()
+    this.updateWalletStorageValue();
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
     return WALLET_STATUS.OK;
   }
@@ -242,7 +248,9 @@ class Metamask implements WalletInterface<MetamaskState> {
       const ethereum = useWindow((window: any) => window.ethereum);
       if (ethereum.on) {
         ethereum.on("accountsChanged", async (accounts: string[]) => {
-          this.state.accounts = accounts;
+          this.state.accounts = ethereum.request({
+            method: "eth_requestAccounts",
+          });
           if (accounts.length === 0) {
             await this.signOut();
           } else {
@@ -251,11 +259,14 @@ class Metamask implements WalletInterface<MetamaskState> {
               accounts
             );
           }
-          this.updateWalletStorageValue()
+          this.updateWalletStorageValue();
         });
 
         ethereum.on("chainChanged", async (chainId: string) => {
-          this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, chainId);
+          this.hookRouter.applyHookWithArgs(
+            WALLET_HOOK.CHAIN_ON_CHANGE,
+            chainId
+          );
         });
 
         ethereum.on("disconnect", async (err: Error) => {
@@ -293,7 +304,11 @@ class Metamask implements WalletInterface<MetamaskState> {
 
   private updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-      this.walletStorage.updateValue(true, this.getPrimaryAccount(), this.getAccounts());
+      this.walletStorage.updateValue(
+        true,
+        this.getPrimaryAccount(),
+        this.state.accounts
+      );
     } else {
       this.walletStorage.updateValue(false, "", []);
     }

@@ -1,15 +1,11 @@
-import {
-  NotImplementedError,
-  Signer,
-  WalletInterface,
-  WALLET_STATUS,
-} from "~/src/types";
-import { Asset, State } from "./types";
+import { Signer, WalletInterface } from "~/src/types";
+import { NotImplementedError } from "../../errors";
+import { HookEvent, WALLET_STATUS } from "../../utils/HookRouter/types";
+import { Asset } from "./types";
 
-const initialState: Readonly<State> = Object.freeze({
-  data1: "",
-  data2: "",
-});
+type State = {};
+
+const initialState: Readonly<State> = Object.freeze({});
 
 class Wallet implements WalletInterface<State> {
   public state: State;
@@ -34,7 +30,7 @@ class Wallet implements WalletInterface<State> {
     throw new NotImplementedError();
   }
 
-  public async getSigner(): Promise<Signer> {
+  public async getSigner(): Promise<Signer<unknown, unknown>> {
     throw new NotImplementedError();
   }
 
@@ -43,6 +39,46 @@ class Wallet implements WalletInterface<State> {
   }
 
   public async getAssets(): Promise<Asset[]> {
+    throw new NotImplementedError();
+  }
+
+  public getBalance(): Promise<string> {
+    throw new NotImplementedError();
+  }
+
+  public getIsConnected(): boolean {
+    throw new NotImplementedError();
+  }
+
+  public getIsWalletInstalled(): boolean {
+    throw new NotImplementedError();
+  }
+
+  public getPrimaryAccount(): unknown {
+    throw new NotImplementedError();
+  }
+
+  public getAccounts(): unknown[] {
+    throw new NotImplementedError();
+  }
+
+  public fetchCurrentChainID(): Promise<string> {
+    throw new NotImplementedError();
+  }
+
+  public onAccountChange(
+    cb: (accounts: unknown) => void | Promise<void>
+  ): HookEvent {
+    throw new NotImplementedError();
+  }
+
+  public onChainChange(
+    cb: (chainId: string) => void | Promise<void>
+  ): HookEvent {
+    throw new NotImplementedError();
+  }
+
+  public onBlockAdded(cb: (block: unknown) => void | Promise<void>): HookEvent {
     throw new NotImplementedError();
   }
 

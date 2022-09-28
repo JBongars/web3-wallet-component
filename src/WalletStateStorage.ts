@@ -9,8 +9,8 @@ type StorageValue = {
   isConnected: boolean;
   connectedAccount: string;
   chain: string;
-  walletid: WALLET_ID,
-  accounts: string[]
+  walletId: WALLET_ID;
+  accounts: string[];
 };
 
 const STORAGE_KEY = "wallet-state-storage";
@@ -18,42 +18,49 @@ const STORAGE_KEY = "wallet-state-storage";
 class WalletStateStorage {
   private chain: string;
   private storage: Storage | null;
-  private walletid: WALLET_ID
+  private walletId: WALLET_ID;
 
-  constructor(chain: string, walletid: WALLET_ID) {
+  constructor(chain: string, walletId: WALLET_ID) {
     this.chain = chain;
-    this.walletid = walletid
+    this.walletId = walletId;
     this.storage = this._storage();
   }
 
   public getValue(): StorageValue | null {
-    const value = this.values().find((state) => state.chain === this.chain && this.walletid == state.walletid) || null;
+    const value =
+      this.values().find(
+        (state) => state.chain === this.chain && this.walletId == state.walletId
+      ) || null;
 
     if (value && !this.isValidAddress(value.connectedAccount)) {
       return {
         isConnected: false,
         connectedAccount: "",
         chain: this.chain,
-        walletid: this.walletid,
+        walletId: this.walletId,
         accounts: value.accounts,
       };
     }
 
-    return value
+    return value;
   }
 
-  public updateValue(isConnected: boolean, connectedAccount: string, accounts: string[]): void {
+  public updateValue(
+    isConnected: boolean,
+    connectedAccount: string,
+    accounts: string[]
+  ): void {
     const exisitingValues = this.getValue();
     let values = this.values();
 
     if (exisitingValues) {
       values = values.map((value) => {
-        if (value.chain === this.chain && value.walletid === this.walletid) {
+        if (value.chain === this.chain && value.walletId === this.walletId) {
           return {
             chain: this.chain,
             isConnected,
             connectedAccount,
-            walletid: this.walletid,
+            walletId: this.walletId,
             accounts,
           };
         }
@@ -64,8 +71,8 @@ class WalletStateStorage {
         chain: this.chain,
         isConnected,
         connectedAccount,
-        walletid: this.walletid,
-        accounts
+        walletId: this.walletId,
+        accounts,
       });
     }
 

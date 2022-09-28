@@ -681,18 +681,18 @@ $parcel$exportWildcard($fc578d3576b0d8ef$exports, $ff033dcd1750fc9d$exports);
 
 const $430794692bff5f59$var$STORAGE_KEY = "wallet-state-storage";
 class $430794692bff5f59$var$WalletStateStorage {
-    constructor(chain, walletid){
+    constructor(chain, walletId){
         this.chain = chain;
-        this.walletid = walletid;
+        this.walletId = walletId;
         this.storage = this._storage();
     }
     getValue() {
-        const value = this.values().find((state)=>state.chain === this.chain && this.walletid == state.walletid) || null;
+        const value = this.values().find((state)=>state.chain === this.chain && this.walletId == state.walletId) || null;
         if (value && !this.isValidAddress(value.connectedAccount)) return {
             isConnected: false,
             connectedAccount: "",
             chain: this.chain,
-            walletid: this.walletid,
+            walletId: this.walletId,
             accounts: value.accounts
         };
         return value;
@@ -701,11 +701,11 @@ class $430794692bff5f59$var$WalletStateStorage {
         const exisitingValues = this.getValue();
         let values = this.values();
         if (exisitingValues) values = values.map((value)=>{
-            if (value.chain === this.chain && value.walletid === this.walletid) return {
+            if (value.chain === this.chain && value.walletId === this.walletId) return {
                 chain: this.chain,
                 isConnected: isConnected,
                 connectedAccount: connectedAccount,
-                walletid: this.walletid,
+                walletId: this.walletId,
                 accounts: accounts
             };
             return value;
@@ -714,7 +714,7 @@ class $430794692bff5f59$var$WalletStateStorage {
             chain: this.chain,
             isConnected: isConnected,
             connectedAccount: connectedAccount,
-            walletid: this.walletid,
+            walletId: this.walletId,
             accounts: accounts
         });
         this.storage?.setItem($430794692bff5f59$var$STORAGE_KEY, JSON.stringify(values));
@@ -932,7 +932,9 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
             const ethereum = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)((window)=>window.ethereum);
             if (ethereum.on) {
                 ethereum.on("accountsChanged", async (accounts)=>{
-                    this.state.accounts = accounts;
+                    this.state.accounts = ethereum.request({
+                        method: "eth_requestAccounts"
+                    });
                     if (accounts.length === 0) await this.signOut();
                     else this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
                     this.updateWalletStorageValue();
@@ -967,7 +969,7 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.getPrimaryAccount(), this.getAccounts());
+        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.getPrimaryAccount(), this.state.accounts);
         else this.walletStorage.updateValue(false, "", []);
     }
 }
@@ -1189,14 +1191,12 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
             isConnected: storageValue.isConnected,
-            accounts: [
-                storageValue.account
-            ]
+            accounts: storageValue.accounts
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0]);
-        else this.walletStorage.updateValue(false, "");
+        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0], this.state.accounts);
+        else this.walletStorage.updateValue(false, "", []);
     }
 }
 
@@ -1219,10 +1219,10 @@ $parcel$exportWildcard($be737fe08c02d508$exports, $b4976c18f17a124b$exports);
 
 
 $parcel$exportWildcard(module.exports, $faefaad95e5fcca0$exports);
-$parcel$exportWildcard(module.exports, $d083fd37dae77b99$exports);
 $parcel$exportWildcard(module.exports, $be737fe08c02d508$exports);
 $parcel$exportWildcard(module.exports, $b94377bbb94beb7e$exports);
 $parcel$exportWildcard(module.exports, $fc578d3576b0d8ef$exports);
+$parcel$exportWildcard(module.exports, $d083fd37dae77b99$exports);
 
 
 //# sourceMappingURL=index.js.map

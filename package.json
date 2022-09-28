@@ -17,6 +17,7 @@
     "@parcel/transformer-typescript-types": "2.6.2",
     "@types/jest": "^28.1.4",
     "@types/node": "^18.0.0",
+    "@types/react": "^18.0.21",
     "jest": "^28.1.2",
     "jest-environment-jsdom": "^28.1.1",
     "parcel": "^2.6.2",

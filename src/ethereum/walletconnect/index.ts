@@ -17,11 +17,15 @@ import {
   WalletNotInstalledError,
 } from "~/src/errors";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
-import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from "~/src/utils/HookRouter/types";
+import {
+  WALLET_HOOK,
+  WALLET_ID,
+  WALLET_STATUS,
+} from "~/src/utils/HookRouter/types";
 import { getChainConfig } from "./chains";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import WalletStateStorage from "~/src/WalletStateStorage";
-import { CHAIN_ETHEREUM } from ".."
+import { CHAIN_ETHEREUM, EthereumWalletType } from "..";
 
 const initialState: Readonly<WalletConnectState> = Object.freeze({
   accounts: [],
@@ -39,7 +43,12 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   private chain: string | null = null;
   public state: WalletConnectState;
   public provider?: ethers.providers.Web3Provider;
-  private walletStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_WALLETCONNECT);
+  private walletStorage = new WalletStateStorage(
+    CHAIN_ETHEREUM,
+    WALLET_ID.ETHEREUM_WALLETCONNECT
+  );
+  public name: string = "WALLET_CONNECT";
+  public type: EthereumWalletType = EthereumWalletType.ETH_WALLET_CONNECT;
 
   constructor(state?: WalletConnectState) {
     if (state) {
@@ -77,7 +86,7 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   public async getWCProvider(): Promise<WalletConnectProvider> {
     const walletConnectProvider = new WalletConnectProvider({
       infuraId: "f83857b162d64708b25a59585f969fbd", // Required
-      qrcode: true
+      qrcode: true,
     });
     await walletConnectProvider.enable();
 
@@ -260,19 +269,22 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     if (storageValue) {
       this.state = {
         isConnected: storageValue.isConnected,
-        accounts: [storageValue.account],
+        accounts: storageValue.accounts,
       };
     }
   }
 
   private updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-      this.walletStorage.updateValue(true, this.state.accounts[0]);
+      this.walletStorage.updateValue(
+        true,
+        this.state.accounts[0],
+        this.state.accounts
+      );
     } else {
-      this.walletStorage.updateValue(false, "");
+      this.walletStorage.updateValue(false, "", []);
     }
   }
-  
 }
 
 export { EthWalletConnect };

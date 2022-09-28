@@ -678,18 +678,18 @@ $parcel$exportWildcard($8c78a71587639d7a$exports, $412a545945027ba9$exports);
 
 const $3b49e6787d3f4e23$var$STORAGE_KEY = "wallet-state-storage";
 class $3b49e6787d3f4e23$var$WalletStateStorage {
-    constructor(chain, walletid){
+    constructor(chain, walletId){
         this.chain = chain;
-        this.walletid = walletid;
+        this.walletId = walletId;
         this.storage = this._storage();
     }
     getValue() {
-        const value = this.values().find((state)=>state.chain === this.chain && this.walletid == state.walletid) || null;
+        const value = this.values().find((state)=>state.chain === this.chain && this.walletId == state.walletId) || null;
         if (value && !this.isValidAddress(value.connectedAccount)) return {
             isConnected: false,
             connectedAccount: "",
             chain: this.chain,
-            walletid: this.walletid,
+            walletId: this.walletId,
             accounts: value.accounts
         };
         return value;
@@ -698,11 +698,11 @@ class $3b49e6787d3f4e23$var$WalletStateStorage {
         const exisitingValues = this.getValue();
         let values = this.values();
         if (exisitingValues) values = values.map((value)=>{
-            if (value.chain === this.chain && value.walletid === this.walletid) return {
+            if (value.chain === this.chain && value.walletId === this.walletId) return {
                 chain: this.chain,
                 isConnected: isConnected,
                 connectedAccount: connectedAccount,
-                walletid: this.walletid,
+                walletId: this.walletId,
                 accounts: accounts
             };
             return value;
@@ -711,7 +711,7 @@ class $3b49e6787d3f4e23$var$WalletStateStorage {
             chain: this.chain,
             isConnected: isConnected,
             connectedAccount: connectedAccount,
-            walletid: this.walletid,
+            walletId: this.walletId,
             accounts: accounts
         });
         this.storage?.setItem($3b49e6787d3f4e23$var$STORAGE_KEY, JSON.stringify(values));
@@ -929,7 +929,9 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
             const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
             if (ethereum.on) {
                 ethereum.on("accountsChanged", async (accounts)=>{
-                    this.state.accounts = accounts;
+                    this.state.accounts = ethereum.request({
+                        method: "eth_requestAccounts"
+                    });
                     if (accounts.length === 0) await this.signOut();
                     else this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
                     this.updateWalletStorageValue();
@@ -964,7 +966,7 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.getPrimaryAccount(), this.getAccounts());
+        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.getPrimaryAccount(), this.state.accounts);
         else this.walletStorage.updateValue(false, "", []);
     }
 }
@@ -1186,14 +1188,12 @@ class $b82f469e02efa91a$export$9741c3aebc6a0fb7 {
         const storageValue = this.walletStorage.getValue();
         if (storageValue) this.state = {
             isConnected: storageValue.isConnected,
-            accounts: [
-                storageValue.account
-            ]
+            accounts: storageValue.accounts
         };
     }
     updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0]);
-        else this.walletStorage.updateValue(false, "");
+        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.state.accounts[0], this.state.accounts);
+        else this.walletStorage.updateValue(false, "", []);
     }
 }
 
@@ -1217,5 +1217,5 @@ $parcel$exportWildcard($61dc865ce14f4bf4$exports, $b82f469e02efa91a$exports);
 
 
 
-export {$28ac839a9eca26f5$export$e162153238934121 as NotImplementedError, $28ac839a9eca26f5$export$72563c16b91dfd16 as WalletNotInstalledError, $28ac839a9eca26f5$export$313d299817c74896 as WalletNotConnectedError, $28ac839a9eca26f5$export$f4d277c155d1965e as HookNotAvailableError, $61dc865ce14f4bf4$export$aef6a8518da1f60c as CHAIN_ETHEREUM, $05db05568a951b86$export$2c78a3b4fc11d8fa as Metamask, $b82f469e02efa91a$export$9741c3aebc6a0fb7 as EthWalletConnect, $dc4d60a7eb431eef$export$2e84527d78ea64a4 as CHAIN_ALGORAND, $0e4707f80e4e0187$export$6ab354d5c56bf95 as MyAlgo, $b5af4601982a5fe5$export$2a2454b5976b73ac as Algorand, $6a9b0d356171a818$export$ba0ef3a0d99fcc8f as WalletConnect, $b5560c6a127e9264$export$6a733d504587e4b0 as PeraWallet, $412a545945027ba9$export$24b8fbafc4b6a151 as useWindow};
+export {$61dc865ce14f4bf4$export$aef6a8518da1f60c as CHAIN_ETHEREUM, $05db05568a951b86$export$2c78a3b4fc11d8fa as Metamask, $b82f469e02efa91a$export$9741c3aebc6a0fb7 as EthWalletConnect, $dc4d60a7eb431eef$export$2e84527d78ea64a4 as CHAIN_ALGORAND, $0e4707f80e4e0187$export$6ab354d5c56bf95 as MyAlgo, $b5af4601982a5fe5$export$2a2454b5976b73ac as Algorand, $6a9b0d356171a818$export$ba0ef3a0d99fcc8f as WalletConnect, $b5560c6a127e9264$export$6a733d504587e4b0 as PeraWallet, $412a545945027ba9$export$24b8fbafc4b6a151 as useWindow, $28ac839a9eca26f5$export$e162153238934121 as NotImplementedError, $28ac839a9eca26f5$export$72563c16b91dfd16 as WalletNotInstalledError, $28ac839a9eca26f5$export$313d299817c74896 as WalletNotConnectedError, $28ac839a9eca26f5$export$f4d277c155d1965e as HookNotAvailableError};
 //# sourceMappingURL=module.js.map
