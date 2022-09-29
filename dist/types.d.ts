@@ -198,10 +198,10 @@ export class WalletConnect implements WalletInterface<_WalletConnectState1> {
     getAccounts(): Accounts[];
     fetchCurrentChainID(): Promise<string>;
     mountEventListeners(): Promise<void>;
-    onAccountChange(cb: (accounts: Accounts[]) => void | Promise<void>): HookEvent;
-    onAccountDisconnect(cb: () => void | Promise<void>): HookEvent;
-    onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
-    onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
+    onAccountChange: (cb: (accounts: Accounts[]) => void | Promise<void>) => HookEvent;
+    onAccountDisconnect: (cb: () => void | Promise<void>) => HookEvent;
+    onChainChange: (cb: (chain: string) => void | Promise<void>) => HookEvent;
+    onBlockAdded: (cb: (newBlock: unknown) => void | Promise<void>) => HookEvent;
     toJSON(): _WalletConnectState1;
     getProvider(): WalletConnectClient;
 }
@@ -243,10 +243,10 @@ export class PeraWallet implements WalletInterface<PeraWalletState> {
     getAccounts(): _Accounts2[];
     fetchCurrentChainID(): Promise<string>;
     mountEventListeners(): Promise<void>;
-    onAccountChange(cb: (accounts: _Accounts2[]) => void | Promise<void>): HookEvent;
-    onAccountDisconnect(cb: () => void | Promise<void>): HookEvent;
-    onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
-    onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
+    onAccountChange: (cb: (accounts: _Accounts2[]) => void | Promise<void>) => HookEvent;
+    onAccountDisconnect: (cb: () => void | Promise<void>) => HookEvent;
+    onChainChange: (cb: (chain: string) => void | Promise<void>) => HookEvent;
+    onBlockAdded: (cb: (newBlock: unknown) => void | Promise<void>) => HookEvent;
     toJSON(): PeraWalletState;
     getProvider(): PeraWalletConnect;
 }
@@ -311,10 +311,10 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     getAccounts(): _Accounts3[];
     fetchCurrentChainID(): Promise<string>;
     mountEventListeners(): Promise<void>;
-    onAccountChange(cb: (accounts: _Accounts3[]) => void | Promise<void>): HookEvent;
-    onAccountDisconnect(cb: () => void | Promise<void>): HookEvent;
-    onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
-    onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
+    onAccountChange: (cb: (accounts: _Accounts3[]) => void | Promise<void>) => HookEvent;
+    onAccountDisconnect: (cb: () => void | Promise<void>) => HookEvent;
+    onChainChange: (cb: (chain: string) => void | Promise<void>) => HookEvent;
+    onBlockAdded: (cb: (newBlock: unknown) => void | Promise<void>) => HookEvent;
     toJSON(): MyAlgoState;
 }
 export const CHAIN_ALGORAND = "ALGORAND";

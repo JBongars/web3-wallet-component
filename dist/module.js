@@ -312,25 +312,25 @@ class $6a9b0d356171a818$export$ba0ef3a0d99fcc8f {
         return "0x1";
     }
     async mountEventListeners() {}
-    onAccountChange(cb) {
+    onAccountChange = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
             return cb(this.getAccounts());
         });
-    }
-    onAccountDisconnect(cb) {
+    };
+    onAccountDisconnect = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT, ()=>{
             return cb();
         });
-    }
-    onChainChange(cb) {
+    };
+    onChainChange = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async ()=>{
             const currentChainId = await this.fetchCurrentChainID();
             return cb(currentChainId);
         });
-    }
-    onBlockAdded(cb) {
+    };
+    onBlockAdded = (cb)=>{
         throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
-    }
+    };
     toJSON() {
         return this.state;
     }
@@ -481,25 +481,25 @@ class $b5560c6a127e9264$export$6a733d504587e4b0 {
         return "0x1";
     }
     async mountEventListeners() {}
-    onAccountChange(cb) {
+    onAccountChange = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
             return cb(this.getAccounts());
         });
-    }
-    onAccountDisconnect(cb) {
+    };
+    onAccountDisconnect = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT, ()=>{
             return cb();
         });
-    }
-    onChainChange(cb) {
+    };
+    onChainChange = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async ()=>{
             const currentChainId = await this.fetchCurrentChainID();
             return cb(currentChainId);
         });
-    }
-    onBlockAdded(cb) {
+    };
+    onBlockAdded = (cb)=>{
         throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
-    }
+    };
     toJSON() {
         return this.state;
     }
@@ -546,26 +546,28 @@ class $b5af4601982a5fe5$export$2a2454b5976b73ac {
         this._peraWallet = new (0, $b5560c6a127e9264$export$6a733d504587e4b0)(data?.peraWallet);
         this._defaultWallet = defaultWallet;
     }
-    _registerActiveWallet(type) {
+    _registerActiveWallet = (type)=>{
         this._activeWallets.push(type);
-    }
-    _deregisterActiveWallet(type) {
+    };
+    _deregisterActiveWallet = (type)=>{
         const index = this._activeWallets.indexOf(type);
         this._activeWallets = this._activeWallets.splice(index, 1);
-    }
-    _initAlgorandWallet(algoWallet) {
+    };
+    _initAlgorandWallet = (algoWallet)=>{
+        const onAccountChange = (accounts)=>{
+            if (accounts.length < 1) this._deregisterActiveWallet(algoWallet.type);
+            else this._registerActiveWallet(algoWallet.type);
+        };
+        const onAccountDisconnect = ()=>{
+            this._deregisterActiveWallet(algoWallet.type);
+        };
         if (algoWallet.getIsWalletInstalled()) {
             algoWallet.init();
-            algoWallet.onAccountChange((accounts)=>{
-                if (accounts.length < 1) this._deregisterActiveWallet(algoWallet.type);
-                else this._registerActiveWallet(algoWallet.type);
-            });
-            algoWallet.onAccountDisconnect(()=>{
-                this._deregisterActiveWallet(algoWallet.type);
-            });
+            algoWallet.onAccountChange(onAccountChange);
+            algoWallet.onAccountDisconnect(onAccountDisconnect);
         } else console.warn("Selected algorand wallet is not currently installed...");
         return algoWallet;
-    }
+    };
     async init() {
         if (this._initialized) return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
         this._initialized = true;
@@ -757,25 +759,25 @@ class $0e4707f80e4e0187$export$6ab354d5c56bf95 {
         return "0x1";
     }
     async mountEventListeners() {}
-    onAccountChange(cb) {
+    onAccountChange = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
             return cb(this.getAccounts());
         });
-    }
-    onAccountDisconnect(cb) {
+    };
+    onAccountDisconnect = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT, ()=>{
             return cb();
         });
-    }
-    onChainChange(cb) {
+    };
+    onChainChange = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, async ()=>{
             const currentChainId = await this.fetchCurrentChainID();
             return cb(currentChainId);
         });
-    }
-    onBlockAdded(cb) {
+    };
+    onBlockAdded = (cb)=>{
         throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
-    }
+    };
     toJSON() {
         return this.state;
     }
