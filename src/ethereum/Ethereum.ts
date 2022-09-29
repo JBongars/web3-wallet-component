@@ -2,7 +2,7 @@ import { Metamask } from "./metamask";
 import { EthWalletConnect } from "./walletconnect";
 import { WalletConnectState } from "./walletconnect/types";
 import { MetamaskState, MetamaskSigner } from "./metamask/types";
-import { WALLET, WalletInterface } from "../types";
+import { ChainWalletInterface, WALLET, WalletInterface } from "../types";
 import { HookEvent, WALLET_STATUS } from "../utils/HookRouter/types";
 import { NotImplementedError } from "../errors";
 
@@ -21,7 +21,11 @@ type EthereumState = {
   activeWallets: EthereumWalletType[];
 };
 
-class Ethereum implements WalletInterface<unknown> {
+class Ethereum
+  implements
+    WalletInterface<unknown>,
+    ChainWalletInterface<EthereumWallet, EthereumWalletType>
+{
   private _metaMask: Metamask;
   private _walletConnect: EthWalletConnect;
   private _initialized: boolean = false;
@@ -38,16 +42,12 @@ class Ethereum implements WalletInterface<unknown> {
   }
 
   private _registerActiveWallet(type: EthereumWalletType) {
-    return () => {
-      this._activeWallets.push(type);
-    };
+    this._activeWallets.push(type);
   }
 
   private _deregisterActiveWallet(type: EthereumWalletType) {
-    return () => {
-      const index = this._activeWallets.indexOf(type);
-      this._activeWallets = this._activeWallets.splice(index, 1);
-    };
+    const index = this._activeWallets.indexOf(type);
+    this._activeWallets = this._activeWallets.splice(index, 1);
   }
 
   private async _initEthereumWallet(wallet: EthereumWallet) {
@@ -84,16 +84,18 @@ class Ethereum implements WalletInterface<unknown> {
     return WALLET_STATUS.OK;
   }
 
-  public getWallet(type: EthereumWalletType) {
+  public getWallet(type: EthereumWalletType): EthereumWallet {
     switch (type) {
       case EthereumWalletType.ETH_WALLET_CONNECT:
         return this._walletConnect;
       case EthereumWalletType.METMASK:
         return this._metaMask;
+      default:
+        throw new Error(`Wallet type ${type} cannot be found`);
     }
   }
 
-  public getActiveWallet() {
+  public getActiveWallet(): EthereumWallet {
     if (this._activeWallets.length === 0) {
       return this.getWallet(this._defaultWallet); // Get default wallet
     }
@@ -161,6 +163,6 @@ class Ethereum implements WalletInterface<unknown> {
   }
 }
 
-export type { EthereumWallet, EthereumSigner, Ethereum, EthereumState };
+export type { EthereumWallet, EthereumSigner, EthereumState };
 
-export { EthereumWalletType };
+export { Ethereum, EthereumWalletType };

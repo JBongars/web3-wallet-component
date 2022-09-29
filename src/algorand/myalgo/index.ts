@@ -1,5 +1,8 @@
 import MyAlgoConnect, {
-  Accounts, AlgorandTxn, EncodedTransaction, SignedTx
+  Accounts,
+  AlgorandTxn,
+  EncodedTransaction,
+  SignedTx,
 } from "@randlabs/myalgo-connect";
 import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
@@ -7,11 +10,11 @@ import {
   HookEvent,
   WALLET_HOOK,
   WALLET_ID,
-  WALLET_STATUS
+  WALLET_STATUS,
 } from "~/src/utils/HookRouter/types";
 import WalletStateStorage from "~/src/WalletStateStorage";
 import { CHAIN_ALGORAND } from "..";
-import { AlgorandSignerTxn } from "../Algorand";
+import { AlgorandSignerTxn, AlgorandWalletType } from "../Algorand";
 import { WalletInterface } from "./../../types";
 import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from "./types";
 
@@ -34,8 +37,14 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   ]);
   public state: MyAlgoState;
   private provider: MyAlgoConnect | undefined;
-  private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_MYALGO);
-  public currentActiveAccountAddress:string = "";
+  private walletStorage: WalletStateStorage = new WalletStateStorage(
+    CHAIN_ALGORAND,
+    WALLET_ID.ALGORAND_MYALGO
+  );
+  public currentActiveAccountAddress: string = "";
+
+  public type: AlgorandWalletType = AlgorandWalletType.MY_ALGO;
+  public name: string = "MY_ALGO";
 
   constructor(state?: MyAlgoState) {
     if (state) {
@@ -44,7 +53,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
       this.state = { ...initialState };
     }
 
-    this.setupInitialState()
+    this.setupInitialState();
   }
 
   private enforceIsConnected(): void {
@@ -76,7 +85,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     this.state.accounts = [];
     this.state.isConnected = false;
     this.updateWalletStorageValue();
-    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
     return WALLET_STATUS.OK;
   }
 
@@ -110,17 +119,19 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   }
 
   public getPrimaryAccount(): Accounts {
-    if(!this.getIsConnected()) {
+    if (!this.getIsConnected()) {
       return {
         name: "",
         address: "",
-      }
+      };
     }
-    
-    const account = this.state.accounts.find(acc => acc.address === this.currentActiveAccountAddress);
 
-    if(this.currentActiveAccountAddress && account) {
-      return account
+    const account = this.state.accounts.find(
+      (acc) => acc.address === this.currentActiveAccountAddress
+    );
+
+    if (this.currentActiveAccountAddress && account) {
+      return account;
     }
 
     return this.state.accounts[0];
@@ -134,11 +145,20 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return "0x1";
   }
 
-  public onAccountChange(cb: (accounts: Accounts) => void | Promise<void>) {
+  public onAccountChange(cb: (accounts: Accounts[]) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
       () => {
-        return cb(this.getPrimaryAccount());
+        return cb(this.getAccounts());
+      }
+    );
+  }
+
+  public onAccountDisconnect(cb: () => void | Promise<void>) {
+    return this.hookRouter.registerCallback(
+      WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
+      () => {
+        return cb();
       }
     );
   }
@@ -173,13 +193,13 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   }
 
   public switchAccount(address: string) {
-    const account = this.state.accounts.find(acc => acc.address === address);
+    const account = this.state.accounts.find((acc) => acc.address === address);
 
-    if(account) {
-      this.currentActiveAccountAddress = account.address
+    if (account) {
+      this.currentActiveAccountAddress = account.address;
     }
 
-    this.updateWalletStorageValue()
+    this.updateWalletStorageValue();
   }
 
   private setupInitialState() {
@@ -204,11 +224,7 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     if (this.state.isConnected && this.state.accounts.length > 0) {
       const accounts = this.getAccounts().map((acc) => acc.address);
       const connectedAccount = this.getPrimaryAccount().address;
-      this.walletStorage.updateValue(
-        true,
-        connectedAccount,
-        accounts
-      );
+      this.walletStorage.updateValue(true, connectedAccount, accounts);
     } else {
       this.walletStorage.updateValue(false, "", []);
     }

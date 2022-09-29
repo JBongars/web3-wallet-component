@@ -8,18 +8,22 @@ import {
   HookEvent,
   WALLET_HOOK,
   WALLET_ID,
-  WALLET_STATUS
+  WALLET_STATUS,
 } from "~/src/utils/HookRouter/types";
 import WalletStateStorage from "~/src/WalletStateStorage";
 import { CHAIN_ALGORAND } from "..";
 import { WalletInterface } from "../../types";
-import { AlgorandSignerTxn } from "../Algorand";
-import { WalletConnectAsset, WalletConnectSigner, WalletConnectState } from "./types";
+import { AlgorandSignerTxn, AlgorandWalletType } from "../Algorand";
+import {
+  WalletConnectAsset,
+  WalletConnectSigner,
+  WalletConnectState,
+} from "./types";
 
 type Accounts = {
   address: string;
   name: string;
-}
+};
 
 type WalletConnectTransaction = Uint8Array[];
 
@@ -36,7 +40,13 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   ]);
   public state: WalletConnectState;
   private provider: WalletConnectClient | undefined;
-  private walletStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_WALLETCONNECT);
+  private walletStorage = new WalletStateStorage(
+    CHAIN_ALGORAND,
+    WALLET_ID.ALGORAND_WALLETCONNECT
+  );
+
+  public type: AlgorandWalletType = AlgorandWalletType.ALGO_WALLET_CONNECT;
+  public name: string = "ALGO_WALLET_CONNECT";
 
   constructor(state?: WalletConnectState) {
     if (state) {
@@ -45,7 +55,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
       this.state = { ...initialState };
     }
 
-    this.setupInitialState()
+    this.setupInitialState();
   }
 
   private enforceIsConnected(): void {
@@ -72,11 +82,11 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
 
       this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
       this.state.accounts = accounts;
-      this.updateWalletStorageValue()
+      this.updateWalletStorageValue();
       this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     }
 
-    this.provider.on("connect", ((error, payload) => {
+    this.provider.on("connect", (error, payload) => {
       if (error) {
         throw error;
       }
@@ -85,9 +95,9 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
       const { accounts } = payload.params[0];
       this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
       this.state.accounts = accounts;
-      this.updateWalletStorageValue()
+      this.updateWalletStorageValue();
       this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
-    }));
+    });
 
     this.provider.on("disconnect", (error, payload) => {
       if (error) {
@@ -104,27 +114,27 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     this.state.isConnected = false;
 
     if (!this.provider) {
-      this.getProvider()
+      this.getProvider();
     }
 
     try {
       await this.provider?.killSession();
-    } catch (e) { }
+    } catch (e) {}
     this.provider = undefined;
-    this.updateWalletStorageValue()
-    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+    this.updateWalletStorageValue();
+    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
     return WALLET_STATUS.OK;
   }
 
   public async getSigner(): Promise<WalletConnectSigner> {
-    return async (
-      transactions: AlgorandSignerTxn,
-    ): Promise<SignedTx[]> => {
+    return async (transactions: AlgorandSignerTxn): Promise<SignedTx[]> => {
       this.enforceIsConnected();
       const walletConnect = this.getProvider();
-      const txnsToSign = (transactions as WalletConnectTransaction).map(txn => ({
-        txn: Buffer.from(txn).toString("base64")
-      }));
+      const txnsToSign = (transactions as WalletConnectTransaction).map(
+        (txn) => ({
+          txn: Buffer.from(txn).toString("base64"),
+        })
+      );
       const jsonRpcRequest = formatJsonRpcRequest("algo_signTxn", [txnsToSign]);
       let signedTxns = await walletConnect.sendCustomRequest(jsonRpcRequest);
       let signedTxns2: any = [];
@@ -132,13 +142,13 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
         if (signedTxns[i] !== null) {
           signedTxns2.push({
             txID: "",
-            blob: new Uint8Array(Buffer.from(signedTxns[i], "base64"))
-          })
+            blob: new Uint8Array(Buffer.from(signedTxns[i], "base64")),
+          });
         } else {
           signedTxns2.push({
             txId: "",
-            blob: null
-          })
+            blob: null,
+          });
         }
       }
 
@@ -167,23 +177,32 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
   public getPrimaryAccount(): Accounts {
     return {
       address: this.state.accounts[0],
-      name: ""
+      name: "",
     };
   }
 
   public getAccounts(): Accounts[] {
-    return this.state.accounts.map(ob => ({ address: ob, name: "" }));
+    return this.state.accounts.map((ob) => ({ address: ob, name: "" }));
   }
 
   public async fetchCurrentChainID(): Promise<string> {
     return "0x1";
   }
 
-  public onAccountChange(cb: (accounts: Accounts) => void | Promise<void>) {
+  public onAccountChange(cb: (accounts: Accounts[]) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
       () => {
-        return cb(this.getPrimaryAccount());
+        return cb(this.getAccounts());
+      }
+    );
+  }
+
+  public onAccountDisconnect(cb: () => void | Promise<void>) {
+    return this.hookRouter.registerCallback(
+      WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
+      () => {
+        return cb();
       }
     );
   }
@@ -233,8 +252,8 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
 
   private updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-       const accounts = this.getAccounts().map(acc => acc.address);
-       const connectedAccount = this.getPrimaryAccount().address;
+      const accounts = this.getAccounts().map((acc) => acc.address);
+      const connectedAccount = this.getPrimaryAccount().address;
       this.walletStorage.updateValue(true, connectedAccount, accounts);
     } else {
       this.walletStorage.updateValue(false, "", []);

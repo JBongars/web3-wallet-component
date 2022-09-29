@@ -1,19 +1,28 @@
 import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
 import { WalletInterface } from "~/src/types";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
-import { HookEvent, WALLET_HOOK, WALLET_ID, WALLET_STATUS } from "~/src/utils/HookRouter/types";
+import {
+  HookEvent,
+  WALLET_HOOK,
+  WALLET_ID,
+  WALLET_STATUS,
+} from "~/src/utils/HookRouter/types";
 import { PeraWalletAsset, PeraWalletSigner, PeraWalletState } from "./types";
 import { PeraWalletConnect } from "@perawallet/connect";
 import WalletStateStorage from "~/src/WalletStateStorage";
-import { AlgorandSignerTxn, CHAIN_ALGORAND } from "..";
-import { AlgorandTxn, EncodedTransaction, SignedTx } from "@randlabs/myalgo-connect";
+import { AlgorandSignerTxn, AlgorandWalletType, CHAIN_ALGORAND } from "..";
+import {
+  AlgorandTxn,
+  EncodedTransaction,
+  SignedTx,
+} from "@randlabs/myalgo-connect";
 import { SignerTransaction } from "@perawallet/connect/dist/util/model/peraWalletModels";
 import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 
 type Accounts = {
   address: string;
   name: string;
-}
+};
 
 type PeraWalletTransaction = Uint8Array[];
 
@@ -30,7 +39,13 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
   ]);
   public state: PeraWalletState;
   private provider: PeraWalletConnect | undefined;
-  private walletStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_PERAWALLET);
+  private walletStorage = new WalletStateStorage(
+    CHAIN_ALGORAND,
+    WALLET_ID.ALGORAND_PERAWALLET
+  );
+
+  public type: AlgorandWalletType = AlgorandWalletType.PERA_WALLET;
+  public name: string = "PERA_WALLET";
 
   constructor(state?: PeraWalletState) {
     if (state) {
@@ -39,7 +54,7 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
       this.state = { ...initialState };
     }
 
-    this.setupInitialState()
+    this.setupInitialState();
   }
 
   private enforceIsConnected(): void {
@@ -55,20 +70,20 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
   public async signIn(): Promise<WALLET_STATUS> {
     this.provider = this.getProvider();
     const accounts = await this.provider.connect();
-    
-    this.state.accounts = accounts.map(account => ({
+
+    this.state.accounts = accounts.map((account) => ({
       name: "",
-      address: account
+      address: account,
     }));
     this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-    this.updateWalletStorageValue()
+    this.updateWalletStorageValue();
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
 
     this.provider?.connector?.on("disconnect", (error, payload) => {
       if (error) {
         throw error;
       }
-      
+
       this.signOut();
     });
 
@@ -80,7 +95,7 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
     this.state.isConnected = false;
 
     if (!this.provider) {
-      this.provider = this.getProvider()
+      this.provider = this.getProvider();
     }
 
     if (!this.provider.connector) {
@@ -89,18 +104,16 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
 
     try {
       await this.provider?.disconnect();
-    } catch (e) { }
+    } catch (e) {}
 
     this.provider = undefined;
-    this.updateWalletStorageValue()
-    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+    this.updateWalletStorageValue();
+    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
     return WALLET_STATUS.OK;
   }
 
   public async getSigner(): Promise<PeraWalletSigner> {
-    return async (
-      transactions: AlgorandSignerTxn,
-    ): Promise<SignedTx[]> => {
+    return async (transactions: AlgorandSignerTxn): Promise<SignedTx[]> => {
       this.enforceIsConnected();
       const peraWallet = this.getProvider();
 
@@ -108,28 +121,30 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
         await peraWallet.reconnectSession();
       }
 
-      const txnsToSign = (transactions as PeraWalletTransaction).map(txn => ({
-        txn: Buffer.from(txn).toString("base64")
+      const txnsToSign = (transactions as PeraWalletTransaction).map((txn) => ({
+        txn: Buffer.from(txn).toString("base64"),
       }));
       const jsonRpcRequest = formatJsonRpcRequest("algo_signTxn", [txnsToSign]);
-      let signedTxns = await peraWallet?.connector?.sendCustomRequest(jsonRpcRequest);
-      console.log ({signedTxns})
+      let signedTxns = await peraWallet?.connector?.sendCustomRequest(
+        jsonRpcRequest
+      );
+      console.log({ signedTxns });
 
       let signedTxns2: any = [];
       for (let i = 0; i < signedTxns.length; i++) {
         if (signedTxns[i] !== null) {
           signedTxns2.push({
             txID: "",
-            blob: new Uint8Array(Buffer.from(signedTxns[i], "base64"))
-          })
+            blob: new Uint8Array(Buffer.from(signedTxns[i], "base64")),
+          });
         } else {
           signedTxns2.push({
             txId: "",
-            blob: null
-          })
+            blob: null,
+          });
         }
       }
-      
+
       return signedTxns2;
     };
   }
@@ -147,7 +162,7 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
   }
 
   public getIsConnected(): boolean {
-    return Boolean(this.getAccounts().length)
+    return Boolean(this.getAccounts().length);
   }
 
   public getPrimaryAccount(): Accounts {
@@ -162,11 +177,20 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
     return "0x1";
   }
 
-  public onAccountChange(cb: (accounts: Accounts) => void | Promise<void>) {
+  public onAccountChange(cb: (accounts: Accounts[]) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
       () => {
-        return cb(this.getPrimaryAccount());
+        return cb(this.getAccounts());
+      }
+    );
+  }
+
+  public onAccountDisconnect(cb: () => void | Promise<void>) {
+    return this.hookRouter.registerCallback(
+      WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
+      () => {
+        return cb();
       }
     );
   }
@@ -206,9 +230,9 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
     if (storageValue) {
       this.state = {
         isConnected: this.getIsConnected(),
-        accounts: storageValue.accounts.map(account => ({
+        accounts: storageValue.accounts.map((account) => ({
           name: "",
-          address: account
+          address: account,
         })),
       };
     }
@@ -216,7 +240,7 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
 
   private updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-      const accounts = this.getAccounts().map(acc => acc.address);
+      const accounts = this.getAccounts().map((acc) => acc.address);
       const connectedAccount = this.getPrimaryAccount().address;
       this.walletStorage.updateValue(true, connectedAccount, accounts);
     } else {
@@ -224,6 +248,5 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
     }
   }
 }
-
 
 export { PeraWallet, PeraWalletTransaction };

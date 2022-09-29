@@ -34,5 +34,11 @@ interface WalletInterface<T> {
   toJSON: () => T;
 }
 
-export { WALLET, WalletInterface };
+interface ChainWalletInterface<Wallet, WalletType> {
+  init: () => Promise<WALLET_STATUS>;
+  getWallet: (type: WalletType) => Wallet;
+  getActiveWallet: () => Wallet;
+}
+
+export { WALLET, WalletInterface, ChainWalletInterface };
 export type { Signer, useWallets };
