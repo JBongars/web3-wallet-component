@@ -66,6 +66,8 @@ class Wallet implements WalletInterface<State> {
     throw new NotImplementedError();
   }
 
+  public async mountEventListeners(): Promise<void> {}
+
   public onAccountChange(
     cb: (accounts: unknown) => void | Promise<void>
   ): HookEvent {

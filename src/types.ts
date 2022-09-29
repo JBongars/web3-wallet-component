@@ -26,6 +26,7 @@ interface WalletInterface<T> {
   getPrimaryAccount: () => unknown;
   getAccounts: () => unknown[];
   fetchCurrentChainID: () => Promise<string>;
+  mountEventListeners: () => Promise<void>;
   onAccountChange: (
     cb: (accounts: unknown) => void | Promise<void>
   ) => HookEvent;

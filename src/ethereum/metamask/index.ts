@@ -242,7 +242,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     return this.state;
   }
 
-  public async mountEventListeners() {
+  public async mountEventListeners(): Promise<void> {
     const provider = await this._getProvider();
     if (typeof window !== "undefined" && "ethereum" in window) {
       const ethereum = useWindow((window: any) => window.ethereum);

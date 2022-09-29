@@ -159,6 +159,10 @@ class Algorand
     return this.getActiveWallet().fetchCurrentChainID();
   }
 
+  public mountEventListeners(): Promise<void> {
+    throw new NotImplementedError();
+  }
+
   public onAccountChange(
     cb: (accounts: unknown) => void | Promise<void>
   ): HookEvent {

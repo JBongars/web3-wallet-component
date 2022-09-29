@@ -94,8 +94,6 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
   }
 
   public async init(): Promise<WALLET_STATUS> {
-    this.provider = await this._getProvider();
-
     return WALLET_STATUS.OK;
   }
 

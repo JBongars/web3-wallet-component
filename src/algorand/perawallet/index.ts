@@ -177,6 +177,8 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
     return "0x1";
   }
 
+  public async mountEventListeners(): Promise<void> {}
+
   public onAccountChange(cb: (accounts: Accounts[]) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
@@ -216,6 +218,8 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
   }
 
   public getProvider(): PeraWalletConnect {
+    this.enforceIsConnected();
+
     if (this.provider instanceof PeraWalletConnect) {
       return this.provider;
     }

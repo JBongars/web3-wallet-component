@@ -217,6 +217,8 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
+        console.trace("Signing in...");
+        debugger;
         this.provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))({
             bridge: "https://bridge.walletconnect.org",
             qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal)))
@@ -314,6 +316,7 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
     async fetchCurrentChainID() {
         return "0x1";
     }
+    async mountEventListeners() {}
     onAccountChange(cb) {
         return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
             return cb(this.getAccounts());
@@ -402,6 +405,8 @@ class $3c9851a538a51e5f$export$6a733d504587e4b0 {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
+        console.trace("Pera signing in...");
+        debugger;
         this.provider = this.getProvider();
         const accounts = await this.provider.connect();
         this.state.accounts = accounts.map((account)=>({
@@ -482,6 +487,7 @@ class $3c9851a538a51e5f$export$6a733d504587e4b0 {
     async fetchCurrentChainID() {
         return "0x1";
     }
+    async mountEventListeners() {}
     onAccountChange(cb) {
         return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
             return cb(this.getAccounts());
@@ -505,6 +511,7 @@ class $3c9851a538a51e5f$export$6a733d504587e4b0 {
         return this.state;
     }
     getProvider() {
+        this.enforceIsConnected();
         if (this.provider instanceof (0, $8zHUo$perawalletconnect.PeraWalletConnect)) return this.provider;
         this.provider = new (0, $8zHUo$perawalletconnect.PeraWalletConnect)();
         return this.provider;
@@ -577,6 +584,7 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     getWallet(type) {
+        // console.trace("getWallet");
         switch(type){
             case $f2b728861576b445$export$69a7e0cc19186a57.MY_ALGO:
                 return this._myAlgo;
@@ -589,6 +597,7 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
         }
     }
     getActiveWallet() {
+        // console.trace("getActiveWallet");
         if (this._activeWallets.length === 0) return this.getWallet(this._defaultWallet); // Get default wallet
         return this.getWallet(this._activeWallets[0]);
     }
@@ -621,6 +630,9 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
     }
     fetchCurrentChainID() {
         return this.getActiveWallet().fetchCurrentChainID();
+    }
+    mountEventListeners() {
+        throw new (0, $d083fd37dae77b99$export$e162153238934121)();
     }
     onAccountChange(cb) {
         throw new (0, $d083fd37dae77b99$export$e162153238934121)();
@@ -665,6 +677,36 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     }
     async init() {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
+    }
+    getProvider() {
+        if (this.provider instanceof (0, ($parcel$interopDefault($8zHUo$randlabsmyalgoconnect)))) return this.provider;
+        this.provider = new (0, ($parcel$interopDefault($8zHUo$randlabsmyalgoconnect)))();
+        return this.provider;
+    }
+    switchAccount(address) {
+        const account = this.state.accounts.find((acc)=>acc.address === address);
+        if (account) this.currentActiveAccountAddress = account.address;
+        this.updateWalletStorageValue();
+    }
+    setupInitialState() {
+        const storageValue = this.walletStorage.getValue();
+        if (storageValue) {
+            this.state = {
+                isConnected: storageValue.isConnected,
+                accounts: storageValue.accounts ? storageValue.accounts.map((address)=>({
+                        name: "",
+                        address: address
+                    })) : []
+            };
+            this.currentActiveAccountAddress = storageValue.connectedAccount;
+        }
+    }
+    updateWalletStorageValue() {
+        if (this.state.isConnected && this.state.accounts.length > 0) {
+            const accounts = this.getAccounts().map((acc)=>acc.address);
+            const connectedAccount = this.getPrimaryAccount().address;
+            this.walletStorage.updateValue(true, connectedAccount, accounts);
+        } else this.walletStorage.updateValue(false, "", []);
     }
     async signIn() {
         const myAlgoConnect = this.getProvider();
@@ -723,6 +765,7 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     async fetchCurrentChainID() {
         return "0x1";
     }
+    async mountEventListeners() {}
     onAccountChange(cb) {
         return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
             return cb(this.getAccounts());
@@ -744,36 +787,6 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     }
     toJSON() {
         return this.state;
-    }
-    getProvider() {
-        if (this.provider instanceof (0, ($parcel$interopDefault($8zHUo$randlabsmyalgoconnect)))) return this.provider;
-        this.provider = new (0, ($parcel$interopDefault($8zHUo$randlabsmyalgoconnect)))();
-        return this.provider;
-    }
-    switchAccount(address) {
-        const account = this.state.accounts.find((acc)=>acc.address === address);
-        if (account) this.currentActiveAccountAddress = account.address;
-        this.updateWalletStorageValue();
-    }
-    setupInitialState() {
-        const storageValue = this.walletStorage.getValue();
-        if (storageValue) {
-            this.state = {
-                isConnected: storageValue.isConnected,
-                accounts: storageValue.accounts ? storageValue.accounts.map((address)=>({
-                        name: "",
-                        address: address
-                    })) : []
-            };
-            this.currentActiveAccountAddress = storageValue.connectedAccount;
-        }
-    }
-    updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) {
-            const accounts = this.getAccounts().map((acc)=>acc.address);
-            const connectedAccount = this.getPrimaryAccount().address;
-            this.walletStorage.updateValue(true, connectedAccount, accounts);
-        } else this.walletStorage.updateValue(false, "", []);
     }
 }
 
@@ -1199,7 +1212,6 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         return walletConnectProvider;
     }
     async init() {
-        this.provider = await this._getProvider();
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
@@ -1368,11 +1380,11 @@ class $d5d3dec9ab4b7763$export$aa318bacd7f710c5 {
     }
     async init() {
         if (this._initialized) return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
-        this._initialized = true;
         await Promise.all([
             this._metaMask,
             this._walletConnect
         ].map(this._initEthereumWallet));
+        this._initialized = true;
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     getWallet(type) {
@@ -1418,6 +1430,9 @@ class $d5d3dec9ab4b7763$export$aa318bacd7f710c5 {
     }
     fetchCurrentChainID() {
         return this.getActiveWallet().fetchCurrentChainID();
+    }
+    mountEventListeners() {
+        throw new (0, $d083fd37dae77b99$export$e162153238934121)();
     }
     onAccountChange(cb) {
         throw new (0, $d083fd37dae77b99$export$e162153238934121)();

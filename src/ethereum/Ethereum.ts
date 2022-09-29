@@ -76,11 +76,11 @@ class Ethereum
       return WALLET_STATUS.OK;
     }
 
-    this._initialized = true;
     await Promise.all(
       [this._metaMask, this._walletConnect].map(this._initEthereumWallet)
     );
 
+    this._initialized = true;
     return WALLET_STATUS.OK;
   }
 
@@ -140,6 +140,10 @@ class Ethereum
 
   public fetchCurrentChainID(): Promise<string> {
     return this.getActiveWallet().fetchCurrentChainID();
+  }
+
+  public mountEventListeners(): Promise<void> {
+    throw new NotImplementedError();
   }
 
   public onAccountChange(

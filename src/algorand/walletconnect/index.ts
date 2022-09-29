@@ -189,6 +189,8 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     return "0x1";
   }
 
+  public async mountEventListeners(): Promise<void> {}
+
   public onAccountChange(cb: (accounts: Accounts[]) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,

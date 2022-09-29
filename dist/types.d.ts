@@ -145,6 +145,7 @@ export class Ethereum implements WalletInterface<unknown>, ChainWalletInterface<
     getPrimaryAccount(): unknown;
     getAccounts(): unknown[];
     fetchCurrentChainID(): Promise<string>;
+    mountEventListeners(): Promise<void>;
     onAccountChange(cb: (accounts: unknown) => void | Promise<void>): HookEvent;
     onChainChange(cb: (chainId: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (block: unknown) => void | Promise<void>): HookEvent;
@@ -196,6 +197,7 @@ export class WalletConnect implements WalletInterface<_WalletConnectState1> {
     getPrimaryAccount(): Accounts;
     getAccounts(): Accounts[];
     fetchCurrentChainID(): Promise<string>;
+    mountEventListeners(): Promise<void>;
     onAccountChange(cb: (accounts: Accounts[]) => void | Promise<void>): HookEvent;
     onAccountDisconnect(cb: () => void | Promise<void>): HookEvent;
     onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
@@ -240,6 +242,7 @@ export class PeraWallet implements WalletInterface<PeraWalletState> {
     getPrimaryAccount(): _Accounts2;
     getAccounts(): _Accounts2[];
     fetchCurrentChainID(): Promise<string>;
+    mountEventListeners(): Promise<void>;
     onAccountChange(cb: (accounts: _Accounts2[]) => void | Promise<void>): HookEvent;
     onAccountDisconnect(cb: () => void | Promise<void>): HookEvent;
     onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
@@ -278,6 +281,7 @@ export class Algorand implements WalletInterface<unknown>, ChainWalletInterface<
     getPrimaryAccount(): unknown;
     getAccounts(): unknown[];
     fetchCurrentChainID(): Promise<string>;
+    mountEventListeners(): Promise<void>;
     onAccountChange(cb: (accounts: unknown) => void | Promise<void>): HookEvent;
     onChainChange(cb: (chainId: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (block: unknown) => void | Promise<void>): HookEvent;
@@ -294,6 +298,8 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     name: string;
     constructor(state?: MyAlgoState);
     init(): Promise<WALLET_STATUS>;
+    getProvider(): MyAlgoConnect;
+    switchAccount(address: string): void;
     signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
     getSigner(): Promise<MyAlgoSigner>;
@@ -304,13 +310,12 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     getPrimaryAccount(): _Accounts3;
     getAccounts(): _Accounts3[];
     fetchCurrentChainID(): Promise<string>;
+    mountEventListeners(): Promise<void>;
     onAccountChange(cb: (accounts: _Accounts3[]) => void | Promise<void>): HookEvent;
     onAccountDisconnect(cb: () => void | Promise<void>): HookEvent;
     onChainChange(cb: (chain: string) => void | Promise<void>): HookEvent;
     onBlockAdded(cb: (newBlock: unknown) => void | Promise<void>): HookEvent;
     toJSON(): MyAlgoState;
-    getProvider(): MyAlgoConnect;
-    switchAccount(address: string): void;
 }
 export const CHAIN_ALGORAND = "ALGORAND";
 export type WALLET = AlgorandWallet | EthereumWallet;
@@ -332,6 +337,7 @@ export interface WalletInterface<T> {
     getPrimaryAccount: () => unknown;
     getAccounts: () => unknown[];
     fetchCurrentChainID: () => Promise<string>;
+    mountEventListeners: () => Promise<void>;
     onAccountChange: (cb: (accounts: unknown) => void | Promise<void>) => HookEvent;
     onChainChange: (cb: (chainId: string) => void | Promise<void>) => HookEvent;
     onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;

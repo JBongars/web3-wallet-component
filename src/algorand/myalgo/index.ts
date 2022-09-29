@@ -66,6 +66,53 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return WALLET_STATUS.OK;
   }
 
+  public getProvider(): MyAlgoConnect {
+    if (this.provider instanceof MyAlgoConnect) {
+      return this.provider;
+    }
+
+    this.provider = new MyAlgoConnect();
+    return this.provider;
+  }
+
+  public switchAccount(address: string) {
+    const account = this.state.accounts.find((acc) => acc.address === address);
+
+    if (account) {
+      this.currentActiveAccountAddress = account.address;
+    }
+
+    this.updateWalletStorageValue();
+  }
+
+  private setupInitialState() {
+    const storageValue = this.walletStorage.getValue();
+
+    if (storageValue) {
+      this.state = {
+        isConnected: storageValue.isConnected,
+        accounts: storageValue.accounts
+          ? storageValue.accounts.map((address) => ({
+              name: "",
+              address,
+            }))
+          : [],
+      };
+
+      this.currentActiveAccountAddress = storageValue.connectedAccount;
+    }
+  }
+
+  private updateWalletStorageValue() {
+    if (this.state.isConnected && this.state.accounts.length > 0) {
+      const accounts = this.getAccounts().map((acc) => acc.address);
+      const connectedAccount = this.getPrimaryAccount().address;
+      this.walletStorage.updateValue(true, connectedAccount, accounts);
+    } else {
+      this.walletStorage.updateValue(false, "", []);
+    }
+  }
+
   public async signIn(): Promise<WALLET_STATUS> {
     const myAlgoConnect = this.getProvider();
 
@@ -145,6 +192,8 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
     return "0x1";
   }
 
+  public async mountEventListeners(): Promise<void> {}
+
   public onAccountChange(cb: (accounts: Accounts[]) => void | Promise<void>) {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
@@ -181,53 +230,6 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
 
   public toJSON(): MyAlgoState {
     return this.state;
-  }
-
-  public getProvider(): MyAlgoConnect {
-    if (this.provider instanceof MyAlgoConnect) {
-      return this.provider;
-    }
-
-    this.provider = new MyAlgoConnect();
-    return this.provider;
-  }
-
-  public switchAccount(address: string) {
-    const account = this.state.accounts.find((acc) => acc.address === address);
-
-    if (account) {
-      this.currentActiveAccountAddress = account.address;
-    }
-
-    this.updateWalletStorageValue();
-  }
-
-  private setupInitialState() {
-    const storageValue = this.walletStorage.getValue();
-
-    if (storageValue) {
-      this.state = {
-        isConnected: storageValue.isConnected,
-        accounts: storageValue.accounts
-          ? storageValue.accounts.map((address) => ({
-              name: "",
-              address,
-            }))
-          : [],
-      };
-
-      this.currentActiveAccountAddress = storageValue.connectedAccount;
-    }
-  }
-
-  private updateWalletStorageValue() {
-    if (this.state.isConnected && this.state.accounts.length > 0) {
-      const accounts = this.getAccounts().map((acc) => acc.address);
-      const connectedAccount = this.getPrimaryAccount().address;
-      this.walletStorage.updateValue(true, connectedAccount, accounts);
-    } else {
-      this.walletStorage.updateValue(false, "", []);
-    }
   }
 }
 
