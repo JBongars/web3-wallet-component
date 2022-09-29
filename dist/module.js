@@ -214,8 +214,6 @@ class $6a9b0d356171a818$export$ba0ef3a0d99fcc8f {
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        console.trace("Signing in...");
-        debugger;
         this.provider = new (0, $hgUW1$walletconnectclient)({
             bridge: "https://bridge.walletconnect.org",
             qrcodeModal: (0, $hgUW1$algorandwalletconnectqrcodemodal)
@@ -402,8 +400,6 @@ class $b5560c6a127e9264$export$6a733d504587e4b0 {
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        console.trace("Pera signing in...");
-        debugger;
         this.provider = this.getProvider();
         const accounts = await this.provider.connect();
         this.state.accounts = accounts.map((account)=>({
@@ -581,7 +577,6 @@ class $b5af4601982a5fe5$export$2a2454b5976b73ac {
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     getWallet(type) {
-        // console.trace("getWallet");
         switch(type){
             case $b5af4601982a5fe5$export$69a7e0cc19186a57.MY_ALGO:
                 return this._myAlgo;
@@ -594,7 +589,6 @@ class $b5af4601982a5fe5$export$2a2454b5976b73ac {
         }
     }
     getActiveWallet() {
-        // console.trace("getActiveWallet");
         if (this._activeWallets.length === 0) return this.getWallet(this._defaultWallet); // Get default wallet
         return this.getWallet(this._activeWallets[0]);
     }
@@ -1041,23 +1035,23 @@ class $05db05568a951b86$export$2c78a3b4fc11d8fa {
         this.chain = `0x${chain}`;
         this.switchChainFromWallet(chain);
     }
-    onAccountChange(cb) {
+    onAccountChange = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, cb);
-    }
-    onChainChange(cb) {
+    };
+    onChainChange = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, cb);
-    }
-    onAccountDisconnect(cb) {
+    };
+    onAccountDisconnect = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT, cb);
-    }
-    onChainDisconnect(cb) {
+    };
+    onChainDisconnect = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT, cb);
-    }
-    onBlockAdded(cb) {
+    };
+    onBlockAdded = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
             return cb(block);
         });
-    }
+    };
     toJSON() {
         return this.state;
     }
@@ -1300,23 +1294,23 @@ class $b82f469e02efa91a$export$9741c3aebc6a0fb7 {
         this.chain = `0x${chain}`;
         this.switchChainFromWallet(chain);
     }
-    onAccountChange(cb) {
+    onAccountChange = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, cb);
-    }
-    onChainChange(cb) {
+    };
+    onChainChange = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, cb);
-    }
-    onAccountDisconnect(cb) {
+    };
+    onAccountDisconnect = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT, cb);
-    }
-    onChainDisconnect(cb) {
+    };
+    onChainDisconnect = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT, cb);
-    }
-    onBlockAdded(cb) {
+    };
+    onBlockAdded = (cb)=>{
         return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
             return cb(block);
         });
-    }
+    };
     toJSON() {
         return this.state;
     }
@@ -1355,26 +1349,28 @@ class $85bc198bca370cae$export$aa318bacd7f710c5 {
         this._walletConnect = new (0, $b82f469e02efa91a$export$9741c3aebc6a0fb7)();
         this._defaultWallet = defaultWallet;
     }
-    _registerActiveWallet(type) {
+    _registerActiveWallet = (type)=>{
         this._activeWallets.push(type);
-    }
-    _deregisterActiveWallet(type) {
+    };
+    _deregisterActiveWallet = (type)=>{
         const index = this._activeWallets.indexOf(type);
         this._activeWallets = this._activeWallets.splice(index, 1);
-    }
-    async _initEthereumWallet(wallet) {
+    };
+    _initEthereumWallet = async (wallet)=>{
+        const onAccountChange = (accounts)=>{
+            if (accounts.length < 1) this._deregisterActiveWallet(wallet.type);
+            else this._registerActiveWallet(wallet.type);
+        };
+        const onAccountDisconnect = ()=>{
+            this._deregisterActiveWallet(wallet.type);
+        };
         if (wallet.getIsWalletInstalled()) {
             await wallet.init();
             await wallet.mountEventListeners();
-            wallet.onAccountChange((accounts)=>{
-                if (accounts.length < 1) this._deregisterActiveWallet(wallet.type);
-                else this._registerActiveWallet(wallet.type);
-            });
-            wallet.onAccountDisconnect(()=>{
-                this._deregisterActiveWallet(wallet.type);
-            });
+            wallet.onAccountChange(onAccountChange);
+            wallet.onAccountDisconnect(onAccountDisconnect);
         } else console.warn(`${wallet.name} is not currently installed...`);
-    }
+    };
     async init() {
         if (this._initialized) return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
         await Promise.all([

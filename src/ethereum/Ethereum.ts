@@ -41,35 +41,38 @@ class Ethereum
     this._defaultWallet = defaultWallet;
   }
 
-  private _registerActiveWallet(type: EthereumWalletType) {
+  private _registerActiveWallet = (type: EthereumWalletType) => {
     this._activeWallets.push(type);
-  }
+  };
 
-  private _deregisterActiveWallet(type: EthereumWalletType) {
+  private _deregisterActiveWallet = (type: EthereumWalletType) => {
     const index = this._activeWallets.indexOf(type);
     this._activeWallets = this._activeWallets.splice(index, 1);
-  }
+  };
 
-  private async _initEthereumWallet(wallet: EthereumWallet) {
+  private _initEthereumWallet = async (wallet: EthereumWallet) => {
+    const onAccountChange = (accounts: string[]) => {
+      if (accounts.length < 1) {
+        this._deregisterActiveWallet(wallet.type);
+      } else {
+        this._registerActiveWallet(wallet.type);
+      }
+    };
+
+    const onAccountDisconnect = () => {
+      this._deregisterActiveWallet(wallet.type);
+    };
+
     if (wallet.getIsWalletInstalled()) {
       await wallet.init();
       await wallet.mountEventListeners();
 
-      wallet.onAccountChange((accounts: string[]) => {
-        if (accounts.length < 1) {
-          this._deregisterActiveWallet(wallet.type);
-        } else {
-          this._registerActiveWallet(wallet.type);
-        }
-      });
-
-      wallet.onAccountDisconnect(() => {
-        this._deregisterActiveWallet(wallet.type);
-      });
+      wallet.onAccountChange(onAccountChange);
+      wallet.onAccountDisconnect(onAccountDisconnect);
     } else {
       console.warn(`${wallet.name} is not currently installed...`);
     }
-  }
+  };
 
   public async init(): Promise<WALLET_STATUS> {
     if (this._initialized) {

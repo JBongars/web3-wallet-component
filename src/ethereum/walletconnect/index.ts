@@ -217,36 +217,38 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     this.switchChainFromWallet(chain);
   }
 
-  public onAccountChange(cb: (accounts: string[]) => void | Promise<void>) {
+  public onAccountChange = (
+    cb: (accounts: string[]) => void | Promise<void>
+  ) => {
     return this.hookRouter.registerCallback(WALLET_HOOK.ACCOUNT_ON_CHANGE, cb);
-  }
+  };
 
-  public onChainChange(cb: (chain: string) => void | Promise<void>) {
+  public onChainChange = (cb: (chain: string) => void | Promise<void>) => {
     return this.hookRouter.registerCallback(WALLET_HOOK.CHAIN_ON_CHANGE, cb);
-  }
+  };
 
-  public onAccountDisconnect(cb: () => void | Promise<void>) {
+  public onAccountDisconnect = (cb: () => void | Promise<void>) => {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
       cb
     );
-  }
+  };
 
-  public onChainDisconnect(cb: () => void | Promise<void>) {
+  public onChainDisconnect = (cb: () => void | Promise<void>) => {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.CHAIN_ON_DISCONNECT,
       cb
     );
-  }
+  };
 
-  public onBlockAdded(cb: (newBlock: number) => void | Promise<void>) {
+  public onBlockAdded = (cb: (newBlock: number) => void | Promise<void>) => {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.NEW_BLOCK,
       (block: number) => {
         return cb(block);
       }
     );
-  }
+  };
 
   public toJSON(): WalletConnectState {
     return this.state;
