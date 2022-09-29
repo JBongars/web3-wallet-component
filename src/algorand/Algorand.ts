@@ -53,36 +53,41 @@ class Algorand
     this._defaultWallet = defaultWallet;
   }
 
-  private _registerActiveWallet(type: AlgorandWalletType): void {
+  private _registerActiveWallet = (type: AlgorandWalletType): void => {
     this._activeWallets.push(type);
-  }
+  };
 
-  private _deregisterActiveWallet(type: AlgorandWalletType): void {
+  private _deregisterActiveWallet = (type: AlgorandWalletType): void => {
     const index = this._activeWallets.indexOf(type);
     this._activeWallets = this._activeWallets.splice(index, 1);
-  }
+  };
 
-  private _initAlgorandWallet(algoWallet: AlgorandWallet): AlgorandWallet {
+  private _initAlgorandWallet = (
+    algoWallet: AlgorandWallet
+  ): AlgorandWallet => {
+    const onAccountChange = (accounts: Accounts[]) => {
+      if (accounts.length < 1) {
+        this._deregisterActiveWallet(algoWallet.type);
+      } else {
+        this._registerActiveWallet(algoWallet.type);
+      }
+    };
+
+    const onAccountDisconnect = () => {
+      this._deregisterActiveWallet(algoWallet.type);
+    };
+
     if (algoWallet.getIsWalletInstalled()) {
       algoWallet.init();
 
-      algoWallet.onAccountChange((accounts: Accounts[]) => {
-        if (accounts.length < 1) {
-          this._deregisterActiveWallet(algoWallet.type);
-        } else {
-          this._registerActiveWallet(algoWallet.type);
-        }
-      });
-
-      algoWallet.onAccountDisconnect(() => {
-        this._deregisterActiveWallet(algoWallet.type);
-      });
+      algoWallet.onAccountChange(onAccountChange);
+      algoWallet.onAccountDisconnect(onAccountDisconnect);
     } else {
       console.warn("Selected algorand wallet is not currently installed...");
     }
 
     return algoWallet;
-  }
+  };
 
   public async init(): Promise<WALLET_STATUS> {
     if (this._initialized) {

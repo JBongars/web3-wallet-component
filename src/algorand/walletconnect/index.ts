@@ -191,25 +191,27 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
 
   public async mountEventListeners(): Promise<void> {}
 
-  public onAccountChange(cb: (accounts: Accounts[]) => void | Promise<void>) {
+  public onAccountChange = (
+    cb: (accounts: Accounts[]) => void | Promise<void>
+  ) => {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
       () => {
         return cb(this.getAccounts());
       }
     );
-  }
+  };
 
-  public onAccountDisconnect(cb: () => void | Promise<void>) {
+  public onAccountDisconnect = (cb: () => void | Promise<void>) => {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
       () => {
         return cb();
       }
     );
-  }
+  };
 
-  public onChainChange(cb: (chain: string) => void | Promise<void>) {
+  public onChainChange = (cb: (chain: string) => void | Promise<void>) => {
     return this.hookRouter.registerCallback(
       WALLET_HOOK.CHAIN_ON_CHANGE,
       async () => {
@@ -217,13 +219,13 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
         return cb(currentChainId);
       }
     );
-  }
+  };
 
-  public onBlockAdded(
+  public onBlockAdded = (
     cb: (newBlock: unknown) => void | Promise<void>
-  ): HookEvent {
+  ): HookEvent => {
     throw new NotImplementedError();
-  }
+  };
 
   public toJSON(): WalletConnectState {
     return this.state;
