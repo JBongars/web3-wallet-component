@@ -58,8 +58,7 @@ class Algorand
   };
 
   private _deregisterActiveWallet = (type: AlgorandWalletType): void => {
-    const index = this._activeWallets.indexOf(type);
-    this._activeWallets = this._activeWallets.splice(index, 1);
+    this._activeWallets = this._activeWallets.filter((elem) => elem !== type);
   };
 
   private _initAlgorandWallet = (
