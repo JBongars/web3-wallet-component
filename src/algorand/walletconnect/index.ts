@@ -13,7 +13,7 @@ import {
 import WalletStateStorage from "~/src/WalletStateStorage";
 import { CHAIN_ALGORAND } from "..";
 import { WALLET_TYPE } from "../../config/wallets";
-import { WalletInterface } from "../../types";
+import { WalletHookHandlerInterface, WalletInterface } from "../../types";
 import { AlgorandSignerTxn, AlgorandWalletType } from "../Algorand";
 import {
   WalletConnectAsset,
@@ -33,7 +33,9 @@ const initialState: Readonly<WalletConnectState> = Object.freeze({
   isConnected: false,
 });
 
-class WalletConnect implements WalletInterface<WalletConnectState> {
+class WalletConnect
+  implements WalletInterface<WalletConnectState>, WalletHookHandlerInterface
+{
   private hookRouter: HookRouter = new HookRouter([
     WALLET_HOOK.ACCOUNT_ON_CHANGE,
     WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
@@ -56,12 +58,33 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
       this.state = { ...initialState };
     }
 
-    this.setupInitialState();
+    this._setupInitialState();
   }
 
-  private enforceIsConnected(): void {
+  private _enforceIsConnected(): void {
     if (!this.getIsConnected()) {
       throw new WalletNotConnectedError();
+    }
+  }
+
+  private _setupInitialState() {
+    const storageValue = this.walletStorage.getValue();
+
+    if (storageValue) {
+      this.state = {
+        isConnected: this.getIsConnected(),
+        accounts: storageValue.accounts,
+      };
+    }
+  }
+
+  private _updateWalletStorageValue() {
+    if (this.state.isConnected && this.state.accounts.length > 0) {
+      const accounts = this.getAccounts().map((acc) => acc.address);
+      const connectedAccount = this.getPrimaryAccount().address;
+      this.walletStorage.updateValue(true, connectedAccount, accounts);
+    } else {
+      this.walletStorage.updateValue(false, "", []);
     }
   }
 
@@ -83,7 +106,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
 
       this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
       this.state.accounts = accounts;
-      this.updateWalletStorageValue();
+      this._updateWalletStorageValue();
       this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     }
 
@@ -96,7 +119,7 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
       const { accounts } = payload.params[0];
       this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
       this.state.accounts = accounts;
-      this.updateWalletStorageValue();
+      this._updateWalletStorageValue();
       this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
     });
 
@@ -122,14 +145,14 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
       await this.provider?.killSession();
     } catch (e) {}
     this.provider = undefined;
-    this.updateWalletStorageValue();
+    this._updateWalletStorageValue();
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
     return WALLET_STATUS.OK;
   }
 
   public async getSigner(): Promise<WalletConnectSigner> {
     return async (transactions: AlgorandSignerTxn): Promise<SignedTx[]> => {
-      this.enforceIsConnected();
+      this._enforceIsConnected();
       const walletConnect = this.getProvider();
       const txnsToSign = (transactions as WalletConnectTransaction).map(
         (txn) => ({
@@ -242,27 +265,6 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
       qrcodeModal: QRCodeModal,
     });
     return this.provider;
-  }
-
-  private setupInitialState() {
-    const storageValue = this.walletStorage.getValue();
-
-    if (storageValue) {
-      this.state = {
-        isConnected: this.getIsConnected(),
-        accounts: storageValue.accounts,
-      };
-    }
-  }
-
-  private updateWalletStorageValue() {
-    if (this.state.isConnected && this.state.accounts.length > 0) {
-      const accounts = this.getAccounts().map((acc) => acc.address);
-      const connectedAccount = this.getPrimaryAccount().address;
-      this.walletStorage.updateValue(true, connectedAccount, accounts);
-    } else {
-      this.walletStorage.updateValue(false, "", []);
-    }
   }
 }
 

@@ -16,7 +16,7 @@ import WalletStateStorage from "~/src/WalletStateStorage";
 import { CHAIN_ALGORAND } from "..";
 import { WALLET_TYPE } from "../../config/wallets";
 import { AlgorandSignerTxn, AlgorandWalletType } from "../Algorand";
-import { WalletInterface } from "./../../types";
+import { WalletHookHandlerInterface, WalletInterface } from "./../../types";
 import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from "./types";
 
 type MyAlgoConfig = {
@@ -30,7 +30,9 @@ const initialState: Readonly<MyAlgoState> = Object.freeze({
   isConnected: false,
 });
 
-class MyAlgo implements WalletInterface<MyAlgoState> {
+class MyAlgo
+  implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface
+{
   private hookRouter: HookRouter = new HookRouter([
     WALLET_HOOK.ACCOUNT_ON_CHANGE,
     WALLET_HOOK.ACCOUNT_ON_DISCONNECT,

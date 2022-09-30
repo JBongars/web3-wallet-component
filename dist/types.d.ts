@@ -50,7 +50,7 @@ type MetamaskChainConfig = {
     };
     rpcUrls: string[];
 };
-export class Metamask implements WalletInterface<MetamaskState> {
+export class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInterface {
     state: MetamaskState;
     provider?: ethers.providers.Web3Provider;
     name: string;
@@ -95,7 +95,7 @@ type WalletConnectChainConfig = {
     };
     rpcUrls: string[];
 };
-export class EthWalletConnect implements WalletInterface<WalletConnectState> {
+export class EthWalletConnect implements WalletInterface<WalletConnectState>, WalletHookHandlerInterface {
     state: WalletConnectState;
     provider?: ethers.providers.Web3Provider;
     type: EthereumWalletType;
@@ -134,26 +134,34 @@ export type EthereumState = {
     walletConnect?: WalletConnectState;
     activeWallets: EthereumWalletType[];
 };
-export class Ethereum implements WalletInterface<unknown>, ChainWalletInterface<EthereumWallet, EthereumWalletType> {
-    constructor(data?: EthereumState, defaultWallet?: EthereumWalletType);
+type EthereumConfig = {
+    hookType: "all" | "active" | "disable";
+    defaultWallet: EthereumWalletType;
+};
+export class Ethereum implements WalletInterface<unknown>, ChainHookHandlerInterface<EthereumWalletType>, ChainWalletInterface<EthereumWallet, EthereumWalletType> {
+    constructor(config: Partial<EthereumConfig>, data?: EthereumState);
     init(): Promise<WALLET_STATUS>;
     getWallet(type: EthereumWalletType): EthereumWallet;
+    getAvailableWallets(): EthereumWalletType[];
+    getConnectedWallets(): EthereumWalletType[];
     getActiveWallet(): EthereumWallet;
+    updateActiveWallet(type: EthereumWalletType): EthereumWallet;
     signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
-    getSigner(): Promise<unknown>;
+    getSigner(): Promise<EthereumSigner>;
     getBalance(): Promise<string>;
-    getAssets(): Promise<unknown[]>;
+    getAssets(): Promise<MetamaskAsset[]>;
+    getProvider(): Promise<ethers.providers.Web3Provider>;
     getIsConnected(): boolean;
     getIsWalletInstalled(): boolean;
     getPrimaryAccount(): string;
     getAccounts(): string[];
     fetchCurrentChainID(): Promise<string>;
     mountEventListeners(): Promise<void>;
-    onAccountDisconnect: (cb: () => void | Promise<void>) => HookEvent;
-    onAccountChange: (cb: (accounts: unknown) => void | Promise<void>) => HookEvent;
-    onChainChange: (cb: (chainId: string) => void | Promise<void>) => HookEvent;
-    onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;
+    onAccountChange: (cb: (walletType: EthereumWalletType, accounts: string[]) => void | Promise<void>) => HookEvent;
+    onChainChange: (cb: (walletType: EthereumWalletType, chain: string) => void | Promise<void>) => HookEvent;
+    onAccountDisconnect: (cb: (walletType: EthereumWalletType) => void | Promise<void>) => HookEvent;
+    onBlockAdded: (cb: (newBlock: number) => void | Promise<void>) => HookEvent;
     toJSON(): unknown;
 }
 export const CHAIN_ETHEREUM = "ETHEREUM";
@@ -190,7 +198,7 @@ type _Accounts1 = {
     name: string;
 };
 export type PeraWalletTransaction = Uint8Array[];
-export class PeraWallet implements WalletInterface<PeraWalletState> {
+export class PeraWallet implements WalletInterface<PeraWalletState>, WalletHookHandlerInterface {
     state: PeraWalletState;
     type: AlgorandWalletType;
     name: string;
@@ -231,7 +239,7 @@ type _Accounts2 = {
     name: string;
 };
 export type WalletConnectTransaction = Uint8Array[];
-export class WalletConnect implements WalletInterface<_WalletConnectState1> {
+export class WalletConnect implements WalletInterface<_WalletConnectState1>, WalletHookHandlerInterface {
     state: _WalletConnectState1;
     type: AlgorandWalletType;
     name: string;
@@ -264,36 +272,44 @@ export type AlgorandState = {
     walletConnect?: _WalletConnectState1;
     peraWallet?: PeraWalletState;
 };
-export class Algorand implements WalletInterface<unknown>, ChainWalletInterface<AlgorandWallet, AlgorandWalletType> {
+type AlgorandConfig = {
+    hookType: "all" | "active" | "disable";
+    defaultWallet: AlgorandWalletType;
+};
+export class Algorand implements WalletInterface<unknown>, ChainWalletInterface<AlgorandWallet, AlgorandWalletType>, ChainHookHandlerInterface<AlgorandWalletType> {
     _myAlgo: MyAlgo;
     _walletConnect: WalletConnect;
     _peraWallet: PeraWallet;
-    constructor(data?: AlgorandState, defaultWallet?: AlgorandWalletType);
+    constructor(config: Partial<AlgorandConfig>, data?: AlgorandState);
     init(): Promise<WALLET_STATUS>;
     getWallet(type: AlgorandWalletType): AlgorandWallet;
+    getAvailableWallets(): AlgorandWalletType[];
+    getConnectedWallets(): AlgorandWalletType[];
     getActiveWallet(): AlgorandWallet;
+    updateActiveWallet(type: AlgorandWalletType): AlgorandWallet;
     signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
-    getSigner(): Promise<unknown>;
+    getSigner(): Promise<AlgorandSigner>;
     getBalance(): Promise<string>;
     getAssets(): Promise<unknown[]>;
+    getProvider(): unknown;
     getIsConnected(): boolean;
     getIsWalletInstalled(): boolean;
     getPrimaryAccount(): _Accounts3;
     getAccounts(): _Accounts3[];
     fetchCurrentChainID(): Promise<string>;
     mountEventListeners(): Promise<void>;
-    onAccountChange(cb: (accounts: unknown) => void | Promise<void>): HookEvent;
-    onChainChange(cb: (chainId: string) => void | Promise<void>): HookEvent;
-    onAccountDisconnect: (cb: () => void | Promise<void>) => HookEvent;
-    onBlockAdded(cb: (block: unknown) => void | Promise<void>): HookEvent;
+    onAccountChange: (cb: (walletType: AlgorandWalletType, accounts: _Accounts3[]) => void | Promise<void>) => HookEvent;
+    onChainChange: (cb: (walletType: AlgorandWalletType, chain: string) => void | Promise<void>) => HookEvent;
+    onAccountDisconnect: (cb: (walletType: AlgorandWalletType) => void | Promise<void>) => HookEvent;
+    onBlockAdded: (cb: (newBlock: number) => void | Promise<void>) => HookEvent;
     toJSON(): unknown;
 }
 export type MyAlgoConfig = {
     shouldSelectOneAccount?: boolean;
 };
 export type MyAlgoTransaction = AlgorandTxn[] | EncodedTransaction[];
-export class MyAlgo implements WalletInterface<MyAlgoState> {
+export class MyAlgo implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface {
     state: MyAlgoState;
     currentActiveAccountAddress: string;
     type: AlgorandWalletType;
@@ -320,7 +336,8 @@ export class MyAlgo implements WalletInterface<MyAlgoState> {
     toJSON(): MyAlgoState;
 }
 export const CHAIN_ALGORAND = "ALGORAND";
-export type WALLET = AlgorandWallet | EthereumWallet;
+export type Wallet = AlgorandWallet | EthereumWallet;
+export type ChainWallet = Algorand | Ethereum;
 export interface useWallets {
     use(walletName: "MYALGO"): MyAlgo;
     use(walletName: "METAMASK"): Metamask;
@@ -340,16 +357,27 @@ export interface WalletInterface<T> {
     getAccounts: () => unknown[];
     fetchCurrentChainID: () => Promise<string>;
     mountEventListeners: () => Promise<void>;
+    toJSON: () => T;
+}
+export interface WalletHookHandlerInterface {
     onAccountChange: (cb: (accounts: unknown) => void | Promise<void>) => HookEvent;
     onAccountDisconnect: (cb: () => void | Promise<void>) => HookEvent;
     onChainChange: (cb: (chainId: string) => void | Promise<void>) => HookEvent;
     onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;
-    toJSON: () => T;
+}
+export interface ChainHookHandlerInterface<WalletType> {
+    onAccountChange: (cb: (walletType: WalletType, accounts: unknown) => void | Promise<void>) => HookEvent;
+    onAccountDisconnect: (cb: (walletType: WalletType) => void | Promise<void>) => HookEvent;
+    onChainChange: (cb: (walletType: WalletType, chainId: string) => void | Promise<void>) => HookEvent;
+    onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;
 }
 export interface ChainWalletInterface<Wallet, WalletType> {
     init: () => Promise<WALLET_STATUS>;
+    getAvailableWallets: () => WalletType[];
+    getConnectedWallets: () => WalletType[];
     getWallet: (type: WalletType) => Wallet;
     getActiveWallet: () => Wallet;
+    updateActiveWallet: (type: WalletType) => Wallet;
 }
 
 //# sourceMappingURL=types.d.ts.map

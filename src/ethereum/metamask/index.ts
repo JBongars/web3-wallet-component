@@ -14,7 +14,7 @@ import WalletStateStorage from "~/src/WalletStateStorage";
 import { CHAIN_ETHEREUM, EthereumWalletType } from "..";
 import { WALLET_TYPE } from "../../config/wallets";
 import { useWindow } from "../../containers";
-import { WalletInterface } from "../../types";
+import { WalletHookHandlerInterface, WalletInterface } from "../../types";
 import { getChainConfig } from "./chains";
 import { MetamaskAsset, MetamaskChainConfig, MetamaskState } from "./types";
 
@@ -23,7 +23,9 @@ const initialState: Readonly<MetamaskState> = Object.freeze({
   isConnected: false,
 });
 
-class Metamask implements WalletInterface<MetamaskState> {
+class Metamask
+  implements WalletInterface<MetamaskState>, WalletHookHandlerInterface
+{
   private hookRouter: HookRouter = new HookRouter([
     WALLET_HOOK.CHAIN_ON_CHANGE,
     WALLET_HOOK.CHAIN_ON_DISCONNECT,
@@ -48,7 +50,7 @@ class Metamask implements WalletInterface<MetamaskState> {
       this.state = { ...initialState };
     }
 
-    this.setupInitialState();
+    this._setupInitialState();
   }
 
   private async _getProvider(): Promise<ethers.providers.Web3Provider> {
@@ -82,6 +84,28 @@ class Metamask implements WalletInterface<MetamaskState> {
     }
   }
 
+  private _setupInitialState() {
+    const storageValue = this.walletStorage.getValue();
+
+    if (storageValue) {
+      this.state = {
+        isConnected: storageValue.isConnected,
+        accounts: storageValue.accounts,
+      };
+    }
+  }
+
+  private _updateWalletStorageValue() {
+    if (this.state.isConnected && this.state.accounts.length > 0) {
+      this.walletStorage.updateValue(
+        true,
+        this.getPrimaryAccount(),
+        this.state.accounts
+      );
+    } else {
+      this.walletStorage.updateValue(false, "", []);
+    }
+  }
   public async init(): Promise<WALLET_STATUS> {
     this.provider = await this._getProvider();
 
@@ -93,7 +117,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     this.state.accounts = await provider.send("eth_requestAccounts", []);
     this.state.isConnected = this.state.accounts.length > 0;
 
-    this.updateWalletStorageValue();
+    this._updateWalletStorageValue();
 
     this.hookRouter.applyHookWithArgs(
       WALLET_HOOK.ACCOUNT_ON_CHANGE,
@@ -107,7 +131,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     this.state.accounts = [];
     this.state.isConnected = false;
 
-    this.updateWalletStorageValue();
+    this._updateWalletStorageValue();
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
     return WALLET_STATUS.OK;
   }
@@ -262,7 +286,7 @@ class Metamask implements WalletInterface<MetamaskState> {
               accounts
             );
           }
-          this.updateWalletStorageValue();
+          this._updateWalletStorageValue();
         });
 
         ethereum.on("chainChanged", async (chainId: string) => {
@@ -292,29 +316,6 @@ class Metamask implements WalletInterface<MetamaskState> {
     await this._enforceChain();
 
     return this._getProvider();
-  }
-
-  private setupInitialState() {
-    const storageValue = this.walletStorage.getValue();
-
-    if (storageValue) {
-      this.state = {
-        isConnected: storageValue.isConnected,
-        accounts: storageValue.accounts,
-      };
-    }
-  }
-
-  private updateWalletStorageValue() {
-    if (this.state.isConnected && this.state.accounts.length > 0) {
-      this.walletStorage.updateValue(
-        true,
-        this.getPrimaryAccount(),
-        this.state.accounts
-      );
-    } else {
-      this.walletStorage.updateValue(false, "", []);
-    }
   }
 }
 

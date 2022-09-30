@@ -2,7 +2,7 @@ import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 import { PeraWalletConnect } from "@perawallet/connect";
 import { SignedTx } from "@randlabs/myalgo-connect";
 import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
-import { WalletInterface } from "~/src/types";
+import { WalletHookHandlerInterface, WalletInterface } from "~/src/types";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import {
   HookEvent,
@@ -27,7 +27,9 @@ const initialState: Readonly<PeraWalletState> = Object.freeze({
   isConnected: false,
 });
 
-class PeraWallet implements WalletInterface<PeraWalletState> {
+class PeraWallet
+  implements WalletInterface<PeraWalletState>, WalletHookHandlerInterface
+{
   private hookRouter: HookRouter = new HookRouter([
     WALLET_HOOK.ACCOUNT_ON_CHANGE,
     WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
@@ -50,12 +52,36 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
       this.state = { ...initialState };
     }
 
-    this.setupInitialState();
+    this._setupInitialState();
   }
 
-  private enforceIsConnected(): void {
+  private _enforceIsConnected(): void {
     if (!this.getIsConnected()) {
       throw new WalletNotConnectedError();
+    }
+  }
+
+  private _setupInitialState() {
+    const storageValue = this.walletStorage.getValue();
+
+    if (storageValue) {
+      this.state = {
+        isConnected: this.getIsConnected(),
+        accounts: storageValue.accounts.map((account) => ({
+          name: "",
+          address: account,
+        })),
+      };
+    }
+  }
+
+  private _updateWalletStorageValue() {
+    if (this.state.isConnected && this.state.accounts.length > 0) {
+      const accounts = this.getAccounts().map((acc) => acc.address);
+      const connectedAccount = this.getPrimaryAccount().address;
+      this.walletStorage.updateValue(true, connectedAccount, accounts);
+    } else {
+      this.walletStorage.updateValue(false, "", []);
     }
   }
 
@@ -72,7 +98,7 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
       address: account,
     }));
     this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-    this.updateWalletStorageValue();
+    this._updateWalletStorageValue();
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
 
     this.provider?.connector?.on("disconnect", (error, payload) => {
@@ -103,14 +129,14 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
     } catch (e) {}
 
     this.provider = undefined;
-    this.updateWalletStorageValue();
+    this._updateWalletStorageValue();
     this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
     return WALLET_STATUS.OK;
   }
 
   public async getSigner(): Promise<PeraWalletSigner> {
     return async (transactions: AlgorandSignerTxn): Promise<SignedTx[]> => {
-      this.enforceIsConnected();
+      this._enforceIsConnected();
       const peraWallet = this.getProvider();
 
       if (!peraWallet.connector) {
@@ -216,7 +242,7 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
   }
 
   public getProvider(): PeraWalletConnect {
-    this.enforceIsConnected();
+    this._enforceIsConnected();
 
     if (this.provider instanceof PeraWalletConnect) {
       return this.provider;
@@ -224,30 +250,6 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
 
     this.provider = new PeraWalletConnect();
     return this.provider;
-  }
-
-  private setupInitialState() {
-    const storageValue = this.walletStorage.getValue();
-
-    if (storageValue) {
-      this.state = {
-        isConnected: this.getIsConnected(),
-        accounts: storageValue.accounts.map((account) => ({
-          name: "",
-          address: account,
-        })),
-      };
-    }
-  }
-
-  private updateWalletStorageValue() {
-    if (this.state.isConnected && this.state.accounts.length > 0) {
-      const accounts = this.getAccounts().map((acc) => acc.address);
-      const connectedAccount = this.getPrimaryAccount().address;
-      this.walletStorage.updateValue(true, connectedAccount, accounts);
-    } else {
-      this.walletStorage.updateValue(false, "", []);
-    }
   }
 }
 
