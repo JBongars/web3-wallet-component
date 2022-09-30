@@ -142,8 +142,8 @@ export class Ethereum implements WalletInterface<unknown>, ChainWalletInterface<
     getAssets(): Promise<unknown[]>;
     getIsConnected(): boolean;
     getIsWalletInstalled(): boolean;
-    getPrimaryAccount(): unknown;
-    getAccounts(): unknown[];
+    getPrimaryAccount(): string;
+    getAccounts(): string[];
     fetchCurrentChainID(): Promise<string>;
     mountEventListeners(): Promise<void>;
     onAccountChange(cb: (accounts: unknown) => void | Promise<void>): HookEvent;
@@ -278,8 +278,8 @@ export class Algorand implements WalletInterface<unknown>, ChainWalletInterface<
     getAssets(): Promise<unknown[]>;
     getIsConnected(): boolean;
     getIsWalletInstalled(): boolean;
-    getPrimaryAccount(): unknown;
-    getAccounts(): unknown[];
+    getPrimaryAccount(): _Accounts3;
+    getAccounts(): _Accounts3[];
     fetchCurrentChainID(): Promise<string>;
     mountEventListeners(): Promise<void>;
     onAccountChange(cb: (accounts: unknown) => void | Promise<void>): HookEvent;

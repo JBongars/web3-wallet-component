@@ -12,6 +12,7 @@ import {
 } from "~/src/utils/HookRouter/types";
 import WalletStateStorage from "~/src/WalletStateStorage";
 import { CHAIN_ETHEREUM, EthereumWalletType } from "..";
+import { WALLET_TYPE } from "../../config/wallets";
 import { useWindow } from "../../containers";
 import { WalletInterface } from "../../types";
 import { getChainConfig } from "./chains";
@@ -38,7 +39,7 @@ class Metamask implements WalletInterface<MetamaskState> {
     WALLET_ID.ETHEREUM_METAMASK
   );
   public name: string = "METAMASK";
-  public type: EthereumWalletType = EthereumWalletType.METMASK;
+  public type: EthereumWalletType = WALLET_TYPE.ETHEREUM_METAMASK;
 
   constructor(state?: MetamaskState) {
     if (state) {

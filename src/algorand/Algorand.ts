@@ -8,8 +8,13 @@ import { ChainWalletInterface, WalletInterface } from "../types";
 import { HookEvent, WALLET_STATUS } from "../utils/HookRouter/types";
 import { Accounts } from "@randlabs/myalgo-connect";
 import { NotImplementedError } from "../errors";
+import { WALLET_TYPE } from "../config/wallets";
 
 type AlgorandWallet = MyAlgo | WalletConnect | PeraWallet;
+type AlgorandWalletType =
+  | WALLET_TYPE.ALGORAND_MYALGO
+  | WALLET_TYPE.ALGORAND_PERAWALLET
+  | WALLET_TYPE.ALGORAND_WALLETCONNECT;
 
 // needs to be removed
 type AlgorandSignerTxn =
@@ -18,12 +23,6 @@ type AlgorandSignerTxn =
   | PeraWalletTransaction;
 
 type AlgorandSigner = MyAlgoSigner | WalletConnectSigner | PeraWalletSigner;
-
-enum AlgorandWalletType {
-  MY_ALGO,
-  ALGO_WALLET_CONNECT,
-  PERA_WALLET,
-}
 
 type AlgorandState = {
   myAlgo?: MyAlgoState;
@@ -45,7 +44,7 @@ class Algorand
 
   constructor(
     data?: AlgorandState,
-    defaultWallet: AlgorandWalletType = AlgorandWalletType.MY_ALGO
+    defaultWallet: AlgorandWalletType = WALLET_TYPE.ALGORAND_MYALGO
   ) {
     this._myAlgo = new MyAlgo(data?.myAlgo);
     this._walletConnect = new WalletConnect(data?.walletConnect);
@@ -105,11 +104,11 @@ class Algorand
 
   public getWallet(type: AlgorandWalletType): AlgorandWallet {
     switch (type) {
-      case AlgorandWalletType.MY_ALGO:
+      case WALLET_TYPE.ALGORAND_MYALGO:
         return this._myAlgo;
-      case AlgorandWalletType.ALGO_WALLET_CONNECT:
+      case WALLET_TYPE.ALGORAND_WALLETCONNECT:
         return this._walletConnect;
-      case AlgorandWalletType.PERA_WALLET:
+      case WALLET_TYPE.ALGORAND_PERAWALLET:
         return this._peraWallet;
       default:
         throw new Error(`Wallet type ${type} cannot be found`);
@@ -151,11 +150,11 @@ class Algorand
     return this.getActiveWallet().getIsWalletInstalled();
   }
 
-  public getPrimaryAccount(): unknown {
+  public getPrimaryAccount(): Accounts {
     return this.getActiveWallet().getPrimaryAccount();
   }
 
-  public getAccounts(): unknown[] {
+  public getAccounts(): Accounts[] {
     return this.getActiveWallet().getAccounts();
   }
 

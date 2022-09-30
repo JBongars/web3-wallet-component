@@ -14,6 +14,7 @@ import {
 } from "~/src/utils/HookRouter/types";
 import WalletStateStorage from "~/src/WalletStateStorage";
 import { CHAIN_ALGORAND } from "..";
+import { WALLET_TYPE } from "../../config/wallets";
 import { AlgorandSignerTxn, AlgorandWalletType } from "../Algorand";
 import { WalletInterface } from "./../../types";
 import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from "./types";
@@ -43,8 +44,8 @@ class MyAlgo implements WalletInterface<MyAlgoState> {
   );
   public currentActiveAccountAddress: string = "";
 
-  public type: AlgorandWalletType = AlgorandWalletType.MY_ALGO;
-  public name: string = "MY_ALGO";
+  public type: AlgorandWalletType = WALLET_TYPE.ALGORAND_MYALGO;
+  public name: string = "ALGORAND_MYALGO";
 
   constructor(state?: MyAlgoState) {
     if (state) {

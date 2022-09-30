@@ -1,17 +1,17 @@
+import { WALLET_TYPE } from "../config/wallets";
+import { NotImplementedError } from "../errors";
+import { ChainWalletInterface, WalletInterface } from "../types";
+import { HookEvent, WALLET_STATUS } from "../utils/HookRouter/types";
 import { Metamask } from "./metamask";
+import { MetamaskSigner, MetamaskState } from "./metamask/types";
 import { EthWalletConnect } from "./walletconnect";
 import { WalletConnectState } from "./walletconnect/types";
-import { MetamaskState, MetamaskSigner } from "./metamask/types";
-import { ChainWalletInterface, WALLET, WalletInterface } from "../types";
-import { HookEvent, WALLET_STATUS } from "../utils/HookRouter/types";
-import { NotImplementedError } from "../errors";
 
 type EthereumWallet = Metamask | EthWalletConnect;
 
-enum EthereumWalletType {
-  METMASK,
-  ETH_WALLET_CONNECT,
-}
+type EthereumWalletType =
+  | WALLET_TYPE.ETHEREUM_METAMASK
+  | WALLET_TYPE.ETHEREUM_WALLETCONNECT;
 
 type EthereumSigner = MetamaskSigner;
 
@@ -34,7 +34,7 @@ class Ethereum
 
   constructor(
     data?: EthereumState,
-    defaultWallet: EthereumWalletType = EthereumWalletType.METMASK
+    defaultWallet: EthereumWalletType = WALLET_TYPE.ETHEREUM_METAMASK
   ) {
     this._metaMask = new Metamask(data?.metaMask);
     this._walletConnect = new EthWalletConnect();
@@ -89,9 +89,9 @@ class Ethereum
 
   public getWallet(type: EthereumWalletType): EthereumWallet {
     switch (type) {
-      case EthereumWalletType.ETH_WALLET_CONNECT:
+      case WALLET_TYPE.ETHEREUM_WALLETCONNECT:
         return this._walletConnect;
-      case EthereumWalletType.METMASK:
+      case WALLET_TYPE.ETHEREUM_METAMASK:
         return this._metaMask;
       default:
         throw new Error(`Wallet type ${type} cannot be found`);
@@ -133,11 +133,11 @@ class Ethereum
     return this.getActiveWallet().getIsWalletInstalled();
   }
 
-  public getPrimaryAccount(): unknown {
+  public getPrimaryAccount(): string {
     return this.getActiveWallet().getPrimaryAccount();
   }
 
-  public getAccounts(): unknown[] {
+  public getAccounts(): string[] {
     return this.getActiveWallet().getAccounts();
   }
 
@@ -171,5 +171,4 @@ class Ethereum
 }
 
 export type { EthereumWallet, EthereumSigner, EthereumState };
-
 export { Ethereum, EthereumWalletType };

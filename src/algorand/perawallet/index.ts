@@ -18,6 +18,7 @@ import {
 } from "@randlabs/myalgo-connect";
 import { SignerTransaction } from "@perawallet/connect/dist/util/model/peraWalletModels";
 import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
+import { WALLET_TYPE } from "../../config/wallets";
 
 type Accounts = {
   address: string;
@@ -44,8 +45,8 @@ class PeraWallet implements WalletInterface<PeraWalletState> {
     WALLET_ID.ALGORAND_PERAWALLET
   );
 
-  public type: AlgorandWalletType = AlgorandWalletType.PERA_WALLET;
-  public name: string = "PERA_WALLET";
+  public type: AlgorandWalletType = WALLET_TYPE.ALGORAND_PERAWALLET;
+  public name: string = "ALGORAND_PERAWALLET";
 
   constructor(state?: PeraWalletState) {
     if (state) {

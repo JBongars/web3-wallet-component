@@ -26,6 +26,7 @@ import { getChainConfig } from "./chains";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import WalletStateStorage from "~/src/WalletStateStorage";
 import { CHAIN_ETHEREUM, EthereumWalletType } from "..";
+import { WALLET_TYPE } from "../../config/wallets";
 
 const initialState: Readonly<WalletConnectState> = Object.freeze({
   accounts: [],
@@ -47,8 +48,8 @@ class EthWalletConnect implements WalletInterface<WalletConnectState> {
     CHAIN_ETHEREUM,
     WALLET_ID.ETHEREUM_WALLETCONNECT
   );
-  public name: string = "WALLET_CONNECT";
-  public type: EthereumWalletType = EthereumWalletType.ETH_WALLET_CONNECT;
+  public type: EthereumWalletType = WALLET_TYPE.ETHEREUM_WALLETCONNECT;
+  public name: string = "ETHEREUM_WALLETCONNECT";
 
   constructor(state?: WalletConnectState) {
     if (state) {

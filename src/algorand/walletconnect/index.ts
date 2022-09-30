@@ -12,6 +12,7 @@ import {
 } from "~/src/utils/HookRouter/types";
 import WalletStateStorage from "~/src/WalletStateStorage";
 import { CHAIN_ALGORAND } from "..";
+import { WALLET_TYPE } from "../../config/wallets";
 import { WalletInterface } from "../../types";
 import { AlgorandSignerTxn, AlgorandWalletType } from "../Algorand";
 import {
@@ -45,8 +46,8 @@ class WalletConnect implements WalletInterface<WalletConnectState> {
     WALLET_ID.ALGORAND_WALLETCONNECT
   );
 
-  public type: AlgorandWalletType = AlgorandWalletType.ALGO_WALLET_CONNECT;
-  public name: string = "ALGO_WALLET_CONNECT";
+  public type: AlgorandWalletType = WALLET_TYPE.ALGORAND_WALLETCONNECT;
+  public name: string = "ALGORAND_WALLETCONNECT";
 
   constructor(state?: WalletConnectState) {
     if (state) {

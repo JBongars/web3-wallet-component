@@ -553,8 +553,7 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
         this._activeWallets.push(type);
     };
     _deregisterActiveWallet = (type)=>{
-        const index = this._activeWallets.indexOf(type);
-        this._activeWallets = this._activeWallets.splice(index, 1);
+        this._activeWallets = this._activeWallets.filter((elem)=>elem !== type);
     };
     _initAlgorandWallet = (algoWallet)=>{
         const onAccountChange = (accounts)=>{
