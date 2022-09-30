@@ -1,3 +1,6 @@
+import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
+import { PeraWalletConnect } from "@perawallet/connect";
+import { SignedTx } from "@randlabs/myalgo-connect";
 import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
 import { WalletInterface } from "~/src/types";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
@@ -7,18 +10,10 @@ import {
   WALLET_ID,
   WALLET_STATUS,
 } from "~/src/utils/HookRouter/types";
-import { PeraWalletAsset, PeraWalletSigner, PeraWalletState } from "./types";
-import { PeraWalletConnect } from "@perawallet/connect";
 import WalletStateStorage from "~/src/WalletStateStorage";
 import { AlgorandSignerTxn, AlgorandWalletType, CHAIN_ALGORAND } from "..";
-import {
-  AlgorandTxn,
-  EncodedTransaction,
-  SignedTx,
-} from "@randlabs/myalgo-connect";
-import { SignerTransaction } from "@perawallet/connect/dist/util/model/peraWalletModels";
-import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 import { WALLET_TYPE } from "../../config/wallets";
+import { PeraWalletAsset, PeraWalletSigner, PeraWalletState } from "./types";
 
 type Accounts = {
   address: string;

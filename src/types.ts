@@ -30,6 +30,7 @@ interface WalletInterface<T> {
   onAccountChange: (
     cb: (accounts: unknown) => void | Promise<void>
   ) => HookEvent;
+  onAccountDisconnect: (cb: () => void | Promise<void>) => HookEvent;
   onChainChange: (cb: (chainId: string) => void | Promise<void>) => HookEvent;
   onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;
   toJSON: () => T;

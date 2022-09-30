@@ -149,21 +149,27 @@ class Ethereum
     throw new NotImplementedError();
   }
 
-  public onAccountChange(
+  public onAccountDisconnect = (cb: () => void | Promise<void>): HookEvent => {
+    throw new NotImplementedError();
+  };
+
+  public onAccountChange = (
     cb: (accounts: unknown) => void | Promise<void>
-  ): HookEvent {
+  ): HookEvent => {
     throw new NotImplementedError();
-  }
+  };
 
-  public onChainChange(
+  public onChainChange = (
     cb: (chainId: string) => void | Promise<void>
-  ): HookEvent {
+  ): HookEvent => {
     throw new NotImplementedError();
-  }
+  };
 
-  public onBlockAdded(cb: (block: unknown) => void | Promise<void>): HookEvent {
+  public onBlockAdded = (
+    cb: (block: unknown) => void | Promise<void>
+  ): HookEvent => {
     throw new NotImplementedError();
-  }
+  };
 
   public toJSON(): unknown {
     throw new NotImplementedError();

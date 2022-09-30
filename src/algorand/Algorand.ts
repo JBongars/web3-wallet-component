@@ -1,14 +1,14 @@
-import { MyAlgo, MyAlgoTransaction } from "./myalgo";
-import { MyAlgoSigner, MyAlgoState } from "./myalgo/types";
-import { WalletConnect, WalletConnectTransaction } from "./walletconnect";
-import { WalletConnectSigner, WalletConnectState } from "./walletconnect/types";
-import { PeraWallet, PeraWalletTransaction } from "./perawallet";
-import { PeraWalletSigner, PeraWalletState } from "./perawallet/types";
+import { Accounts } from "@randlabs/myalgo-connect";
+import { WALLET_TYPE } from "../config/wallets";
+import { NotImplementedError } from "../errors";
 import { ChainWalletInterface, WalletInterface } from "../types";
 import { HookEvent, WALLET_STATUS } from "../utils/HookRouter/types";
-import { Accounts } from "@randlabs/myalgo-connect";
-import { NotImplementedError } from "../errors";
-import { WALLET_TYPE } from "../config/wallets";
+import { MyAlgo, MyAlgoTransaction } from "./myalgo";
+import { MyAlgoSigner, MyAlgoState } from "./myalgo/types";
+import { PeraWallet, PeraWalletTransaction } from "./perawallet";
+import { PeraWalletSigner, PeraWalletState } from "./perawallet/types";
+import { WalletConnect, WalletConnectTransaction } from "./walletconnect";
+import { WalletConnectSigner, WalletConnectState } from "./walletconnect/types";
 
 type AlgorandWallet = MyAlgo | WalletConnect | PeraWallet;
 type AlgorandWalletType =
@@ -59,6 +59,8 @@ class Algorand
   private _deregisterActiveWallet = (type: AlgorandWalletType): void => {
     this._activeWallets = this._activeWallets.filter((elem) => elem !== type);
   };
+
+  private _mountWalletHooks = (wallet: WalletInterface<unknown>): void => {};
 
   private _initAlgorandWallet = (
     algoWallet: AlgorandWallet
@@ -178,6 +180,10 @@ class Algorand
     throw new NotImplementedError();
   }
 
+  public onAccountDisconnect = (cb: () => void | Promise<void>): HookEvent => {
+    throw new NotImplementedError();
+  };
+
   public onBlockAdded(cb: (block: unknown) => void | Promise<void>): HookEvent {
     throw new NotImplementedError();
   }
@@ -188,5 +194,4 @@ class Algorand
 }
 
 export { Algorand, AlgorandWalletType, AlgorandState };
-
 export type { AlgorandWallet, AlgorandSigner, AlgorandSignerTxn };

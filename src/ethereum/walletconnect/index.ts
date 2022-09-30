@@ -1,32 +1,23 @@
-import { WalletInterface } from "../../types";
-import {
-  WalletConnectAsset,
-  WalletConnectChainConfig,
-  WalletConnectSigner,
-  WalletConnectState,
-} from "./types";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 import { ethers, providers } from "ethers";
-import {
-  TransactionRequest,
-  TransactionResponse,
-} from "@ethersproject/abstract-provider";
-import { useWindow } from "../../containers";
-import {
-  NotImplementedError,
-  WalletNotConnectedError,
-  WalletNotInstalledError,
-} from "~/src/errors";
+import { NotImplementedError, WalletNotConnectedError } from "~/src/errors";
 import HookRouter from "~/src/utils/HookRouter/HookRouter";
 import {
   WALLET_HOOK,
   WALLET_ID,
   WALLET_STATUS,
 } from "~/src/utils/HookRouter/types";
-import { getChainConfig } from "./chains";
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import WalletStateStorage from "~/src/WalletStateStorage";
 import { CHAIN_ETHEREUM, EthereumWalletType } from "..";
 import { WALLET_TYPE } from "../../config/wallets";
+import { useWindow } from "../../containers";
+import { WalletInterface } from "../../types";
+import { getChainConfig } from "./chains";
+import {
+  WalletConnectAsset,
+  WalletConnectChainConfig,
+  WalletConnectState,
+} from "./types";
 
 const initialState: Readonly<WalletConnectState> = Object.freeze({
   accounts: [],
