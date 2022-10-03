@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { WALLET_TYPE } from "../config/wallets";
+import { CHAIN_TYPE, WALLET_TYPE } from "../config/wallets";
 import { NotImplementedError, WalletNotInstalledError } from "../errors";
 import {
   ChainHookHandlerInterface,
@@ -61,9 +61,12 @@ class Ethereum
   private _activeWallets: EthereumWalletType[] = [];
   private _config: EthereumConfig;
 
+  public type: CHAIN_TYPE = CHAIN_TYPE.ETHEREUM;
+  public name: string = "ETHEREUM";
+
   constructor(config: Partial<EthereumConfig>, data?: EthereumState) {
     this._metaMask = new Metamask(data?.metaMask);
-    this._walletConnect = new EthWalletConnect();
+    this._walletConnect = new EthWalletConnect(data?.walletConnect);
     this._config = { ...defaultEthereumConfig, ...config };
   }
 
@@ -281,5 +284,5 @@ class Ethereum
   }
 }
 
-export type { EthereumWallet, EthereumSigner, EthereumState };
-export { Ethereum, EthereumWalletType };
+export type { EthereumWallet, EthereumSigner, EthereumState, EthereumConfig };
+export { Ethereum, EthereumWalletType, defaultEthereumConfig };

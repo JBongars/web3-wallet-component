@@ -67,11 +67,9 @@ interface ChainWalletInterface<Wallet, WalletType> {
 }
 
 export {
-  Wallet,
-  ChainWallet,
   WalletInterface,
   ChainWalletInterface,
   WalletHookHandlerInterface,
   ChainHookHandlerInterface,
 };
-export type { Signer, useWallets };
+export type { Signer, useWallets, Wallet, ChainWallet };

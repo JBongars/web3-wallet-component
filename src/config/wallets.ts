@@ -6,4 +6,9 @@ enum WALLET_TYPE {
   ALGORAND_PERAWALLET,
 }
 
-export { WALLET_TYPE };
+enum CHAIN_TYPE {
+  ALGORAND,
+  ETHEREUM,
+}
+
+export { WALLET_TYPE, CHAIN_TYPE };

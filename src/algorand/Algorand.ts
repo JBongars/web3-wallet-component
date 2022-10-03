@@ -1,5 +1,5 @@
 import { Accounts } from "@randlabs/myalgo-connect";
-import { WALLET_TYPE } from "../config/wallets";
+import { CHAIN_TYPE, WALLET_TYPE } from "../config/wallets";
 import { NotImplementedError } from "../errors";
 import {
   ChainHookHandlerInterface,
@@ -25,7 +25,7 @@ type AlgorandWalletType =
   | WALLET_TYPE.ALGORAND_PERAWALLET
   | WALLET_TYPE.ALGORAND_WALLETCONNECT;
 
-// needs to be removed
+// TECH DEBT: needs to be removed
 type AlgorandSignerTxn =
   | MyAlgoTransaction
   | WalletConnectTransaction
@@ -63,12 +63,15 @@ class Algorand
     WALLET_HOOK.NEW_BLOCK,
   ]);
 
-  public _myAlgo: MyAlgo;
-  public _walletConnect: WalletConnect;
-  public _peraWallet: PeraWallet;
+  private _myAlgo: MyAlgo;
+  private _walletConnect: WalletConnect;
+  private _peraWallet: PeraWallet;
   private _initialized: boolean = false;
   private _activeWallets: AlgorandWalletType[] = [];
   private _config: AlgorandConfig;
+
+  public type: CHAIN_TYPE = CHAIN_TYPE.ALGORAND;
+  public name: string = "ALGORAND";
 
   constructor(config: Partial<AlgorandConfig>, data?: AlgorandState) {
     this._myAlgo = new MyAlgo(data?.myAlgo);
@@ -282,5 +285,10 @@ class Algorand
   }
 }
 
-export { Algorand, AlgorandWalletType, AlgorandState };
-export type { AlgorandWallet, AlgorandSigner, AlgorandSignerTxn };
+export { Algorand, AlgorandWalletType, AlgorandState, defaultAlgorandConfig };
+export type {
+  AlgorandWallet,
+  AlgorandSigner,
+  AlgorandSignerTxn,
+  AlgorandConfig,
+};

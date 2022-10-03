@@ -22,6 +22,13 @@ enum WALLET_STATUS {
     EXTENSION_NOT_FOUND = 3,
     ACCOUNT_NOT_FOUND = 4
 }
+enum WALLET_ID {
+    ETHEREUM_METAMASK = 1,
+    ALGORAND_MYALGO = 2,
+    ALGORAND_WALLETCONNECT = 3,
+    ETHEREUM_WALLETCONNECT = 4,
+    ALGORAND_PERAWALLET = 5
+}
 type HookEvent = {
     destroy: () => void;
     id: Symbol;
@@ -33,6 +40,10 @@ export enum WALLET_TYPE {
     ALGORAND_MYALGO = 2,
     ALGORAND_WALLETCONNECT = 3,
     ALGORAND_PERAWALLET = 4
+}
+export enum CHAIN_TYPE {
+    ALGORAND = 0,
+    ETHEREUM = 1
 }
 type MetamaskState = {
     accounts: string[];
@@ -134,11 +145,14 @@ export type EthereumState = {
     walletConnect?: WalletConnectState;
     activeWallets: EthereumWalletType[];
 };
-type EthereumConfig = {
+export type EthereumConfig = {
     hookType: "all" | "active" | "disable";
     defaultWallet: EthereumWalletType;
 };
+export const defaultEthereumConfig: EthereumConfig;
 export class Ethereum implements WalletInterface<unknown>, ChainHookHandlerInterface<EthereumWalletType>, ChainWalletInterface<EthereumWallet, EthereumWalletType> {
+    type: CHAIN_TYPE;
+    name: string;
     constructor(config: Partial<EthereumConfig>, data?: EthereumState);
     init(): Promise<WALLET_STATUS>;
     getWallet(type: EthereumWalletType): EthereumWallet;
@@ -165,6 +179,13 @@ export class Ethereum implements WalletInterface<unknown>, ChainHookHandlerInter
     toJSON(): unknown;
 }
 export const CHAIN_ETHEREUM = "ETHEREUM";
+export type StorageValue = {
+    isConnected: boolean;
+    connectedAccount: string;
+    chain: string;
+    walletId: WALLET_ID;
+    accounts: string[];
+};
 type MyAlgoState = {
     accounts: _Accounts3[];
     isConnected: boolean;
@@ -272,14 +293,14 @@ export type AlgorandState = {
     walletConnect?: _WalletConnectState1;
     peraWallet?: PeraWalletState;
 };
-type AlgorandConfig = {
+export type AlgorandConfig = {
     hookType: "all" | "active" | "disable";
     defaultWallet: AlgorandWalletType;
 };
+export const defaultAlgorandConfig: AlgorandConfig;
 export class Algorand implements WalletInterface<unknown>, ChainWalletInterface<AlgorandWallet, AlgorandWalletType>, ChainHookHandlerInterface<AlgorandWalletType> {
-    _myAlgo: MyAlgo;
-    _walletConnect: WalletConnect;
-    _peraWallet: PeraWallet;
+    type: CHAIN_TYPE;
+    name: string;
     constructor(config: Partial<AlgorandConfig>, data?: AlgorandState);
     init(): Promise<WALLET_STATUS>;
     getWallet(type: AlgorandWalletType): AlgorandWallet;
@@ -378,6 +399,56 @@ export interface ChainWalletInterface<Wallet, WalletType> {
     getWallet: (type: WalletType) => Wallet;
     getActiveWallet: () => Wallet;
     updateActiveWallet: (type: WalletType) => Wallet;
+}
+export type SuperWalletType = AlgorandWalletType | EthereumWalletType;
+export type SuperWalletSigner = AlgorandSigner | EthereumSigner;
+export type SuperWalletState = {
+    algorand: AlgorandState;
+    ethereum: EthereumState;
+};
+export type ChainConfig = {
+    type: CHAIN_TYPE.ALGORAND;
+    config: AlgorandConfig;
+    data: Partial<AlgorandState>;
+} | {
+    type: CHAIN_TYPE.ETHEREUM;
+    config: EthereumConfig;
+};
+export type SuperWalletConfig = {
+    defaultChain: CHAIN_TYPE;
+    chains: ChainConfig[];
+};
+export class SuperWallet implements WalletInterface<unknown> {
+    constructor(config: SuperWalletConfig, data?: SuperWalletState);
+    init(): Promise<WALLET_STATUS>;
+    getChain(type: CHAIN_TYPE): ChainWallet;
+    getWallet(chainType: CHAIN_TYPE, walletType: WALLET_TYPE): Wallet;
+    getAvailableWalletsOnChain(chainType: CHAIN_TYPE): SuperWalletType[];
+    getAvailableWallets(): SuperWalletType[];
+    getConnectedWalletsOnChain(chainType: CHAIN_TYPE): SuperWalletType[];
+    getConnectedWallets(): SuperWalletType[];
+    getActiveChain(): ChainWallet;
+    getActiveWalletOnChain(chainType: CHAIN_TYPE): Wallet;
+    getActiveWallet(): Wallet;
+    updateActiveChain(chainType: CHAIN_TYPE): ChainWallet;
+    updateActiveWalletOnChain(chainType: CHAIN_TYPE, walletType: WALLET_TYPE): Wallet;
+    signIn(): Promise<WALLET_STATUS>;
+    signOut(): Promise<WALLET_STATUS>;
+    getSigner(): Promise<SuperWalletSigner>;
+    getBalance(): Promise<string>;
+    getAssets(): Promise<unknown[]>;
+    getProvider(): unknown;
+    getIsConnected(): boolean;
+    getIsWalletInstalled(): boolean;
+    getPrimaryAccount(): unknown;
+    getAccounts(): unknown[];
+    fetchCurrentChainID(): Promise<string>;
+    mountEventListeners(): Promise<void>;
+    onAccountChange: (cb: (chainType: CHAIN_TYPE, walletType: Wallet, accounts: _Accounts3[]) => void | Promise<void>) => import("~/utils/HookRouter/types").HookEvent;
+    onChainChange: (cb: (chainType: CHAIN_TYPE, walletType: CHAIN_TYPE, chain: string) => void | Promise<void>) => import("~/utils/HookRouter/types").HookEvent;
+    onAccountDisconnect: (cb: (chainType: CHAIN_TYPE, walletType: CHAIN_TYPE) => void | Promise<void>) => import("~/utils/HookRouter/types").HookEvent;
+    onBlockAdded: (cb: (chainType: CHAIN_TYPE, newBlock: number) => void | Promise<void>) => never;
+    toJSON(): unknown;
 }
 
 //# sourceMappingURL=types.d.ts.map
