@@ -1,7 +1,6 @@
 // import { MyAlgo, WalletConnect } from "./algorand";
 // import { Metamask, EthWalletConnect } from "./ethereum";
 import { Algorand, AlgorandWallet, MyAlgo, WalletConnect } from './algorand';
-import { WALLET_TYPE } from './config';
 import { Ethereum, EthereumWallet, Metamask } from './ethereum';
 import { HookEvent, WALLET_STATUS } from './utils/HookRouter/types';
 
