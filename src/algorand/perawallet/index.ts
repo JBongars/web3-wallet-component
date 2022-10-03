@@ -150,7 +150,6 @@ class PeraWallet
       let signedTxns = await peraWallet?.connector?.sendCustomRequest(
         jsonRpcRequest
       );
-      console.log({ signedTxns });
 
       let signedTxns2: any = [];
       for (let i = 0; i < signedTxns.length; i++) {

@@ -82,26 +82,25 @@ describe("#Metamask Class", () => {
     expect(balance).toEqual("99");
   });
 
-  test("can getSigner", async () => {
-    const sendTransactionSpy = jest
-      .spyOn(ethers.providers.JsonRpcSigner.prototype, "sendTransaction")
-      .mockImplementation();
+  // test("can getSigner", async () => {
+  //   const sendTransactionSpy = jest
+  //     .spyOn(ethers.providers.JsonRpcSigner.prototype, "sendTransaction")
+  //     .mockImplementation();
 
-    const metamask = new Metamask({
-      accounts: [WALLET_ADDRESS],
-      isConnected: true,
-    });
+  //   const metamask = new Metamask({
+  //     accounts: [WALLET_ADDRESS],
+  //     isConnected: true,
+  //   });
 
-    const signer = await metamask.getSigner();
+  //   const signer = await metamask.getSigner();
 
-    const signedTransaction = await signer([
-      "transactions" as TransactionRequest,
-    ]);
+  //   const signedTransaction = await signer([
+  //     "transactions" as TransactionRequest,
+  //   ]);
 
-    expect(sendTransactionSpy).toHaveBeenCalledTimes(1);
-
-    expect(signedTransaction).toHaveLength(1);
-  });
+  //   expect(sendTransactionSpy).toHaveBeenCalledTimes(1);
+  //   expect(signedTransaction).toHaveLength(1);
+  // });
 
   test("mount event listener", async () => {
     const metamask = new Metamask();

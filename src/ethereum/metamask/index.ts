@@ -33,13 +33,13 @@ class Metamask
     WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
     WALLET_HOOK.NEW_BLOCK,
   ]);
-  private chain: string | null = null;
-  public state: MetamaskState;
-  public provider?: ethers.providers.Web3Provider;
-  private walletStorage: WalletStateStorage = new WalletStateStorage(
+  private _walletStorage: WalletStateStorage = new WalletStateStorage(
     CHAIN_ETHEREUM,
     WALLET_ID.ETHEREUM_METAMASK
   );
+  private chain: string | null = null;
+  public state: MetamaskState;
+  public provider?: ethers.providers.Web3Provider;
   public name: string = "METAMASK";
   public type: EthereumWalletType = WALLET_TYPE.ETHEREUM_METAMASK;
 
@@ -85,7 +85,7 @@ class Metamask
   }
 
   private _setupInitialState() {
-    const storageValue = this.walletStorage.getValue();
+    const storageValue = this._walletStorage.getValue();
 
     if (storageValue) {
       this.state = {
@@ -97,13 +97,13 @@ class Metamask
 
   private _updateWalletStorageValue() {
     if (this.state.isConnected && this.state.accounts.length > 0) {
-      this.walletStorage.updateValue(
+      this._walletStorage.updateValue(
         true,
         this.getPrimaryAccount(),
         this.state.accounts
       );
     } else {
-      this.walletStorage.updateValue(false, "", []);
+      this._walletStorage.updateValue(false, "", []);
     }
   }
   public async init(): Promise<WALLET_STATUS> {
@@ -275,11 +275,11 @@ class Metamask
       const ethereum = useWindow((window: any) => window.ethereum);
       if (ethereum.on) {
         ethereum.on("accountsChanged", async (accounts: string[]) => {
-          this.state.accounts = ethereum.request({
-            method: "eth_requestAccounts",
-          });
+          this.state.accounts = accounts;
+
           if (accounts.length === 0) {
             await this.signOut();
+            this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
           } else {
             this.hookRouter.applyHookWithArgs(
               WALLET_HOOK.ACCOUNT_ON_CHANGE,

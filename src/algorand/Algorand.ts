@@ -103,7 +103,7 @@ class Algorand
         if (!verifyWallet(wallet.type)) {
           return;
         }
-        this.hookRouter.applyHookWithArgs(hookType, [wallet.type, ...args]);
+        this.hookRouter.applyHookWithArgs(hookType, ...[wallet.type, ...args]);
       };
 
     const onAccountChange = (accounts: Accounts[]) => {
@@ -112,27 +112,18 @@ class Algorand
       } else {
         this._registerActiveWallet(wallet.type);
       }
-
-      hook(WALLET_HOOK.ACCOUNT_ON_CHANGE)(wallet.type, accounts);
     };
 
     const onAccountDisconnect = () => {
       this._deregisterActiveWallet(wallet.type);
-
-      hook(WALLET_HOOK.ACCOUNT_ON_DISCONNECT)(wallet.type);
     };
+
+    wallet.onAccountChange(hook(WALLET_HOOK.ACCOUNT_ON_CHANGE));
+    wallet.onAccountDisconnect(hook(WALLET_HOOK.ACCOUNT_ON_DISCONNECT));
+    wallet.onChainChange(hook(WALLET_HOOK.CHAIN_ON_CHANGE));
 
     wallet.onAccountChange(onAccountChange);
     wallet.onAccountDisconnect(onAccountDisconnect);
-    wallet.onChainChange(hook(WALLET_HOOK.CHAIN_ON_CHANGE));
-
-    // onBlockAdded is a chain and not a wallet specific event
-    // so wallet type is not required
-    if (wallet.type === this._config.defaultWallet) {
-      wallet.onBlockAdded((newBlock: unknown) => {
-        this.hookRouter.applyHookWithArgs(WALLET_HOOK.NEW_BLOCK, [newBlock]);
-      });
-    }
   };
 
   private _initAlgorandWallet = async (
@@ -283,12 +274,7 @@ class Algorand
   };
 
   public onBlockAdded = (cb: (newBlock: number) => void | Promise<void>) => {
-    return this.hookRouter.registerCallback(
-      WALLET_HOOK.NEW_BLOCK,
-      (block: number) => {
-        return cb(block);
-      }
-    );
+    throw new NotImplementedError();
   };
 
   public toJSON(): unknown {

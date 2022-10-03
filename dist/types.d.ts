@@ -302,7 +302,7 @@ export class Algorand implements WalletInterface<unknown>, ChainWalletInterface<
     onAccountChange: (cb: (walletType: AlgorandWalletType, accounts: _Accounts3[]) => void | Promise<void>) => HookEvent;
     onChainChange: (cb: (walletType: AlgorandWalletType, chain: string) => void | Promise<void>) => HookEvent;
     onAccountDisconnect: (cb: (walletType: AlgorandWalletType) => void | Promise<void>) => HookEvent;
-    onBlockAdded: (cb: (newBlock: number) => void | Promise<void>) => HookEvent;
+    onBlockAdded: (cb: (newBlock: number) => void | Promise<void>) => never;
     toJSON(): unknown;
 }
 export type MyAlgoConfig = {

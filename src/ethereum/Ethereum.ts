@@ -85,7 +85,8 @@ class Ethereum
         if (!verifyWallet(wallet.type)) {
           return;
         }
-        this.hookRouter.applyHookWithArgs(hookType, [wallet.type, ...args]);
+
+        this.hookRouter.applyHookWithArgs(hookType, ...[wallet.type, ...args]);
       };
 
     const onAccountChange = (accounts: string[]) => {
@@ -94,20 +95,19 @@ class Ethereum
       } else {
         this._registerActiveWallet(wallet.type);
       }
-
-      hook(WALLET_HOOK.ACCOUNT_ON_CHANGE)(wallet.type, accounts);
     };
 
     const onAccountDisconnect = () => {
       this._deregisterActiveWallet(wallet.type);
-
-      hook(WALLET_HOOK.ACCOUNT_ON_DISCONNECT)(wallet.type);
     };
+
+    wallet.onAccountChange(hook(WALLET_HOOK.ACCOUNT_ON_CHANGE));
+    wallet.onAccountDisconnect(hook(WALLET_HOOK.ACCOUNT_ON_DISCONNECT));
+    wallet.onChainChange(hook(WALLET_HOOK.CHAIN_ON_CHANGE));
+    wallet.onChainDisconnect(hook(WALLET_HOOK.CHAIN_ON_DISCONNECT));
 
     wallet.onAccountChange(onAccountChange);
     wallet.onAccountDisconnect(onAccountDisconnect);
-    wallet.onChainChange(hook(WALLET_HOOK.CHAIN_ON_CHANGE));
-    wallet.onChainDisconnect(hook(WALLET_HOOK.CHAIN_ON_DISCONNECT));
 
     // onBlockAdded is a chain and not a wallet specific event
     // so wallet type is not required

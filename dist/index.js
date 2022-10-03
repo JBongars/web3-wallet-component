@@ -37,7 +37,6 @@ var $faefaad95e5fcca0$exports = {};
 var $d083fd37dae77b99$exports = {};
 
 $parcel$export($d083fd37dae77b99$exports, "NotImplementedError", () => $d083fd37dae77b99$export$e162153238934121);
-$parcel$export($d083fd37dae77b99$exports, "HookIsDisabled", () => $d083fd37dae77b99$export$3db4dd00151b5768);
 $parcel$export($d083fd37dae77b99$exports, "WalletNotInstalledError", () => $d083fd37dae77b99$export$72563c16b91dfd16);
 $parcel$export($d083fd37dae77b99$exports, "WalletNotConnectedError", () => $d083fd37dae77b99$export$313d299817c74896);
 $parcel$export($d083fd37dae77b99$exports, "HookNotAvailableError", () => $d083fd37dae77b99$export$f4d277c155d1965e);
@@ -45,12 +44,6 @@ class $d083fd37dae77b99$export$e162153238934121 extends Error {
     constructor(message = "NotImplementedError"){
         super(message);
         this.name = "NotImplementedError";
-    }
-}
-class $d083fd37dae77b99$export$3db4dd00151b5768 extends Error {
-    constructor(message = "HookIsDisabled"){
-        super(message);
-        this.name = "HookIsDisabled";
     }
 }
 class $d083fd37dae77b99$export$72563c16b91dfd16 extends Error {
@@ -445,9 +438,6 @@ class $3c9851a538a51e5f$export$6a733d504587e4b0 {
                 txnsToSign
             ]);
             let signedTxns = await peraWallet?.connector?.sendCustomRequest(jsonRpcRequest);
-            console.log({
-                signedTxns: signedTxns
-            });
             let signedTxns2 = [];
             for(let i = 0; i < signedTxns.length; i++)if (signedTxns[i] !== null) signedTxns2.push({
                 txID: "",
@@ -743,7 +733,7 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
         };
         const hook = (hookType)=>(...args)=>{
                 if (!verifyWallet(wallet.type)) return;
-                this.hookRouter.applyHookWithArgs(hookType, [
+                this.hookRouter.applyHookWithArgs(hookType, ...[
                     wallet.type,
                     ...args
                 ]);
@@ -751,22 +741,15 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
         const onAccountChange = (accounts)=>{
             if (accounts.length < 1) this._deregisterActiveWallet(wallet.type);
             else this._registerActiveWallet(wallet.type);
-            hook((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE)(wallet.type, accounts);
         };
         const onAccountDisconnect = ()=>{
             this._deregisterActiveWallet(wallet.type);
-            hook((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT)(wallet.type);
         };
+        wallet.onAccountChange(hook((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE));
+        wallet.onAccountDisconnect(hook((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT));
+        wallet.onChainChange(hook((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE));
         wallet.onAccountChange(onAccountChange);
         wallet.onAccountDisconnect(onAccountDisconnect);
-        wallet.onChainChange(hook((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE));
-        // onBlockAdded is a chain and not a wallet specific event
-        // so wallet type is not required
-        if (wallet.type === this._config.defaultWallet) wallet.onBlockAdded((newBlock)=>{
-            this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, [
-                newBlock
-            ]);
-        });
     };
     _initAlgorandWallet = async (algoWallet)=>{
         if (algoWallet.getIsWalletInstalled()) {
@@ -866,9 +849,7 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
         return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT, cb);
     };
     onBlockAdded = (cb)=>{
-        return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
-            return cb(block);
-        });
+        throw new (0, $d083fd37dae77b99$export$e162153238934121)();
     };
     toJSON() {
         throw new (0, $d083fd37dae77b99$export$e162153238934121)();
@@ -1011,8 +992,8 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
     ]);
+    _walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $be737fe08c02d508$export$aef6a8518da1f60c), (0, $57b8a5d2d8300786$export$7c460c214963f696).ETHEREUM_METAMASK);
     chain = null;
-    walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $be737fe08c02d508$export$aef6a8518da1f60c), (0, $57b8a5d2d8300786$export$7c460c214963f696).ETHEREUM_METAMASK);
     name = "METAMASK";
     type = (0, $eeb7484c2092e8d9$export$353aefc175350117).ETHEREUM_METAMASK;
     constructor(state){
@@ -1039,15 +1020,15 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
     }
     _setupInitialState() {
-        const storageValue = this.walletStorage.getValue();
+        const storageValue = this._walletStorage.getValue();
         if (storageValue) this.state = {
             isConnected: storageValue.isConnected,
             accounts: storageValue.accounts
         };
     }
     _updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) this.walletStorage.updateValue(true, this.getPrimaryAccount(), this.state.accounts);
-        else this.walletStorage.updateValue(false, "", []);
+        if (this.state.isConnected && this.state.accounts.length > 0) this._walletStorage.updateValue(true, this.getPrimaryAccount(), this.state.accounts);
+        else this._walletStorage.updateValue(false, "", []);
     }
     async init() {
         this.provider = await this._getProvider();
@@ -1166,11 +1147,13 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
             const ethereum = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)((window)=>window.ethereum);
             if (ethereum.on) {
                 ethereum.on("accountsChanged", async (accounts)=>{
-                    this.state.accounts = ethereum.request({
-                        method: "eth_requestAccounts"
-                    });
-                    if (accounts.length === 0) await this.signOut();
-                    else this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
+                    this.state.accounts = accounts;
+                    if (accounts.length === 0) {
+                        await this.signOut();
+                        this.hookRouter.applyHooks([
+                            (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
+                        ]);
+                    } else this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
                     this._updateWalletStorageValue();
                 });
                 ethereum.on("chainChanged", async (chainId)=>{
@@ -1467,7 +1450,7 @@ class $d5d3dec9ab4b7763$export$aa318bacd7f710c5 {
         };
         const hook = (hookType)=>(...args)=>{
                 if (!verifyWallet(wallet.type)) return;
-                this.hookRouter.applyHookWithArgs(hookType, [
+                this.hookRouter.applyHookWithArgs(hookType, ...[
                     wallet.type,
                     ...args
                 ]);
@@ -1475,16 +1458,16 @@ class $d5d3dec9ab4b7763$export$aa318bacd7f710c5 {
         const onAccountChange = (accounts)=>{
             if (accounts.length < 1) this._deregisterActiveWallet(wallet.type);
             else this._registerActiveWallet(wallet.type);
-            hook((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE)(wallet.type, accounts);
         };
         const onAccountDisconnect = ()=>{
             this._deregisterActiveWallet(wallet.type);
-            hook((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT)(wallet.type);
         };
-        wallet.onAccountChange(onAccountChange);
-        wallet.onAccountDisconnect(onAccountDisconnect);
+        wallet.onAccountChange(hook((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE));
+        wallet.onAccountDisconnect(hook((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT));
         wallet.onChainChange(hook((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE));
         wallet.onChainDisconnect(hook((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT));
+        wallet.onAccountChange(onAccountChange);
+        wallet.onAccountDisconnect(onAccountDisconnect);
         // onBlockAdded is a chain and not a wallet specific event
         // so wallet type is not required
         if (wallet.type === this._config.defaultWallet) wallet.onBlockAdded((newBlock)=>{
