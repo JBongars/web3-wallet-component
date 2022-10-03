@@ -10,7 +10,8 @@
   "scripts": {
     "test": "jest",
     "build": "parcel build",
-    "dev": "parcel watch"
+    "dev": "parcel watch",
+    "lint": "eslint src/* --ext .ts"
   },
   "devDependencies": {
     "@parcel/packager-ts": "2.6.2",
@@ -18,9 +19,15 @@
     "@types/jest": "^28.1.4",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.21",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
+    "eslint": "^8.24.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "jest": "^28.1.2",
     "jest-environment-jsdom": "^28.1.1",
     "parcel": "^2.6.2",
+    "prettier": "^2.7.1",
     "ts-jest": "^28.0.5",
     "typescript": ">=3.0.0"
   },

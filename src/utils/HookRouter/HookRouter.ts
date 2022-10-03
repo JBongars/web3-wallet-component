@@ -1,80 +1,75 @@
-import { HookNotAvailableError } from "../../errors";
-import { HookEvent, WALLET_HOOK } from "./types";
+import { HookNotAvailableError } from '../../errors';
+import { HookEvent, WALLET_HOOK } from './types';
 
 class HookRouter {
-  private availableHooks: WALLET_HOOK[];
-  private hooks: Map<WALLET_HOOK, Map<Symbol, Function>>;
+    private availableHooks: WALLET_HOOK[];
+    private hooks: Map<WALLET_HOOK, Map<symbol, Function>>;
 
-  constructor(hooks: WALLET_HOOK[]) {
-    this.hooks = new Map();
-    this.availableHooks = hooks;
+    constructor(hooks: WALLET_HOOK[]) {
+        this.hooks = new Map();
+        this.availableHooks = hooks;
 
-    this.resetAllHooks();
-  }
-
-  private checkIfValidHook(hook: WALLET_HOOK) {
-    if (!this.hooks.has(hook)) {
-      throw new HookNotAvailableError();
+        this.resetAllHooks();
     }
-  }
 
-  public getAvailableHooks() {
-    return [...this.availableHooks];
-  }
+    private checkIfValidHook(hook: WALLET_HOOK) {
+        if (!this.hooks.has(hook)) {
+            throw new HookNotAvailableError();
+        }
+    }
 
-  public resetHook(hook: WALLET_HOOK) {
-    this.checkIfValidHook(hook);
+    public getAvailableHooks() {
+        return [...this.availableHooks];
+    }
 
-    this.hooks.delete(hook);
-    this.hooks.set(hook, new Map());
-  }
+    public resetHook(hook: WALLET_HOOK) {
+        this.checkIfValidHook(hook);
 
-  public resetAllHooks() {
-    this.availableHooks.forEach((hook) => {
-      this.hooks.set(hook, new Map());
-    });
-  }
+        this.hooks.delete(hook);
+        this.hooks.set(hook, new Map());
+    }
 
-  public registerCallback(hook: WALLET_HOOK, cb: Function): HookEvent {
-    this.checkIfValidHook(hook);
+    public resetAllHooks() {
+        this.availableHooks.forEach((hook) => {
+            this.hooks.set(hook, new Map());
+        });
+    }
 
-    const id = Symbol();
-    this.hooks.get(hook)?.set(id, cb);
+    public registerCallback(hook: WALLET_HOOK, cb: Function): HookEvent {
+        this.checkIfValidHook(hook);
 
-    return {
-      id,
-      destroy: () => this.deregisterCallback(hook, id),
-    };
-  }
+        const id = Symbol();
+        this.hooks.get(hook)?.set(id, cb);
 
-  public deregisterCallback(hook: WALLET_HOOK, id: Symbol) {
-    this.checkIfValidHook(hook);
+        return {
+            id,
+            destroy: () => this.deregisterCallback(hook, id)
+        };
+    }
 
-    this.hooks.get(hook)?.delete(id);
-  }
+    public deregisterCallback(hook: WALLET_HOOK, id: symbol) {
+        this.checkIfValidHook(hook);
 
-  public async applyHooks(hooks: WALLET_HOOK[]): Promise<void> {
-    const callbacksToInvoke: Function[] = [];
+        this.hooks.get(hook)?.delete(id);
+    }
 
-    hooks.forEach((hook) => {
-      this.hooks
-        .get(hook)
-        ?.forEach((fn: Function) => callbacksToInvoke.push(fn));
-    });
+    public async applyHooks(hooks: WALLET_HOOK[]): Promise<void> {
+        const callbacksToInvoke: Function[] = [];
 
-    await Promise.all(callbacksToInvoke.map((fn) => fn()));
-  }
+        hooks.forEach((hook) => {
+            this.hooks.get(hook)?.forEach((fn: Function) => callbacksToInvoke.push(fn));
+        });
 
-  public async applyHookWithArgs(
-    hook: WALLET_HOOK,
-    ...args: any[]
-  ): Promise<void> {
-    const callbacksToInvoke: Function[] = [];
+        await Promise.all(callbacksToInvoke.map((fn) => fn()));
+    }
 
-    this.hooks.get(hook)?.forEach((fn: Function) => callbacksToInvoke.push(fn));
+    public async applyHookWithArgs(hook: WALLET_HOOK, ...args: any[]): Promise<void> {
+        const callbacksToInvoke: Function[] = [];
 
-    await Promise.all(callbacksToInvoke.map((fn) => fn(...args)));
-  }
+        this.hooks.get(hook)?.forEach((fn: Function) => callbacksToInvoke.push(fn));
+
+        await Promise.all(callbacksToInvoke.map((fn) => fn(...args)));
+    }
 }
 
 export default HookRouter;

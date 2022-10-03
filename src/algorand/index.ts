@@ -1,7 +1,7 @@
-export * from "./myalgo";
-export * from "./Algorand";
-export * from "./walletconnect";
-export * from "./perawallet";
+export * from './myalgo';
+export * from './Algorand';
+export * from './walletconnect';
+export * from './perawallet';
 
-const CHAIN_ALGORAND = "ALGORAND";
+const CHAIN_ALGORAND = 'ALGORAND';
 export { CHAIN_ALGORAND };
