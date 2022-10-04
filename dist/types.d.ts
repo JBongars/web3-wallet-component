@@ -685,11 +685,12 @@ export type SuperWalletState = {
  */
 export type ChainConfig = {
     type: CHAIN_TYPE.ALGORAND;
-    config: AlgorandConfig;
-    data: Partial<AlgorandState>;
+    config?: Partial<AlgorandConfig>;
+    data?: Partial<AlgorandState>;
 } | {
     type: CHAIN_TYPE.ETHEREUM;
-    config: EthereumConfig;
+    config?: Partial<EthereumConfig>;
+    data?: Partial<EthereumState>;
 };
 /**
  * Config to initialize Super Wallet. Contains list of @see ChainConfig to initialize all wallets

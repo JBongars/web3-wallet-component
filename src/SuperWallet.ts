@@ -48,12 +48,13 @@ type SuperWalletState = {
 type ChainConfig =
     | {
           type: CHAIN_TYPE.ALGORAND;
-          config: AlgorandConfig;
-          data: Partial<AlgorandState>;
+          config?: Partial<AlgorandConfig>;
+          data?: Partial<AlgorandState>;
       }
     | {
           type: CHAIN_TYPE.ETHEREUM;
-          config: EthereumConfig;
+          config?: Partial<EthereumConfig>;
+          data?: Partial<EthereumState>;
       };
 
 /**
@@ -94,11 +95,11 @@ class SuperWallet implements WalletInterface<unknown> {
 
         this._config.chains.map((chain) => {
             if (chain.type === CHAIN_TYPE.ALGORAND) {
-                algorandConfig = { ...algorandConfig, ...chain.config };
+                algorandConfig = { ...algorandConfig, ...(chain.config as AlgorandConfig) };
             }
 
             if (chain.type === CHAIN_TYPE.ETHEREUM) {
-                ethereumConfig = { ...ethereumConfig, ...chain.config };
+                ethereumConfig = { ...ethereumConfig, ...(chain.config as EthereumConfig) };
             }
         });
 

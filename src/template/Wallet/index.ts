@@ -11,11 +11,7 @@ class Wallet implements WalletInterface<State> {
     private _state: State;
 
     constructor(state?: State) {
-        if (state) {
-            this._state = { ...state };
-        } else {
-            this._state = { ...initialState };
-        }
+        this._state = Object.assign({}, initialState, state);
     }
 
     public async init(): Promise<WALLET_STATUS> {
