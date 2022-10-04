@@ -24,7 +24,7 @@ Component for managing state for different wallets in a single page such as for 
 
 ### Configure and Initialize Wallets
 
-```ts
+```js
 // Super Wallet
 const superWallet = new SuperWallet({
   defaultChain: CHAIN_TYPE.ETHEREUM,
@@ -59,7 +59,7 @@ myAlgo.init().then(() => {
 
 ### Configure Hooks
 
-```ts
+```js
 superWallet.onAccountChange((chain, wallet, accounts) => {
     console.log('Account has changed!');
     console.log(`chain: ${chain}`);
@@ -67,6 +67,10 @@ superWallet.onAccountChange((chain, wallet, accounts) => {
     console.log(`accounts: ${accounts}`);
 });
 ```
+
+## Docs
+
+Type `yarn docs` into the terminal for further documentation
 
 ## Design
 
