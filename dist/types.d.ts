@@ -406,7 +406,7 @@ export type AlgorandSignerTxn = MyAlgoTransaction | AlgorandWalletConnectTransac
 /**
  * Signer object passed
  */
-export type AlgorandSigner = MyAlgoSigner | WalletConnect | PeraWalletSigner;
+export type AlgorandSigner = MyAlgoSigner | AlgorandWalletConnectSigner | PeraWalletSigner;
 /**
  * Internal state of the wallet to be passed using the @see toJSON
  */

@@ -3,7 +3,12 @@ import { MyAlgo, MyAlgoTransaction } from './myalgo';
 import { MyAlgoSigner, MyAlgoState } from './myalgo/types';
 import { PeraWallet, PeraWalletTransaction } from './perawallet';
 import { PeraWalletSigner, PeraWalletState } from './perawallet/types';
-import { AlgorandWalletConnectState, AlgorandWalletConnectTransaction, WalletConnect } from './walletconnect';
+import {
+    AlgorandWalletConnectSigner,
+    AlgorandWalletConnectState,
+    AlgorandWalletConnectTransaction,
+    WalletConnect
+} from './walletconnect';
 
 /**
  * Generic interface for low level wallets
@@ -24,7 +29,7 @@ type AlgorandSignerTxn = MyAlgoTransaction | AlgorandWalletConnectTransaction | 
 /**
  * Signer object passed
  */
-type AlgorandSigner = MyAlgoSigner | WalletConnect | PeraWalletSigner;
+type AlgorandSigner = MyAlgoSigner | AlgorandWalletConnectSigner | PeraWalletSigner;
 
 /**
  * Internal state of the wallet to be passed using the @see toJSON
