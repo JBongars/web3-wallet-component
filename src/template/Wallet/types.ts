@@ -1,8 +1,8 @@
 type State = {
-  data1: string;
-  data2: string;
+    data1: string;
+    data2: string;
 };
 
-type Asset = {};
+type Asset = unknown;
 
 export type { State, Asset };

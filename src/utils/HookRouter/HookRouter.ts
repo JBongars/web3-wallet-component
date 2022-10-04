@@ -1,80 +1,132 @@
-import { HookNotAvailableError } from "../../errors";
-import { HookEvent, WALLET_HOOK } from "./types";
+import { HookNotAvailableError } from '../../errors';
+import { HookEvent, WALLET_HOOK } from './types';
 
+/**
+ * Handles callback hooks for wallet/ chain events
+ * @see WALLET_HOOK for available hooks
+ * @remarks Should only be used internally as this component is prone to changing
+ * @internal
+ * @example
+ * ```ts
+ * const hookRouter = new HookRouter([WALLET_HOOK.NEW_BLOCK]); // init hook router
+ * hookRouter.registerCallback(WALLET_HOOK.NEW_BLOCK, () => console.log("hello hook!")); // create a new hook
+ * hookRouter.applyHooks([WALLET_HOOK.NEW_BLOCK]); // >> hello hook!
+ * ```
+ */
 class HookRouter {
-  private availableHooks: WALLET_HOOK[];
-  private hooks: Map<WALLET_HOOK, Map<Symbol, Function>>;
+    private availableHooks: WALLET_HOOK[];
+    private hooks: Map<WALLET_HOOK, Map<symbol, Function>>;
 
-  constructor(hooks: WALLET_HOOK[]) {
-    this.hooks = new Map();
-    this.availableHooks = hooks;
+    /**
+     * Initializes the hook router to start listening for hooks
+     * @param hooks - List of hooks the HookRouter should listen for
+     */
+    constructor(hooks: WALLET_HOOK[]) {
+        this.hooks = new Map();
+        this.availableHooks = hooks;
 
-    this.resetAllHooks();
-  }
-
-  private checkIfValidHook(hook: WALLET_HOOK) {
-    if (!this.hooks.has(hook)) {
-      throw new HookNotAvailableError();
+        this.resetAllHooks();
     }
-  }
 
-  public getAvailableHooks() {
-    return [...this.availableHooks];
-  }
+    /**
+     * Check if hook router is listening to a hook
+     * @param hook - hook enum
+     */
+    private checkIfValidHook(hook: WALLET_HOOK) {
+        if (!this.hooks.has(hook)) {
+            throw new HookNotAvailableError();
+        }
+    }
 
-  public resetHook(hook: WALLET_HOOK) {
-    this.checkIfValidHook(hook);
+    /**
+     * self descriptive
+     * @returns list of available hooks
+     */
+    public getAvailableHooks() {
+        return [...this.availableHooks];
+    }
 
-    this.hooks.delete(hook);
-    this.hooks.set(hook, new Map());
-  }
+    /**
+     * clear all hooks registered to an event
+     * @param hook - hook enum
+     */
+    public resetHook(hook: WALLET_HOOK) {
+        this.checkIfValidHook(hook);
 
-  public resetAllHooks() {
-    this.availableHooks.forEach((hook) => {
-      this.hooks.set(hook, new Map());
-    });
-  }
+        this.hooks.delete(hook);
+        this.hooks.set(hook, new Map());
+    }
 
-  public registerCallback(hook: WALLET_HOOK, cb: Function): HookEvent {
-    this.checkIfValidHook(hook);
+    /**
+     * clears all available hooks resetting the hook router
+     */
+    public resetAllHooks() {
+        this.availableHooks.forEach((hook) => {
+            this.hooks.set(hook, new Map());
+        });
+    }
 
-    const id = Symbol();
-    this.hooks.get(hook)?.set(id, cb);
+    /**
+     * Register a new hook that will be called when the hook event is triggered
+     * @param hook - hook enum
+     * @param cb - callback to invoke when the hook is called
+     * @returns a hook event
+     * @see HookEvent
+     * @see applyHooks
+     * @remarks if a hook is expecting to be called with an argument, use @see applyHookWithArgs
+     */
+    public registerCallback(hook: WALLET_HOOK, cb: Function): HookEvent {
+        this.checkIfValidHook(hook);
 
-    return {
-      id,
-      destroy: () => this.deregisterCallback(hook, id),
-    };
-  }
+        const id = Symbol();
+        this.hooks.get(hook)?.set(id, cb);
 
-  public deregisterCallback(hook: WALLET_HOOK, id: Symbol) {
-    this.checkIfValidHook(hook);
+        return {
+            id,
+            destroy: () => this.deregisterCallback(hook, id)
+        };
+    }
 
-    this.hooks.get(hook)?.delete(id);
-  }
+    /**
+     * Deregisters a particular hook
+     * @param hook - hook enum
+     * @param id - hook id found in the @see HookEvent
+     * @remarks hooks can also be deregistered using the @see HookEvent.destroy method
+     */
+    public deregisterCallback(hook: WALLET_HOOK, id: symbol) {
+        this.checkIfValidHook(hook);
 
-  public async applyHooks(hooks: WALLET_HOOK[]): Promise<void> {
-    const callbacksToInvoke: Function[] = [];
+        this.hooks.get(hook)?.delete(id);
+    }
 
-    hooks.forEach((hook) => {
-      this.hooks
-        .get(hook)
-        ?.forEach((fn: Function) => callbacksToInvoke.push(fn));
-    });
+    /**
+     * Calls all hooks that are specified
+     * @param hooks - list of hook enums
+     * @remarks Use @see applyHookWithArgs if hooks should be called with args
+     */
+    public async applyHooks(hooks: WALLET_HOOK[]): Promise<void> {
+        const callbacksToInvoke: Function[] = [];
 
-    await Promise.all(callbacksToInvoke.map((fn) => fn()));
-  }
+        hooks.forEach((hook) => {
+            this.hooks.get(hook)?.forEach((fn: Function) => callbacksToInvoke.push(fn));
+        });
 
-  public async applyHookWithArgs(
-    hook: WALLET_HOOK,
-    ...args: any[]
-  ): Promise<void> {
-    const callbacksToInvoke: Function[] = [];
+        await Promise.all(callbacksToInvoke.map((fn) => fn()));
+    }
 
-    this.hooks.get(hook)?.forEach((fn: Function) => callbacksToInvoke.push(fn));
+    /**
+     * Calls a hook with a list of arguments
+     * @param hook - hook enum
+     * @param args - argument to pass to the hook callback
+     * @remarks args are destructured
+     */
+    public async applyHookWithArgs(hook: WALLET_HOOK, ...args: any[]): Promise<void> {
+        const callbacksToInvoke: Function[] = [];
 
-    await Promise.all(callbacksToInvoke.map((fn) => fn(...args)));
-  }
+        this.hooks.get(hook)?.forEach((fn: Function) => callbacksToInvoke.push(fn));
+
+        await Promise.all(callbacksToInvoke.map((fn) => fn(...args)));
+    }
 }
 
 export default HookRouter;
