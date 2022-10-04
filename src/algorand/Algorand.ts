@@ -46,7 +46,7 @@ class Algorand
 
     /**
      * Constructor for Algorand
-     * @param config - Algorand Config
+     * @param config - Partial Algorand Config to be overwritten with defaults
      * @param data - Algorand Data to initialize with
      */
     constructor(config: Partial<AlgorandConfig>, data?: AlgorandState) {
