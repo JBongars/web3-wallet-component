@@ -14,7 +14,8 @@
 <li><a href="SuperWallet.html">SuperWallet</a></li></ul>
 <h1>Class SuperWallet</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Super Class</p>
+<div class="tsd-comment tsd-typography"><p>Super Wallet Class. One Wallet to rule them all
+Manages Chain + Wallet and allows you to seamlessly switch between using one interface</p>
 </div></section>
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
@@ -25,7 +26,7 @@
 <ul class="tsd-hierarchy">
 <li><a href="../interfaces/WalletInterface.html" class="tsd-signature-type" data-tsd-kind="Interface">WalletInterface</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:52</li></ul></aside>
+<li>Defined in src/SuperWallet.ts:71</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -48,7 +49,7 @@
 <h3 class="tsd-index-heading">Methods</h3>
 <div class="tsd-index-list"><a href="SuperWallet.html#_applyAllChains" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-2048-path"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)" id="icon-2048-text"></path></svg><span>_apply<wbr/>All<wbr/>Chains</span></a>
 <a href="SuperWallet.html#_deregisterActiveChain" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_deregister<wbr/>Active<wbr/>Chain</span></a>
-<a href="SuperWallet.html#_initSuperWallet" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_init<wbr/>Super<wbr/>Wallet</span></a>
+<a href="SuperWallet.html#_initSuperWalletChain" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_init<wbr/>Super<wbr/>Wallet<wbr/>Chain</span></a>
 <a href="SuperWallet.html#_mountInternalHooks" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_mount<wbr/>Internal<wbr/>Hooks</span></a>
 <a href="SuperWallet.html#_registerActiveChain" class="tsd-index-link tsd-kind-method tsd-parent-kind-class tsd-is-private"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>_register<wbr/>Active<wbr/>Chain</span></a>
 <a href="SuperWallet.html#fetchCurrentChainID" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>fetch<wbr/>Current<wbr/>ChainID</span></a>
@@ -97,39 +98,39 @@
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> data: <a href="../types/SuperWalletState.html" class="tsd-signature-type" data-tsd-kind="Type alias">SuperWalletState</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="SuperWallet.html" class="tsd-signature-type" data-tsd-kind="Class">SuperWallet</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:67</li></ul></aside></li></ul></section></section>
+<li>Defined in src/SuperWallet.ts:86</li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_activeChain" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_active<wbr/>Chain</span><a href="#_activeChain" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_active<wbr/>Chain<span class="tsd-signature-symbol">:</span> <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:64</li></ul></aside></section>
+<li>Defined in src/SuperWallet.ts:83</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_algorand" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_algorand</span><a href="#_algorand" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_algorand<span class="tsd-signature-symbol">:</span> <a href="Algorand.html" class="tsd-signature-type" data-tsd-kind="Class">Algorand</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:61</li></ul></aside></section>
+<li>Defined in src/SuperWallet.ts:80</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_config" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_config</span><a href="#_config" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_config<span class="tsd-signature-symbol">:</span> <a href="../types/SuperWalletConfig.html" class="tsd-signature-type" data-tsd-kind="Type alias">SuperWalletConfig</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:65</li></ul></aside></section>
+<li>Defined in src/SuperWallet.ts:84</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_ethereum" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_ethereum</span><a href="#_ethereum" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_ethereum<span class="tsd-signature-symbol">:</span> <a href="Ethereum.html" class="tsd-signature-type" data-tsd-kind="Class">Ethereum</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:62</li></ul></aside></section>
+<li>Defined in src/SuperWallet.ts:81</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_initialized" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_initialized</span><a href="#_initialized" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_initialized<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:63</li></ul></aside></section>
+<li>Defined in src/SuperWallet.ts:82</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="hookRouter" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>hook<wbr/>Router</span><a href="#hookRouter" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">hook<wbr/>Router<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HookRouter</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:53</li></ul></aside></section></section>
+<li>Defined in src/SuperWallet.ts:72</li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_applyAllChains" class="tsd-anchor"></a>
@@ -137,6 +138,11 @@
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_applyAllChains._applyAllChains-1">_apply<wbr/>All<wbr/>Chains<span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span>method<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>chainType<span class="tsd-signature-symbol">: </span><a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">[]</span><a href="#_applyAllChains._applyAllChains-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>higher level function that wraps around functions
+that take a chain as an argument and applies function to all chains</p>
+
+<h3>Returns</h3><p>function return value</p>
+</div>
 <section class="tsd-panel tsd-type-parameters">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameters">
@@ -147,6 +153,8 @@
 <ul class="tsd-parameter-list">
 <li>
 <h5>method: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>chainType<span class="tsd-signature-symbol">: </span><a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span></h5>
+<div class="tsd-comment tsd-typography"><p>function to invoke</p>
+</div>
 <ul class="tsd-parameters">
 <li class="tsd-parameter-signature">
 <ul class="tsd-signatures tsd-kind-type-literal">
@@ -160,38 +168,48 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">[]</span></h4></li></ul></li></ul></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:130</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:171</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_deregisterActiveChain" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_deregister<wbr/>Active<wbr/>Chain</span><a href="#_deregisterActiveChain" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_deregisterActiveChain._deregisterActiveChain-1">_deregister<wbr/>Active<wbr/>Chain<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_deregisterActiveChain._deregisterActiveChain-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Deregister a new wallet from active</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>type: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5></li></ul></div>
+<h5>type: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5>
+<div class="tsd-comment tsd-typography"><p>Wallet type</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:94</li></ul></aside></li></ul></section>
-<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_initSuperWallet" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_init<wbr/>Super<wbr/>Wallet</span><a href="#_initSuperWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<li>Defined in src/SuperWallet.ts:121</li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_initSuperWalletChain" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_init<wbr/>Super<wbr/>Wallet<wbr/>Chain</span><a href="#_initSuperWalletChain" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-<li class="tsd-signature tsd-anchor-link" id="_initSuperWallet._initSuperWallet-1">_init<wbr/>Super<wbr/>Wallet<span class="tsd-signature-symbol">(</span>chain<span class="tsd-signature-symbol">: </span><a href="../types/ChainWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">ChainWallet</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#_initSuperWallet._initSuperWallet-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="_initSuperWalletChain._initSuperWalletChain-1">_init<wbr/>Super<wbr/>Wallet<wbr/>Chain<span class="tsd-signature-symbol">(</span>chain<span class="tsd-signature-symbol">: </span><a href="../types/ChainWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">ChainWallet</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#_initSuperWalletChain._initSuperWalletChain-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Initializes the chain wallet</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>chain: <a href="../types/ChainWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">ChainWallet</a></h5></li></ul></div>
+<h5>chain: <a href="../types/ChainWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">ChainWallet</a></h5>
+<div class="tsd-comment tsd-typography"><p>chain to initialize</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:125</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:160</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_mountInternalHooks" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_mount<wbr/>Internal<wbr/>Hooks</span><a href="#_mountInternalHooks" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_mountInternalHooks._mountInternalHooks-1">_mount<wbr/>Internal<wbr/>Hooks<span class="tsd-signature-symbol">(</span>chain<span class="tsd-signature-symbol">: </span><a href="../types/ChainWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">ChainWallet</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_mountInternalHooks._mountInternalHooks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Mount internal hooks that make managing active wallet possible</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -199,20 +217,24 @@
 <h5>chain: <a href="../types/ChainWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">ChainWallet</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:98</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:129</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_registerActiveChain" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_register<wbr/>Active<wbr/>Chain</span><a href="#_registerActiveChain" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_registerActiveChain._registerActiveChain-1">_register<wbr/>Active<wbr/>Chain<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_registerActiveChain._registerActiveChain-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Register a wallet as active</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>type: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5></li></ul></div>
+<h5>type: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5>
+<div class="tsd-comment tsd-typography"><p>Wallet type</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:90</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:113</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="fetchCurrentChainID" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>fetch<wbr/>Current<wbr/>ChainID</span><a href="#fetchCurrentChainID" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -226,7 +248,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.fetchCurrentChainID</p>
 <ul>
-<li>Defined in src/SuperWallet.ts:267</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:366</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getAccounts" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Accounts</span><a href="#getAccounts" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -238,28 +260,40 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getAccounts</p>
 <ul>
-<li>Defined in src/SuperWallet.ts:263</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:362</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getActiveChain" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Active<wbr/>Chain</span><a href="#getActiveChain" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="getActiveChain.getActiveChain-1">get<wbr/>Active<wbr/>Chain<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/ChainWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">ChainWallet</a><a href="#getActiveChain.getActiveChain-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get active wallet from chain</p>
+
+<h3>Returns</h3><p>active wallet on chain</p>
+</div>
 <h4 class="tsd-returns-title">Returns <a href="../types/ChainWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">ChainWallet</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:195</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:275</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getActiveWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Active<wbr/>Wallet</span><a href="#getActiveWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="getActiveWallet.getActiveWallet-1">get<wbr/>Active<wbr/>Wallet<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/Wallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">Wallet</a><a href="#getActiveWallet.getActiveWallet-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get the last used wallet on the last used chain</p>
+
+<h3>Returns</h3><p>the last used wallet on the last used chain</p>
+</div>
 <h4 class="tsd-returns-title">Returns <a href="../types/Wallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">Wallet</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:209</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:297</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getActiveWalletOnChain" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Active<wbr/>Wallet<wbr/>On<wbr/>Chain</span><a href="#getActiveWalletOnChain" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="getActiveWalletOnChain.getActiveWalletOnChain-1">get<wbr/>Active<wbr/>Wallet<wbr/>On<wbr/>Chain<span class="tsd-signature-symbol">(</span>chainType<span class="tsd-signature-symbol">: </span><a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/Wallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">Wallet</a><a href="#getActiveWalletOnChain.getActiveWalletOnChain-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get all active wallets on any chain</p>
+
+<h3>Returns</h3><p>all active wallets on any chain</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -267,7 +301,7 @@
 <h5>chainType: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../types/Wallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">Wallet</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:202</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:286</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getAssets" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Assets</span><a href="#getAssets" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -275,28 +309,38 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:243</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:342</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getAvailableWallets" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Available<wbr/>Wallets</span><a href="#getAvailableWallets" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="getAvailableWallets.getAvailableWallets-1">get<wbr/>Available<wbr/>Wallets<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/SuperWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">SuperWalletType</a><span class="tsd-signature-symbol">[]</span><a href="#getAvailableWallets.getAvailableWallets-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get all available wallet</p>
+
+<h3>Returns</h3><p>all available wallets on any chain</p>
+</div>
 <h4 class="tsd-returns-title">Returns <a href="../types/SuperWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">SuperWalletType</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:180</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:246</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getAvailableWalletsOnChain" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Available<wbr/>Wallets<wbr/>On<wbr/>Chain</span><a href="#getAvailableWalletsOnChain" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="getAvailableWalletsOnChain.getAvailableWalletsOnChain-1">get<wbr/>Available<wbr/>Wallets<wbr/>On<wbr/>Chain<span class="tsd-signature-symbol">(</span>chainType<span class="tsd-signature-symbol">: </span><a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/SuperWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">SuperWalletType</a><span class="tsd-signature-symbol">[]</span><a href="#getAvailableWalletsOnChain.getAvailableWalletsOnChain-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get all available wallet from chain</p>
+
+<h3>Returns</h3><p>all available wallets on chain</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>chainType: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5></li></ul></div>
+<h5>chainType: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5>
+<div class="tsd-comment tsd-typography"><p>chain type</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../types/SuperWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">SuperWalletType</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:173</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:235</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getBalance" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Balance</span><a href="#getBalance" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -309,41 +353,57 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getBalance</p>
 <ul>
-<li>Defined in src/SuperWallet.ts:239</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:338</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getChain" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Chain</span><a href="#getChain" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="getChain.getChain-1">get<wbr/>Chain<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/ChainWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">ChainWallet</a><a href="#getChain.getChain-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get Chain</p>
+
+<h3>Returns</h3><p>chain interface</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>type: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5></li></ul></div>
+<h5>type: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5>
+<div class="tsd-comment tsd-typography"><p>chain type</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../types/ChainWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">ChainWallet</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:153</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:204</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getConnectedWallets" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Connected<wbr/>Wallets</span><a href="#getConnectedWallets" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="getConnectedWallets.getConnectedWallets-1">get<wbr/>Connected<wbr/>Wallets<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/SuperWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">SuperWalletType</a><span class="tsd-signature-symbol">[]</span><a href="#getConnectedWallets.getConnectedWallets-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get all available wallet</p>
+
+<h3>Returns</h3><p>all connected wallets on any chain</p>
+</div>
 <h4 class="tsd-returns-title">Returns <a href="../types/SuperWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">SuperWalletType</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:191</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:266</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getConnectedWalletsOnChain" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Connected<wbr/>Wallets<wbr/>On<wbr/>Chain</span><a href="#getConnectedWalletsOnChain" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="getConnectedWalletsOnChain.getConnectedWalletsOnChain-1">get<wbr/>Connected<wbr/>Wallets<wbr/>On<wbr/>Chain<span class="tsd-signature-symbol">(</span>chainType<span class="tsd-signature-symbol">: </span><a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/SuperWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">SuperWalletType</a><span class="tsd-signature-symbol">[]</span><a href="#getConnectedWalletsOnChain.getConnectedWalletsOnChain-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get all connected wallet from chain</p>
+
+<h3>Returns</h3><p>all connected wallets on chain</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>chainType: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5></li></ul></div>
+<h5>chainType: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5>
+<div class="tsd-comment tsd-typography"><p>chain type</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../types/SuperWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">SuperWalletType</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:184</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:255</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getIsConnected" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Is<wbr/>Connected</span><a href="#getIsConnected" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -354,7 +414,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getIsConnected</p>
 <ul>
-<li>Defined in src/SuperWallet.ts:251</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:350</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getIsWalletInstalled" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Is<wbr/>Wallet<wbr/>Installed</span><a href="#getIsWalletInstalled" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -365,7 +425,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getIsWalletInstalled</p>
 <ul>
-<li>Defined in src/SuperWallet.ts:255</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:354</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getPrimaryAccount" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Primary<wbr/>Account</span><a href="#getPrimaryAccount" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -379,7 +439,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getPrimaryAccount</p>
 <ul>
-<li>Defined in src/SuperWallet.ts:259</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:358</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getProvider" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Provider</span><a href="#getProvider" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -387,7 +447,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:247</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:346</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getSigner" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Signer</span><a href="#getSigner" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -395,44 +455,53 @@
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>get the current signer object for a wallet</p>
 
-<h3>Remarks</h3><p>the signer object is usually a function that will take an unsigned transaction and return a signed transaction</p>
+<h3>Remarks</h3><p>the signer object is usually a function that will take an unsigned transaction and return a signed transaction
+custom signers may be available directly from the wallet provider depending on the blockchain</p>
 
 <h3>Returns</h3><p>signer object</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/SuperWalletSigner.html" class="tsd-signature-type" data-tsd-kind="Type alias">SuperWalletSigner</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getSigner</p>
 <ul>
-<li>Defined in src/SuperWallet.ts:235</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:334</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Wallet</span><a href="#getWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="getWallet.getWallet-1">get<wbr/>Wallet<span class="tsd-signature-symbol">(</span>chainType<span class="tsd-signature-symbol">: </span><a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a>, walletType<span class="tsd-signature-symbol">: </span><a href="../enums/WALLET_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">WALLET_TYPE</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/Wallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">Wallet</a><a href="#getWallet.getWallet-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get wallet from chain</p>
+
+<h3>Returns</h3><p>specific wallet</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>chainType: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5></li>
+<h5>chainType: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5>
+<div class="tsd-comment tsd-typography"><p>chain type</p>
+</div></li>
 <li>
-<h5>walletType: <a href="../enums/WALLET_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">WALLET_TYPE</a></h5></li></ul></div>
+<h5>walletType: <a href="../enums/WALLET_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">WALLET_TYPE</a></h5>
+<div class="tsd-comment tsd-typography"><p>wallet type</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../types/Wallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">Wallet</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:164</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:221</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="init" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>init</span><a href="#init" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="init.init-1">init<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">WALLET_STATUS</span><span class="tsd-signature-symbol">&gt;</span><a href="#init.init-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>initializes the wallet</p>
-
-<h3>Remarks</h3><p>this requires the wallet to be installed in the browser</p>
+<div class="tsd-comment tsd-typography"><p>Initializes the chain wallet</p>
 
 <h3>Returns</h3><p>wallet status</p>
+
+<h3>Remarks</h3><p>Should be called separately from constructor</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">WALLET_STATUS</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.init</p>
 <ul>
-<li>Defined in src/SuperWallet.ts:142</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:188</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="mountEventListeners" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>mount<wbr/>Event<wbr/>Listeners</span><a href="#mountEventListeners" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -449,7 +518,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.mountEventListeners</p>
 <ul>
-<li>Defined in src/SuperWallet.ts:271</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:370</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="onAccountChange" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Account<wbr/>Change</span><a href="#onAccountChange" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -477,7 +546,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HookEvent</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:275</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:374</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="onAccountDisconnect" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Account<wbr/>Disconnect</span><a href="#onAccountDisconnect" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -503,7 +572,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HookEvent</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:287</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:386</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="onBlockAdded" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Block<wbr/>Added</span><a href="#onBlockAdded" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -529,7 +598,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">never</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:291</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:390</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="onChainChange" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Chain<wbr/>Change</span><a href="#onChainChange" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -557,7 +626,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HookEvent</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:281</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:380</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="signIn" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>sign<wbr/>In</span><a href="#signIn" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -572,7 +641,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">WALLET_STATUS</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.signIn</p>
 <ul>
-<li>Defined in src/SuperWallet.ts:227</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:326</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="signOut" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>sign<wbr/>Out</span><a href="#signOut" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -585,7 +654,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">WALLET_STATUS</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.signOut</p>
 <ul>
-<li>Defined in src/SuperWallet.ts:231</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:330</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="toJSON" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>toJSON</span><a href="#toJSON" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -603,35 +672,49 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.toJSON</p>
 <ul>
-<li>Defined in src/SuperWallet.ts:295</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:394</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="updateActiveChain" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>update<wbr/>Active<wbr/>Chain</span><a href="#updateActiveChain" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="updateActiveChain.updateActiveChain-1">update<wbr/>Active<wbr/>Chain<span class="tsd-signature-symbol">(</span>chainType<span class="tsd-signature-symbol">: </span><a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/ChainWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">ChainWallet</a><a href="#updateActiveChain.updateActiveChain-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Update the active chain with chain</p>
+
+<h3>Returns</h3><p>the chain wallet</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>chainType: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5></li></ul></div>
+<h5>chainType: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5>
+<div class="tsd-comment tsd-typography"><p>chain to become active</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../types/ChainWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">ChainWallet</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:214</li></ul></aside></li></ul></section>
+<li>Defined in src/SuperWallet.ts:307</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="updateActiveWalletOnChain" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>update<wbr/>Active<wbr/>Wallet<wbr/>On<wbr/>Chain</span><a href="#updateActiveWalletOnChain" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="updateActiveWalletOnChain.updateActiveWalletOnChain-1">update<wbr/>Active<wbr/>Wallet<wbr/>On<wbr/>Chain<span class="tsd-signature-symbol">(</span>chainType<span class="tsd-signature-symbol">: </span><a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a>, walletType<span class="tsd-signature-symbol">: </span><a href="../enums/WALLET_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">WALLET_TYPE</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../types/Wallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">Wallet</a><a href="#updateActiveWalletOnChain.updateActiveWalletOnChain-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Update the active wallet on chain</p>
+
+<h3>Returns</h3><p>the active wallet</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>chainType: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5></li>
+<h5>chainType: <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a></h5>
+<div class="tsd-comment tsd-typography"><p>chain to select wallet</p>
+</div></li>
 <li>
-<h5>walletType: <a href="../enums/WALLET_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">WALLET_TYPE</a></h5></li></ul></div>
+<h5>walletType: <a href="../enums/WALLET_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">WALLET_TYPE</a></h5>
+<div class="tsd-comment tsd-typography"><p>wallet to become active on chain</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../types/Wallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">Wallet</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/SuperWallet.ts:219</li></ul></aside></li></ul></section></section></div>
+<li>Defined in src/SuperWallet.ts:318</li></ul></aside></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -666,7 +749,7 @@
 <li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="SuperWallet.html#hookRouter" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>hook<wbr/>Router</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SuperWallet.html#_applyAllChains" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_apply<wbr/>All<wbr/>Chains</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SuperWallet.html#_deregisterActiveChain" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_deregister<wbr/>Active<wbr/>Chain</a></li>
-<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SuperWallet.html#_initSuperWallet" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_init<wbr/>Super<wbr/>Wallet</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SuperWallet.html#_initSuperWalletChain" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_init<wbr/>Super<wbr/>Wallet<wbr/>Chain</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SuperWallet.html#_mountInternalHooks" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_mount<wbr/>Internal<wbr/>Hooks</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="SuperWallet.html#_registerActiveChain" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>_register<wbr/>Active<wbr/>Chain</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="SuperWallet.html#fetchCurrentChainID" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>fetch<wbr/>Current<wbr/>ChainID</a></li>

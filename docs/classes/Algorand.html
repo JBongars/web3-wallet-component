@@ -13,6 +13,9 @@
 <li><a href="../modules.html">wallet-component</a></li>
 <li><a href="Algorand.html">Algorand</a></li></ul>
 <h1>Class Algorand</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>Algorand Chain Wallet used to manage algorand wallets and invoke algorand transactions</p>
+</div></section>
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
@@ -24,7 +27,7 @@
 <li><a href="../interfaces/ChainWalletInterface.html" class="tsd-signature-type" data-tsd-kind="Interface">ChainWalletInterface</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/AlgorandWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWallet</a><span class="tsd-signature-symbol">, </span><a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a><span class="tsd-signature-symbol">&gt;</span></li>
 <li><a href="../interfaces/ChainHookHandlerInterface.html" class="tsd-signature-type" data-tsd-kind="Interface">ChainHookHandlerInterface</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a><span class="tsd-signature-symbol">&gt;</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:41</li></ul></aside>
+<li>Defined in src/algorand/Algorand.ts:23</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -82,63 +85,69 @@
 <ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="constructor.new_Algorand">new <wbr/>Algorand<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/AlgorandConfig.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandConfig</a><span class="tsd-signature-symbol">&gt;</span>, data<span class="tsd-signature-symbol">?: </span><a href="../types/AlgorandState.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandState</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="Algorand.html" class="tsd-signature-type" data-tsd-kind="Class">Algorand</a><a href="#constructor.new_Algorand" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Constructor for Algorand</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>config: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/AlgorandConfig.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandConfig</a><span class="tsd-signature-symbol">&gt;</span></h5></li>
+<h5>config: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/AlgorandConfig.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandConfig</a><span class="tsd-signature-symbol">&gt;</span></h5>
+<div class="tsd-comment tsd-typography"><p>Algorand Config</p>
+</div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> data: <a href="../types/AlgorandState.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandState</a></h5></li></ul></div>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> data: <a href="../types/AlgorandState.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandState</a></h5>
+<div class="tsd-comment tsd-typography"><p>Algorand Data to initialize with</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="Algorand.html" class="tsd-signature-type" data-tsd-kind="Class">Algorand</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:65</li></ul></aside></li></ul></section></section>
+<li>Defined in src/algorand/Algorand.ts:52</li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_activeWallets" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_active<wbr/>Wallets</span><a href="#_activeWallets" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_active<wbr/>Wallets<span class="tsd-signature-symbol">:</span> <a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:59</li></ul></aside></section>
+<li>Defined in src/algorand/Algorand.ts:41</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_config" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_config</span><a href="#_config" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_config<span class="tsd-signature-symbol">:</span> <a href="../types/AlgorandConfig.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandConfig</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:60</li></ul></aside></section>
+<li>Defined in src/algorand/Algorand.ts:42</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_initialized" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_initialized</span><a href="#_initialized" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_initialized<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:58</li></ul></aside></section>
+<li>Defined in src/algorand/Algorand.ts:40</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_myAlgo" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_my<wbr/>Algo</span><a href="#_myAlgo" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_my<wbr/>Algo<span class="tsd-signature-symbol">:</span> <a href="MyAlgo.html" class="tsd-signature-type" data-tsd-kind="Class">MyAlgo</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:55</li></ul></aside></section>
+<li>Defined in src/algorand/Algorand.ts:37</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_peraWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_pera<wbr/>Wallet</span><a href="#_peraWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_pera<wbr/>Wallet<span class="tsd-signature-symbol">:</span> <a href="PeraWallet.html" class="tsd-signature-type" data-tsd-kind="Class">PeraWallet</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:57</li></ul></aside></section>
+<li>Defined in src/algorand/Algorand.ts:39</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_walletConnect" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_wallet<wbr/>Connect</span><a href="#_walletConnect" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_wallet<wbr/>Connect<span class="tsd-signature-symbol">:</span> <a href="WalletConnect.html" class="tsd-signature-type" data-tsd-kind="Class">WalletConnect</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:56</li></ul></aside></section>
+<li>Defined in src/algorand/Algorand.ts:38</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="hookRouter" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>hook<wbr/>Router</span><a href="#hookRouter" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">hook<wbr/>Router<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HookRouter</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:47</li></ul></aside></section>
+<li>Defined in src/algorand/Algorand.ts:29</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="name" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;ALGORAND&#39;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:63</li></ul></aside></section>
+<li>Defined in src/algorand/Algorand.ts:45</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="type" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type</span><a href="#type" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">type<span class="tsd-signature-symbol">:</span> <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a><span class="tsd-signature-symbol"> = CHAIN_TYPE.ALGORAND</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:62</li></ul></aside></section></section>
+<li>Defined in src/algorand/Algorand.ts:44</li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_deregisterActiveWallet" class="tsd-anchor"></a>
@@ -146,53 +155,69 @@
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_deregisterActiveWallet._deregisterActiveWallet-1">_deregister<wbr/>Active<wbr/>Wallet<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_deregisterActiveWallet._deregisterActiveWallet-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Deregister a new wallet from active</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>type: <a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a></h5></li></ul></div>
+<h5>type: <a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a></h5>
+<div class="tsd-comment tsd-typography"><p>Wallet type</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:76</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:71</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_initAlgorandWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_init<wbr/>Algorand<wbr/>Wallet</span><a href="#_initAlgorandWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_initAlgorandWallet._initAlgorandWallet-1">_init<wbr/>Algorand<wbr/>Wallet<span class="tsd-signature-symbol">(</span>algoWallet<span class="tsd-signature-symbol">: </span><a href="../types/AlgorandWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWallet</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#_initAlgorandWallet._initAlgorandWallet-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Internally initialize wallet</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>algoWallet: <a href="../types/AlgorandWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWallet</a></h5></li></ul></div>
+<h5>algoWallet: <a href="../types/AlgorandWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWallet</a></h5>
+<div class="tsd-comment tsd-typography"><p>wallet</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:121</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:124</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_mountInternalHooks" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_mount<wbr/>Internal<wbr/>Hooks</span><a href="#_mountInternalHooks" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_mountInternalHooks._mountInternalHooks-1">_mount<wbr/>Internal<wbr/>Hooks<span class="tsd-signature-symbol">(</span>wallet<span class="tsd-signature-symbol">: </span><a href="../types/AlgorandWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWallet</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_mountInternalHooks._mountInternalHooks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Mount internal hooks that make managing active wallet possible</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>wallet: <a href="../types/AlgorandWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWallet</a></h5></li></ul></div>
+<h5>wallet: <a href="../types/AlgorandWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWallet</a></h5>
+<div class="tsd-comment tsd-typography"><p>wallet type</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:80</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:79</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_registerActiveWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_register<wbr/>Active<wbr/>Wallet</span><a href="#_registerActiveWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_registerActiveWallet._registerActiveWallet-1">_register<wbr/>Active<wbr/>Wallet<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_registerActiveWallet._registerActiveWallet-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Register a wallet as active</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>type: <a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a></h5></li></ul></div>
+<h5>type: <a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a></h5>
+<div class="tsd-comment tsd-typography"><p>Wallet type</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:72</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:63</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="fetchCurrentChainID" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>fetch<wbr/>Current<wbr/>ChainID</span><a href="#fetchCurrentChainID" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -206,7 +231,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.fetchCurrentChainID</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:222</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:230</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getAccounts" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Accounts</span><a href="#getAccounts" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -218,7 +243,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Accounts</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getAccounts</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:218</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:226</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getActiveWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Active<wbr/>Wallet</span><a href="#getActiveWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -227,7 +252,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/AlgorandWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWallet</a></h4><aside class="tsd-sources">
 <p>Implementation of ChainWalletInterface.getActiveWallet</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:174</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:182</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getAvailableWallets" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Available<wbr/>Wallets</span><a href="#getAvailableWallets" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -236,7 +261,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Implementation of ChainWalletInterface.getAvailableWallets</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:154</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:162</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getBalance" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Balance</span><a href="#getBalance" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -249,7 +274,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getBalance</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:198</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:206</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getConnectedWallets" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Connected<wbr/>Wallets</span><a href="#getConnectedWallets" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -258,7 +283,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Implementation of ChainWalletInterface.getConnectedWallets</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:164</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:172</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getIsConnected" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Is<wbr/>Connected</span><a href="#getIsConnected" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -269,7 +294,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getIsConnected</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:206</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:214</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getIsWalletInstalled" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Is<wbr/>Wallet<wbr/>Installed</span><a href="#getIsWalletInstalled" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -280,7 +305,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getIsWalletInstalled</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:210</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:218</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getPrimaryAccount" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Primary<wbr/>Account</span><a href="#getPrimaryAccount" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -294,7 +319,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Accounts</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getPrimaryAccount</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:214</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:222</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getProvider" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Provider</span><a href="#getProvider" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -302,7 +327,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/algorand/Algorand.ts:202</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:210</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getSigner" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Signer</span><a href="#getSigner" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -310,14 +335,15 @@
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>get the current signer object for a wallet</p>
 
-<h3>Remarks</h3><p>the signer object is usually a function that will take an unsigned transaction and return a signed transaction</p>
+<h3>Remarks</h3><p>the signer object is usually a function that will take an unsigned transaction and return a signed transaction
+custom signers may be available directly from the wallet provider depending on the blockchain</p>
 
 <h3>Returns</h3><p>signer object</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/AlgorandSigner.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandSigner</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getSigner</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:194</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:202</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Wallet</span><a href="#getWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -331,22 +357,22 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/AlgorandWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWallet</a></h4><aside class="tsd-sources">
 <p>Implementation of ChainWalletInterface.getWallet</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:141</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:149</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="init" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>init</span><a href="#init" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="init.init-1">init<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">WALLET_STATUS</span><span class="tsd-signature-symbol">&gt;</span><a href="#init.init-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>initializes the wallet</p>
-
-<h3>Remarks</h3><p>this requires the wallet to be installed in the browser</p>
+<div class="tsd-comment tsd-typography"><p>Initializes the chain wallet</p>
 
 <h3>Returns</h3><p>wallet status</p>
+
+<h3>Remarks</h3><p>Should be called separately from constructor</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">WALLET_STATUS</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.init</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:130</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:138</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="mountEventListeners" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>mount<wbr/>Event<wbr/>Listeners</span><a href="#mountEventListeners" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -363,12 +389,17 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.mountEventListeners</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:226</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:234</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="onAccountChange" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Account<wbr/>Change</span><a href="#onAccountChange" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="onAccountChange.onAccountChange-1">on<wbr/>Account<wbr/>Change<span class="tsd-signature-symbol">(</span>cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>walletType<span class="tsd-signature-symbol">: </span><a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a>, accounts<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Accounts</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HookEvent</span><a href="#onAccountChange.onAccountChange-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>call hook when account changes. Either an account was removed or an account was added.
+will return a list accounts to compare the changes.</p>
+
+<h3>Remarks</h3><p>this hook is also called when the wallet is initialized for the first time</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -390,12 +421,18 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HookEvent</span></h4><aside class="tsd-sources">
 <p>Implementation of ChainHookHandlerInterface.onAccountChange</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:230</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:238</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="onAccountDisconnect" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Account<wbr/>Disconnect</span><a href="#onAccountDisconnect" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="onAccountDisconnect.onAccountDisconnect-1">on<wbr/>Account<wbr/>Disconnect<span class="tsd-signature-symbol">(</span>cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>walletType<span class="tsd-signature-symbol">: </span><a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HookEvent</span><a href="#onAccountDisconnect.onAccountDisconnect-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>call hook when the user signs out of all accounts either by calling</p>
+
+<h3>See</h3><p>signOut or by manually disconnecting from all accounts in their wallet.</p>
+
+<h3>Remarks</h3><p>is not called when the user signs out of their account assuming there is another account available</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -415,12 +452,19 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HookEvent</span></h4><aside class="tsd-sources">
 <p>Implementation of ChainHookHandlerInterface.onAccountDisconnect</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:238</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:246</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="onBlockAdded" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Block<wbr/>Added</span><a href="#onBlockAdded" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="onBlockAdded.onBlockAdded-1">on<wbr/>Block<wbr/>Added<span class="tsd-signature-symbol">(</span>cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>newBlock<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">never</span><a href="#onBlockAdded.onBlockAdded-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>call hook whenever a new block is added to the blockchain</p>
+
+<h3>Remarks</h3><p>right now only available for</p>
+
+<h3>See</h3><p>Ethereum as relies on the ethereum.on events an is not being polled.
+onBlockAdded is a chain and not a wallet specific event so wallet type is not required</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -440,12 +484,23 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">never</span></h4><aside class="tsd-sources">
 <p>Implementation of ChainHookHandlerInterface.onBlockAdded</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:242</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:250</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="onChainChange" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Chain<wbr/>Change</span><a href="#onChainChange" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="onChainChange.onChainChange-1">on<wbr/>Chain<wbr/>Change<span class="tsd-signature-symbol">(</span>cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>walletType<span class="tsd-signature-symbol">: </span><a href="../types/AlgorandWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWalletType</a>, chain<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HookEvent</span><a href="#onChainChange.onChainChange-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>call hook when the user triggers a chain change event. Can use this hook to trigger a</p>
+
+<h3>See</h3><ul>
+<li>switchChainFromWallet to force the user to force the chain back to a
+predefined hook. Also see</li>
+<li>forceCurrentChainID to throw an error if the user attempts to sign a transaction on the wrong chain</li>
+<li>Metamask</li>
+</ul>
+
+<h3>Remarks</h3><p>only available on certain chains/wallet.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -467,7 +522,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HookEvent</span></h4><aside class="tsd-sources">
 <p>Implementation of ChainHookHandlerInterface.onChainChange</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:234</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:242</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="signIn" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>sign<wbr/>In</span><a href="#signIn" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -482,7 +537,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">WALLET_STATUS</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.signIn</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:186</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:194</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="signOut" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>sign<wbr/>Out</span><a href="#signOut" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -495,7 +550,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">WALLET_STATUS</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.signOut</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:190</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:198</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="toJSON" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>toJSON</span><a href="#toJSON" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -513,7 +568,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.toJSON</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:246</li></ul></aside></li></ul></section>
+<li>Defined in src/algorand/Algorand.ts:254</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="updateActiveWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>update<wbr/>Active<wbr/>Wallet</span><a href="#updateActiveWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -527,7 +582,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/AlgorandWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">AlgorandWallet</a></h4><aside class="tsd-sources">
 <p>Implementation of ChainWalletInterface.updateActiveWallet</p>
 <ul>
-<li>Defined in src/algorand/Algorand.ts:181</li></ul></aside></li></ul></section></section></div>
+<li>Defined in src/algorand/Algorand.ts:189</li></ul></aside></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">

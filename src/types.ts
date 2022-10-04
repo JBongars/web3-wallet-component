@@ -1,17 +1,11 @@
 // import { MyAlgo, WalletConnect } from "./algorand";
 // import { Metamask, EthWalletConnect } from "./ethereum";
-import { Algorand, AlgorandWallet, MyAlgo, WalletConnect } from './algorand';
-import { Ethereum, EthereumWallet, Metamask } from './ethereum';
+import { Algorand, AlgorandWallet } from './algorand';
+import { Ethereum, EthereumWallet } from './ethereum';
 import { HookEvent, WALLET_STATUS } from './utils/HookRouter/types';
 
 type Wallet = AlgorandWallet | EthereumWallet;
 type ChainWallet = Algorand | Ethereum;
-
-interface useWallets {
-    use(walletName: 'MYALGO'): MyAlgo;
-    use(walletName: 'METAMASK'): Metamask;
-    use(walletName: 'WALLETCONNECT'): WalletConnect;
-}
 
 type Signer<T, S> = (transactions: T) => Promise<S[]>;
 
@@ -19,7 +13,7 @@ interface WalletInterface<T> {
     /**
      * initializes the wallet
      * @remarks this requires the wallet to be installed in the browser
-     * @remarks wallet init script to be added at a later date
+     * wallet init script to be added at a later date
      * @returns wallet status
      */
     init: () => Promise<WALLET_STATUS>;
@@ -37,7 +31,7 @@ interface WalletInterface<T> {
     /**
      * get the current signer object for a wallet
      * @remarks the signer object is usually a function that will take an unsigned transaction and return a signed transaction
-     * @remarks custom signers may be available directly from the wallet provider depending on the blockchain
+     * custom signers may be available directly from the wallet provider depending on the blockchain
      * @returns signer object
      */
     getSigner: () => Promise<unknown>;
@@ -83,23 +77,70 @@ interface WalletInterface<T> {
     toJSON: () => T;
 }
 
+/**
+ * Implement Wallet hooks for Wallets
+ */
 interface WalletHookHandlerInterface {
+    /**
+     * call hook when account changes. Either an account was removed or an account was added.
+     * will return a list accounts to compare the changes.
+     * @remarks this hook is also called when the wallet is initialized for the first time
+     */
     onAccountChange: (cb: (accounts: unknown) => void | Promise<void>) => HookEvent;
+    /**
+     * call hook when the user signs out of all accounts either by calling @see signOut or by manually disconnecting from all accounts in their wallet.
+     * @remarks is not called when the user signs out of their account assuming there is another account available
+     */
     onAccountDisconnect: (cb: () => void | Promise<void>) => HookEvent;
+    /**
+     * call hook when the user triggers a chain change event. Can use this hook to trigger a @see switchChainFromWallet to force the user to force the chain back to a
+     * predefined hook. Also see @see forceCurrentChainID to throw an error if the user attempts to sign a transaction on the wrong chain
+     * @remarks only available on certain chains/wallet. @see Metamask
+     */
     onChainChange: (cb: (chainId: string) => void | Promise<void>) => HookEvent;
+    /**
+     * call hook whenever a new block is added to the blockchain
+     * @remarks right now only available for @see Ethereum as relies on the ethereum.on events an is not being polled.
+     */
     onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;
 }
 
+/**
+ * Implement Wallet hooks for "Chain Wallets" or a higher level wallet that manages multiple wallets.
+ * @remarks since this is a higher level component, the wallet id is pass into every callback that is wallet specific to allow more fine tuning
+ */
 interface ChainHookHandlerInterface<WalletType> {
+    /**
+     * call hook when account changes. Either an account was removed or an account was added.
+     * will return a list accounts to compare the changes.
+     * @remarks this hook is also called when the wallet is initialized for the first time
+     */
     onAccountChange: (cb: (walletType: WalletType, accounts: unknown) => void | Promise<void>) => HookEvent;
+    /**
+     * call hook when the user signs out of all accounts either by calling @see signOut or by manually disconnecting from all accounts in their wallet.
+     * @remarks is not called when the user signs out of their account assuming there is another account available
+     */
     onAccountDisconnect: (cb: (walletType: WalletType) => void | Promise<void>) => HookEvent;
+    /**
+     * call hook when the user triggers a chain change event. Can use this hook to trigger a @see switchChainFromWallet to force the user to force the chain back to a
+     * predefined hook. Also see @see forceCurrentChainID to throw an error if the user attempts to sign a transaction on the wrong chain
+     * @remarks only available on certain chains/wallet. @see Metamask
+     */
     onChainChange: (cb: (walletType: WalletType, chainId: string) => void | Promise<void>) => HookEvent;
 
-    // onBlockAdded is a chain and not a wallet specific event
-    // so wallet type is not required
+    /**
+     * call hook whenever a new block is added to the blockchain
+     * @remarks right now only available for @see Ethereum as relies on the ethereum.on events an is not being polled.
+     * onBlockAdded is a chain and not a wallet specific event so wallet type is not required
+     */
     onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;
 }
 
+/**
+ * Additional methods for Chain Wallets
+ * Chain Wallets allow high level control over many wallets
+ * @remarks does not include SuperWallet. @see SuperWallet
+ */
 interface ChainWalletInterface<Wallet, WalletType> {
     init: () => Promise<WALLET_STATUS>;
     getAvailableWallets: () => WalletType[];
@@ -110,4 +151,4 @@ interface ChainWalletInterface<Wallet, WalletType> {
 }
 
 export { WalletInterface, ChainWalletInterface, WalletHookHandlerInterface, ChainHookHandlerInterface };
-export type { Signer, useWallets, Wallet, ChainWallet };
+export type { Signer, Wallet, ChainWallet };

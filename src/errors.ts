@@ -1,3 +1,6 @@
+/**
+ * Method or function is not implemented
+ */
 class NotImplementedError extends Error {
     constructor(message = 'NotImplementedError') {
         super(message);
@@ -5,6 +8,9 @@ class NotImplementedError extends Error {
     }
 }
 
+/**
+ * Wallet method was invoked although wallet was not installed
+ */
 class WalletNotInstalledError extends Error {
     constructor(message = 'WalletNotInstalledError') {
         super(message);
@@ -12,6 +18,9 @@ class WalletNotInstalledError extends Error {
     }
 }
 
+/**
+ * Wallet method was invoked although wallet was not connected
+ */
 class WalletNotConnectedError extends Error {
     constructor(message = 'WalletNotConnectedError') {
         super(message);
@@ -19,6 +28,9 @@ class WalletNotConnectedError extends Error {
     }
 }
 
+/**
+ * Hook was registered with an event that is not supported
+ */
 class HookNotAvailableError extends Error {
     constructor(message = 'HookNotAvailableError') {
         super(message);

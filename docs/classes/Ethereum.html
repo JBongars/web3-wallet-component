@@ -13,6 +13,9 @@
 <li><a href="../modules.html">wallet-component</a></li>
 <li><a href="Ethereum.html">Ethereum</a></li></ul>
 <h1>Class Ethereum</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>Ethereum Chain Wallet used to manage ethereum wallets and invoke ethereum transactions</p>
+</div></section>
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
@@ -24,7 +27,7 @@
 <li><a href="../interfaces/ChainHookHandlerInterface.html" class="tsd-signature-type" data-tsd-kind="Interface">ChainHookHandlerInterface</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a><span class="tsd-signature-symbol">&gt;</span></li>
 <li><a href="../interfaces/ChainWalletInterface.html" class="tsd-signature-type" data-tsd-kind="Interface">ChainWalletInterface</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/EthereumWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWallet</a><span class="tsd-signature-symbol">, </span><a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a><span class="tsd-signature-symbol">&gt;</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:34</li></ul></aside>
+<li>Defined in src/ethereum/Ethereum.ts:22</li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -81,58 +84,64 @@
 <ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="constructor.new_Ethereum">new <wbr/>Ethereum<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/EthereumConfig.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumConfig</a><span class="tsd-signature-symbol">&gt;</span>, data<span class="tsd-signature-symbol">?: </span><a href="../types/EthereumState.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumState</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="Ethereum.html" class="tsd-signature-type" data-tsd-kind="Class">Ethereum</a><a href="#constructor.new_Ethereum" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Constructor for Ethereum</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>config: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/EthereumConfig.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumConfig</a><span class="tsd-signature-symbol">&gt;</span></h5></li>
+<h5>config: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/EthereumConfig.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumConfig</a><span class="tsd-signature-symbol">&gt;</span></h5>
+<div class="tsd-comment tsd-typography"><p>Partial Ethereum Config to be overwritten with defaults</p>
+</div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> data: <a href="../types/EthereumState.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumState</a></h5></li></ul></div>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> data: <a href="../types/EthereumState.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumState</a></h5>
+<div class="tsd-comment tsd-typography"><p>Ethereum Data to initialize with</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="Ethereum.html" class="tsd-signature-type" data-tsd-kind="Class">Ethereum</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:57</li></ul></aside></li></ul></section></section>
+<li>Defined in src/ethereum/Ethereum.ts:50</li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_activeWallets" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_active<wbr/>Wallets</span><a href="#_activeWallets" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_active<wbr/>Wallets<span class="tsd-signature-symbol">:</span> <a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:51</li></ul></aside></section>
+<li>Defined in src/ethereum/Ethereum.ts:39</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_config" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_config</span><a href="#_config" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_config<span class="tsd-signature-symbol">:</span> <a href="../types/EthereumConfig.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumConfig</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:52</li></ul></aside></section>
+<li>Defined in src/ethereum/Ethereum.ts:40</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_initialized" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_initialized</span><a href="#_initialized" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_initialized<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:50</li></ul></aside></section>
+<li>Defined in src/ethereum/Ethereum.ts:38</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_metaMask" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_meta<wbr/>Mask</span><a href="#_metaMask" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_meta<wbr/>Mask<span class="tsd-signature-symbol">:</span> <a href="Metamask.html" class="tsd-signature-type" data-tsd-kind="Class">Metamask</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:48</li></ul></aside></section>
+<li>Defined in src/ethereum/Ethereum.ts:36</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="_walletConnect" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_wallet<wbr/>Connect</span><a href="#_walletConnect" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">_wallet<wbr/>Connect<span class="tsd-signature-symbol">:</span> <a href="EthWalletConnect.html" class="tsd-signature-type" data-tsd-kind="Class">EthWalletConnect</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:49</li></ul></aside></section>
+<li>Defined in src/ethereum/Ethereum.ts:37</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private"><a id="hookRouter" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>hook<wbr/>Router</span><a href="#hookRouter" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">hook<wbr/>Router<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HookRouter</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:40</li></ul></aside></section>
+<li>Defined in src/ethereum/Ethereum.ts:28</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="name" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;ETHEREUM&#39;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:55</li></ul></aside></section>
+<li>Defined in src/ethereum/Ethereum.ts:43</li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="type" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type</span><a href="#type" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">type<span class="tsd-signature-symbol">:</span> <a href="../enums/CHAIN_TYPE.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CHAIN_TYPE</a><span class="tsd-signature-symbol"> = CHAIN_TYPE.ETHEREUM</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:54</li></ul></aside></section></section>
+<li>Defined in src/ethereum/Ethereum.ts:42</li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_deregisterActiveWallet" class="tsd-anchor"></a>
@@ -140,19 +149,25 @@
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_deregisterActiveWallet._deregisterActiveWallet-1">_deregister<wbr/>Active<wbr/>Wallet<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_deregisterActiveWallet._deregisterActiveWallet-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Deregister a new wallet from active</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>type: <a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a></h5></li></ul></div>
+<h5>type: <a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a></h5>
+<div class="tsd-comment tsd-typography"><p>Wallet type</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:118</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:123</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_initEthereumWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_init<wbr/>Ethereum<wbr/>Wallet</span><a href="#_initEthereumWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_initEthereumWallet._initEthereumWallet-1">_init<wbr/>Ethereum<wbr/>Wallet<span class="tsd-signature-symbol">(</span>wallet<span class="tsd-signature-symbol">: </span><a href="../types/EthereumWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWallet</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#_initEthereumWallet._initEthereumWallet-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Internally initialize wallet</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -160,33 +175,41 @@
 <h5>wallet: <a href="../types/EthereumWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWallet</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:123</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:132</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_mountInternalHooks" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_mount<wbr/>Internal<wbr/>Hooks</span><a href="#_mountInternalHooks" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_mountInternalHooks._mountInternalHooks-1">_mount<wbr/>Internal<wbr/>Hooks<span class="tsd-signature-symbol">(</span>wallet<span class="tsd-signature-symbol">: </span><a href="../types/EthereumWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWallet</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_mountInternalHooks._mountInternalHooks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Mount internal hooks that make managing active wallet possible</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>wallet: <a href="../types/EthereumWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWallet</a></h5></li></ul></div>
+<h5>wallet: <a href="../types/EthereumWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWallet</a></h5>
+<div class="tsd-comment tsd-typography"><p>wallet type</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:63</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:60</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private"><a id="_registerActiveWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>_register<wbr/>Active<wbr/>Wallet</span><a href="#_registerActiveWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
 <li class="tsd-signature tsd-anchor-link" id="_registerActiveWallet._registerActiveWallet-1">_register<wbr/>Active<wbr/>Wallet<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_registerActiveWallet._registerActiveWallet-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Register a wallet as active</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>type: <a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a></h5></li></ul></div>
+<h5>type: <a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a></h5>
+<div class="tsd-comment tsd-typography"><p>Wallet type</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:114</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:115</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="fetchCurrentChainID" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>fetch<wbr/>Current<wbr/>ChainID</span><a href="#fetchCurrentChainID" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -200,7 +223,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.fetchCurrentChainID</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:215</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:229</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getAccounts" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Accounts</span><a href="#getAccounts" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -212,7 +235,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getAccounts</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:211</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:225</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getActiveWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Active<wbr/>Wallet</span><a href="#getActiveWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -221,7 +244,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/EthereumWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWallet</a></h4><aside class="tsd-sources">
 <p>Implementation of ChainWalletInterface.getActiveWallet</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:167</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:181</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getAvailableWallets" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Available<wbr/>Wallets</span><a href="#getAvailableWallets" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -230,7 +253,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Implementation of ChainWalletInterface.getAvailableWallets</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:155</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:169</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getBalance" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Balance</span><a href="#getBalance" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -243,7 +266,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getBalance</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:191</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:205</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getConnectedWallets" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Connected<wbr/>Wallets</span><a href="#getConnectedWallets" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -252,7 +275,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Implementation of ChainWalletInterface.getConnectedWallets</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:161</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:175</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getIsConnected" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Is<wbr/>Connected</span><a href="#getIsConnected" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -263,7 +286,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getIsConnected</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:199</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:213</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getIsWalletInstalled" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Is<wbr/>Wallet<wbr/>Installed</span><a href="#getIsWalletInstalled" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -274,7 +297,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getIsWalletInstalled</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:203</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:217</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getPrimaryAccount" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Primary<wbr/>Account</span><a href="#getPrimaryAccount" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -288,7 +311,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getPrimaryAccount</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:207</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:221</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getProvider" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Provider</span><a href="#getProvider" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -296,7 +319,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Web3Provider</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:195</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:209</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getSigner" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Signer</span><a href="#getSigner" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -304,14 +327,15 @@
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>get the current signer object for a wallet</p>
 
-<h3>Remarks</h3><p>the signer object is usually a function that will take an unsigned transaction and return a signed transaction</p>
+<h3>Remarks</h3><p>the signer object is usually a function that will take an unsigned transaction and return a signed transaction
+custom signers may be available directly from the wallet provider depending on the blockchain</p>
 
 <h3>Returns</h3><p>signer object</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">JsonRpcSigner</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.getSigner</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:187</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:201</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="getWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Wallet</span><a href="#getWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -325,22 +349,22 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/EthereumWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWallet</a></h4><aside class="tsd-sources">
 <p>Implementation of ChainWalletInterface.getWallet</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:144</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:158</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="init" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>init</span><a href="#init" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="init.init-1">init<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">WALLET_STATUS</span><span class="tsd-signature-symbol">&gt;</span><a href="#init.init-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>initializes the wallet</p>
-
-<h3>Remarks</h3><p>this requires the wallet to be installed in the browser</p>
+<div class="tsd-comment tsd-typography"><p>Initializes the chain wallet</p>
 
 <h3>Returns</h3><p>wallet status</p>
+
+<h3>Remarks</h3><p>Should be called separately from constructor</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">WALLET_STATUS</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.init</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:133</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:147</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="mountEventListeners" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>mount<wbr/>Event<wbr/>Listeners</span><a href="#mountEventListeners" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -357,12 +381,17 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.mountEventListeners</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:219</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:233</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="onAccountChange" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Account<wbr/>Change</span><a href="#onAccountChange" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="onAccountChange.onAccountChange-1">on<wbr/>Account<wbr/>Change<span class="tsd-signature-symbol">(</span>cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>walletType<span class="tsd-signature-symbol">: </span><a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a>, accounts<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HookEvent</span><a href="#onAccountChange.onAccountChange-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>call hook when account changes. Either an account was removed or an account was added.
+will return a list accounts to compare the changes.</p>
+
+<h3>Remarks</h3><p>this hook is also called when the wallet is initialized for the first time</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -384,12 +413,18 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HookEvent</span></h4><aside class="tsd-sources">
 <p>Implementation of ChainHookHandlerInterface.onAccountChange</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:223</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:237</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="onAccountDisconnect" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Account<wbr/>Disconnect</span><a href="#onAccountDisconnect" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="onAccountDisconnect.onAccountDisconnect-1">on<wbr/>Account<wbr/>Disconnect<span class="tsd-signature-symbol">(</span>cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>walletType<span class="tsd-signature-symbol">: </span><a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HookEvent</span><a href="#onAccountDisconnect.onAccountDisconnect-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>call hook when the user signs out of all accounts either by calling</p>
+
+<h3>See</h3><p>signOut or by manually disconnecting from all accounts in their wallet.</p>
+
+<h3>Remarks</h3><p>is not called when the user signs out of their account assuming there is another account available</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -409,12 +444,19 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HookEvent</span></h4><aside class="tsd-sources">
 <p>Implementation of ChainHookHandlerInterface.onAccountDisconnect</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:231</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:245</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="onBlockAdded" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Block<wbr/>Added</span><a href="#onBlockAdded" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="onBlockAdded.onBlockAdded-1">on<wbr/>Block<wbr/>Added<span class="tsd-signature-symbol">(</span>cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>newBlock<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HookEvent</span><a href="#onBlockAdded.onBlockAdded-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>call hook whenever a new block is added to the blockchain</p>
+
+<h3>Remarks</h3><p>right now only available for</p>
+
+<h3>See</h3><p>Ethereum as relies on the ethereum.on events an is not being polled.
+onBlockAdded is a chain and not a wallet specific event so wallet type is not required</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -434,12 +476,23 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HookEvent</span></h4><aside class="tsd-sources">
 <p>Implementation of ChainHookHandlerInterface.onBlockAdded</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:235</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:249</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="onChainChange" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>on<wbr/>Chain<wbr/>Change</span><a href="#onChainChange" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="onChainChange.onChainChange-1">on<wbr/>Chain<wbr/>Change<span class="tsd-signature-symbol">(</span>cb<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>walletType<span class="tsd-signature-symbol">: </span><a href="../types/EthereumWalletType.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWalletType</a>, chain<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HookEvent</span><a href="#onChainChange.onChainChange-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>call hook when the user triggers a chain change event. Can use this hook to trigger a</p>
+
+<h3>See</h3><ul>
+<li>switchChainFromWallet to force the user to force the chain back to a
+predefined hook. Also see</li>
+<li>forceCurrentChainID to throw an error if the user attempts to sign a transaction on the wrong chain</li>
+<li>Metamask</li>
+</ul>
+
+<h3>Remarks</h3><p>only available on certain chains/wallet.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -461,7 +514,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HookEvent</span></h4><aside class="tsd-sources">
 <p>Implementation of ChainHookHandlerInterface.onChainChange</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:227</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:241</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="signIn" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>sign<wbr/>In</span><a href="#signIn" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -476,7 +529,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">WALLET_STATUS</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.signIn</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:179</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:193</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="signOut" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>sign<wbr/>Out</span><a href="#signOut" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -489,7 +542,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">WALLET_STATUS</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.signOut</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:183</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:197</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="toJSON" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>toJSON</span><a href="#toJSON" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -507,7 +560,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <p>Implementation of WalletInterface.toJSON</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:241</li></ul></aside></li></ul></section>
+<li>Defined in src/ethereum/Ethereum.ts:255</li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="updateActiveWallet" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>update<wbr/>Active<wbr/>Wallet</span><a href="#updateActiveWallet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -521,7 +574,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/EthereumWallet.html" class="tsd-signature-type" data-tsd-kind="Type alias">EthereumWallet</a></h4><aside class="tsd-sources">
 <p>Implementation of ChainWalletInterface.updateActiveWallet</p>
 <ul>
-<li>Defined in src/ethereum/Ethereum.ts:174</li></ul></aside></li></ul></section></section></div>
+<li>Defined in src/ethereum/Ethereum.ts:188</li></ul></aside></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">

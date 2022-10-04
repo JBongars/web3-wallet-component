@@ -21,14 +21,30 @@ import { ChainWallet, Wallet, WalletInterface } from './types';
 import HookRouter from './utils/HookRouter';
 import { WALLET_HOOK, WALLET_STATUS } from './utils/HookRouter/types';
 
+/**
+ * wallet enum to be used as identifier
+ * @remarks superset of all wallet types
+ */
 type SuperWalletType = AlgorandWalletType | EthereumWalletType;
+
+/**
+ * Signer object passed
+ */
 type SuperWalletSigner = AlgorandSigner | EthereumSigner;
 
+/**
+ * Internal state of the wallet to be passed using the @see toJSON
+ * Superset of all wallet states
+ */
 type SuperWalletState = {
     algorand: AlgorandState;
     ethereum: EthereumState;
 };
 
+/**
+ * Chain Config represents the config/data to initialize all wallets
+ * @remarks Superset of all wallet states
+ */
 type ChainConfig =
     | {
           type: CHAIN_TYPE.ALGORAND;
@@ -40,14 +56,17 @@ type ChainConfig =
           config: EthereumConfig;
       };
 
+/**
+ * Config to initialize Super Wallet. Contains list of @see ChainConfig to initialize all wallets
+ */
 type SuperWalletConfig = {
     defaultChain: CHAIN_TYPE;
     chains: ChainConfig[];
 };
 
 /**
- * Super Class
- *
+ * Super Wallet Class. One Wallet to rule them all
+ * Manages Chain + Wallet and allows you to seamlessly switch between using one interface
  */
 class SuperWallet implements WalletInterface<unknown> {
     private hookRouter: HookRouter = new HookRouter([
@@ -87,14 +106,26 @@ class SuperWallet implements WalletInterface<unknown> {
         this._ethereum = new Ethereum(ethereumConfig, ethereumState);
     }
 
+    /**
+     * Register a wallet as active
+     * @param type - Wallet type
+     */
     private _registerActiveChain = (type: CHAIN_TYPE): void => {
         this._activeChain.unshift(type);
     };
 
+    /**
+     * Deregister a new wallet from active
+     * @param type - Wallet type
+     */
     private _deregisterActiveChain = (type: CHAIN_TYPE): void => {
         this._activeChain = this._activeChain.filter((elem) => elem !== type);
     };
 
+    /**
+     * Mount internal hooks that make managing active wallet possible
+     * @param wallet - wallet type
+     */
     private _mountInternalHooks = (chain: ChainWallet) => {
         const hook =
             (hookType: WALLET_HOOK) =>
@@ -122,11 +153,21 @@ class SuperWallet implements WalletInterface<unknown> {
         chain.onAccountDisconnect((_wallet: unknown) => onAccountDisconnect());
     };
 
-    private _initSuperWallet = async (chain: ChainWallet): Promise<void> => {
+    /**
+     * Initializes the chain wallet
+     * @param chain - chain to initialize
+     */
+    private _initSuperWalletChain = async (chain: ChainWallet): Promise<void> => {
         await chain.init();
         await this._mountInternalHooks(chain);
     };
 
+    /**
+     * higher level function that wraps around functions
+     * that take a chain as an argument and applies function to all chains
+     * @param method - function to invoke
+     * @returns function return value
+     */
     private _applyAllChains = <T>(method: (chainType: CHAIN_TYPE) => T[]): T[] => {
         const CHAIN_TYPES: CHAIN_TYPE[] = [CHAIN_TYPE.ALGORAND, CHAIN_TYPE.ETHEREUM];
 
@@ -139,17 +180,27 @@ class SuperWallet implements WalletInterface<unknown> {
         return result;
     };
 
+    /**
+     * Initializes the chain wallet
+     * @returns wallet status
+     * @remarks Should be called separately from constructor
+     */
     public async init(): Promise<WALLET_STATUS> {
         if (this._initialized) {
             return WALLET_STATUS.OK;
         }
 
         this._initialized = true;
-        await Promise.all([this._algorand, this._ethereum].map(this._initSuperWallet));
+        await Promise.all([this._algorand, this._ethereum].map(this._initSuperWalletChain));
 
         return WALLET_STATUS.OK;
     }
 
+    /**
+     * Get Chain
+     * @param type - chain type
+     * @returns chain interface
+     */
     public getChain(type: CHAIN_TYPE): ChainWallet {
         switch (type) {
             case CHAIN_TYPE.ALGORAND:
@@ -161,6 +212,12 @@ class SuperWallet implements WalletInterface<unknown> {
         }
     }
 
+    /**
+     * Get wallet from chain
+     * @param chainType - chain type
+     * @param walletType - wallet type
+     * @returns specific wallet
+     */
     public getWallet(chainType: CHAIN_TYPE, walletType: WALLET_TYPE): Wallet {
         const chain = this.getChain(chainType);
 
@@ -170,6 +227,11 @@ class SuperWallet implements WalletInterface<unknown> {
         return chain.getWallet(walletType as EthereumWalletType);
     }
 
+    /**
+     * Get all available wallet from chain
+     * @param chainType - chain type
+     * @returns all available wallets on chain
+     */
     public getAvailableWalletsOnChain(chainType: CHAIN_TYPE): SuperWalletType[] {
         if (chainType === CHAIN_TYPE.ALGORAND) {
             return this._algorand.getAvailableWallets();
@@ -177,10 +239,19 @@ class SuperWallet implements WalletInterface<unknown> {
         return this._ethereum.getAvailableWallets();
     }
 
+    /**
+     * Get all available wallet
+     * @returns all available wallets on any chain
+     */
     public getAvailableWallets(): SuperWalletType[] {
         return this._applyAllChains(this.getAvailableWalletsOnChain);
     }
 
+    /**
+     * Get all connected wallet from chain
+     * @param chainType - chain type
+     * @returns all connected wallets on chain
+     */
     public getConnectedWalletsOnChain(chainType: CHAIN_TYPE): SuperWalletType[] {
         if (chainType === CHAIN_TYPE.ALGORAND) {
             return this._algorand.getConnectedWallets();
@@ -188,10 +259,19 @@ class SuperWallet implements WalletInterface<unknown> {
         return this._ethereum.getConnectedWallets();
     }
 
+    /**
+     * Get all available wallet
+     * @returns all connected wallets on any chain
+     */
     public getConnectedWallets(): SuperWalletType[] {
         return this._applyAllChains(this.getConnectedWalletsOnChain);
     }
 
+    /**
+     * Get active wallet from chain
+     * @param chainType - chain type
+     * @returns active wallet on chain
+     */
     public getActiveChain(): ChainWallet {
         if (this._activeChain.length === 0) {
             return this.getChain(this._config.defaultChain); // Get default wallet
@@ -199,6 +279,10 @@ class SuperWallet implements WalletInterface<unknown> {
         return this.getChain(this._activeChain[0]);
     }
 
+    /**
+     * Get all active wallets on any chain
+     * @returns all active wallets on any chain
+     */
     public getActiveWalletOnChain(chainType: CHAIN_TYPE): Wallet {
         if (chainType === CHAIN_TYPE.ALGORAND) {
             return this._algorand.getActiveWallet();
@@ -206,16 +290,31 @@ class SuperWallet implements WalletInterface<unknown> {
         return this._ethereum.getActiveWallet();
     }
 
+    /**
+     * Get the last used wallet on the last used chain
+     * @returns the last used wallet on the last used chain
+     */
     public getActiveWallet(): Wallet {
         const chain = this.getActiveChain();
         return chain.getActiveWallet();
     }
 
+    /**
+     * Update the active chain with chain
+     * @param chainType - chain to become active
+     * @returns the chain wallet
+     */
     public updateActiveChain(chainType: CHAIN_TYPE): ChainWallet {
         this._registerActiveChain(chainType);
         return this.getChain(chainType);
     }
 
+    /**
+     * Update the active wallet on chain
+     * @param chainType - chain to select wallet
+     * @param walletType - wallet to become active on chain
+     * @returns the active wallet
+     */
     public updateActiveWalletOnChain(chainType: CHAIN_TYPE, walletType: WALLET_TYPE): Wallet {
         const chain = this.getChain(chainType);
         if (chain instanceof Algorand) {

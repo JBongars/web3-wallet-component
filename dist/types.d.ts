@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { TransactionRequest, TransactionResponse } from "@ethersproject/abstract-provider";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import MyAlgoConnect, { SignedTx, Accounts as _Accounts3, AlgorandTxn, EncodedTransaction } from "@randlabs/myalgo-connect";
 import { PeraWalletConnect } from "@perawallet/connect";
@@ -15,11 +16,30 @@ export class WalletNotConnectedError extends Error {
 export class HookNotAvailableError extends Error {
     constructor(message?: string);
 }
+/**
+ * Wallet statuses
+ */
 enum WALLET_STATUS {
+    /**
+     * Wallet is OK
+     */
     OK = 0,
+    /**
+     * There was a problem logging in
+     * @remarks user may have cancelled the transaction
+     */
     LOGIN_ERROR = 1,
+    /**
+     * There was a problem initializing the wallet
+     */
     WALLET_ERROR = 2,
+    /**
+     * There was a problem initializing the  wallet because the extension was not found
+     */
     EXTENSION_NOT_FOUND = 3,
+    /**
+     * The Wallet account was not found
+     */
     ACCOUNT_NOT_FOUND = 4
 }
 /**
@@ -52,22 +72,22 @@ export enum CHAIN_TYPE {
 /**
  * State for Metamask Wallet
  */
-type MetamaskState = {
+export type MetamaskState = {
     accounts: string[];
     isConnected: boolean;
 };
 /**
  * Signer for Metamask Wallet
  */
-type MetamaskSigner = ethers.providers.JsonRpcSigner;
+export type MetamaskSigner = ethers.providers.JsonRpcSigner;
 /**
  * Metamask Assets
  */
-type MetamaskAsset = {};
+export type MetamaskAsset = {};
 /**
  * Config for Metamask initialization
  */
-type MetamaskChainConfig = {
+export type MetamaskChainConfig = {
     chainName: string;
     chainId: string;
     nativeCurrency: {
@@ -103,25 +123,33 @@ export class Metamask implements WalletInterface<MetamaskState>, WalletHookHandl
     onChainDisconnect: (cb: () => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
     onBlockAdded: (cb: (newBlock: number) => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
     toJSON(): MetamaskState;
+    /**
+     * Mounts ethereum based event hooks to the hook router
+     * @see https://eips.ethereum.org/EIPS/eip-1193#references for list of ethereum hooks
+     */
     mountEventListeners(): Promise<void>;
     unmountEventListeners(): Promise<void>;
     getProvider(): Promise<ethers.providers.Web3Provider>;
 }
 /**
- * State for WalletConnect Wallet
+ * State for EthereumWalletConnect Wallet
  */
-type WalletConnectState = {
+export type EthereumWalletConnectState = {
     accounts: string[];
     isConnected: boolean;
 };
 /**
- * WalletConnect Assets
+ * Signer for EthereumWalletConnect Wallet
  */
-type WalletConnectAsset = {};
+export type EthereumWalletConnectSigner = Signer<TransactionRequest, TransactionResponse>;
 /**
- * Config for WalletConnect initialization
+ * EthereumWalletConnect Assets
  */
-type WalletConnectChainConfig = {
+export type EthereumWalletConnectAsset = {};
+/**
+ * Config for EthereumWalletConnect initialization
+ */
+export type EthereumWalletConnectChainConfig = {
     chainName: string;
     chainId: string;
     nativeCurrency: {
@@ -131,25 +159,25 @@ type WalletConnectChainConfig = {
     };
     rpcUrls: string[];
 };
-export class EthWalletConnect implements WalletInterface<WalletConnectState>, WalletHookHandlerInterface {
-    state: WalletConnectState;
+export class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, WalletHookHandlerInterface {
+    state: EthereumWalletConnectState;
     provider?: ethers.providers.Web3Provider;
     type: EthereumWalletType;
     name: string;
-    constructor(state?: WalletConnectState);
+    constructor(state?: EthereumWalletConnectState);
     getWCProvider(): Promise<WalletConnectProvider>;
     init(): Promise<WALLET_STATUS>;
     signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
     getSigner(): Promise<ethers.providers.JsonRpcSigner>;
     getBalance(): Promise<string>;
-    getAssets(): Promise<WalletConnectAsset[]>;
+    getAssets(): Promise<EthereumWalletConnectAsset[]>;
     getIsConnected(): boolean;
     getIsWalletInstalled(): boolean;
     getPrimaryAccount(): string;
     getAccounts(): string[];
     fetchCurrentChainID(): Promise<string>;
-    addChainToWallet(chainConfig: WalletConnectChainConfig): Promise<void>;
+    addChainToWallet(chainConfig: EthereumWalletConnectChainConfig): Promise<void>;
     switchChainFromWallet(chain: number): Promise<void>;
     forceCurrentChainID(chain: number): Promise<void>;
     onAccountChange: (cb: (accounts: string[]) => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
@@ -157,7 +185,7 @@ export class EthWalletConnect implements WalletInterface<WalletConnectState>, Wa
     onAccountDisconnect: (cb: () => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
     onChainDisconnect: (cb: () => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
     onBlockAdded: (cb: (newBlock: number) => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
-    toJSON(): WalletConnectState;
+    toJSON(): EthereumWalletConnectState;
     mountEventListeners(): Promise<void>;
     unmountEventListeners(): Promise<void>;
     getProvider(): Promise<ethers.providers.Web3Provider>;
@@ -167,7 +195,7 @@ export type EthereumWalletType = WALLET_TYPE.ETHEREUM_METAMASK | WALLET_TYPE.ETH
 export type EthereumSigner = MetamaskSigner;
 export type EthereumState = {
     metaMask?: MetamaskState;
-    walletConnect?: WalletConnectState;
+    walletConnect?: EthereumWalletConnectState;
     activeWallets: EthereumWalletType[];
 };
 export type EthereumConfig = {
@@ -203,6 +231,9 @@ export class Ethereum implements WalletInterface<unknown>, ChainHookHandlerInter
     toJSON(): unknown;
 }
 export const CHAIN_ETHEREUM = "ETHEREUM";
+/**
+ * Schema for Storage
+ */
 export type StorageValue = {
     isConnected: boolean;
     connectedAccount: string;
@@ -220,18 +251,18 @@ type Accounts = {
 /**
  * State for Pera Wallet
  */
-type PeraWalletState = {
+export type PeraWalletState = {
     accounts: Accounts[];
     isConnected: boolean;
 };
 /**
  * Signer for Pera Wallet
  */
-type PeraWalletSigner = Signer<AlgorandSignerTxn, SignedTx>;
+export type PeraWalletSigner = Signer<AlgorandSignerTxn, SignedTx>;
 /**
  * Pera Assets
  */
-type PeraWalletAsset = {
+export type PeraWalletAsset = {
     chainId: string;
     name: string;
     unit_name: string;
@@ -267,12 +298,13 @@ export class PeraWallet implements WalletInterface<PeraWalletState>, WalletHookH
     toJSON(): PeraWalletState;
     getProvider(): PeraWalletConnect;
 }
-type _WalletConnectState1 = {
+export type AlgorandWalletConnectState = {
     accounts: string[];
     isConnected: boolean;
 };
-type WalletConnectSigner = Signer<AlgorandSignerTxn, SignedTx>;
-type _WalletConnectAsset1 = {
+export type AlgorandWalletConnectSigner = Signer<AlgorandSignerTxn, SignedTx>;
+export type AlgorandWalletConnectTransaction = Uint8Array[];
+export type AlgorandWalletConnectAsset = {
     chainId: string;
     name: string;
     unit_name: string;
@@ -283,18 +315,17 @@ type _Accounts2 = {
     address: string;
     name: string;
 };
-export type WalletConnectTransaction = Uint8Array[];
-export class WalletConnect implements WalletInterface<_WalletConnectState1>, WalletHookHandlerInterface {
-    state: _WalletConnectState1;
+export class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, WalletHookHandlerInterface {
+    state: AlgorandWalletConnectState;
     type: AlgorandWalletType;
     name: string;
-    constructor(state?: _WalletConnectState1);
+    constructor(state?: AlgorandWalletConnectState);
     init(): Promise<WALLET_STATUS>;
     signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;
-    getSigner(): Promise<WalletConnectSigner>;
+    getSigner(): Promise<AlgorandWalletConnectSigner>;
     getBalance(): Promise<string>;
-    getAssets(): Promise<_WalletConnectAsset1[]>;
+    getAssets(): Promise<AlgorandWalletConnectAsset[]>;
     getIsWalletInstalled(): boolean;
     getIsConnected(): boolean;
     getPrimaryAccount(): _Accounts2;
@@ -305,16 +336,16 @@ export class WalletConnect implements WalletInterface<_WalletConnectState1>, Wal
     onAccountDisconnect: (cb: () => void | Promise<void>) => HookEvent;
     onChainChange: (cb: (chain: string) => void | Promise<void>) => HookEvent;
     onBlockAdded: (cb: (newBlock: unknown) => void | Promise<void>) => HookEvent;
-    toJSON(): _WalletConnectState1;
+    toJSON(): AlgorandWalletConnectState;
     getProvider(): WalletConnectClient;
 }
 export type AlgorandWallet = MyAlgo | WalletConnect | PeraWallet;
 export type AlgorandWalletType = WALLET_TYPE.ALGORAND_MYALGO | WALLET_TYPE.ALGORAND_PERAWALLET | WALLET_TYPE.ALGORAND_WALLETCONNECT;
-export type AlgorandSignerTxn = MyAlgoTransaction | WalletConnectTransaction | PeraWalletTransaction;
-export type AlgorandSigner = MyAlgoSigner | WalletConnectSigner | PeraWalletSigner;
+export type AlgorandSignerTxn = MyAlgoTransaction | AlgorandWalletConnectTransaction | PeraWalletTransaction;
+export type AlgorandSigner = MyAlgoSigner | WalletConnect | PeraWalletSigner;
 export type AlgorandState = {
     myAlgo?: MyAlgoState;
-    walletConnect?: _WalletConnectState1;
+    walletConnect?: AlgorandWalletConnectState;
     peraWallet?: PeraWalletState;
 };
 export type AlgorandConfig = {
@@ -324,18 +355,18 @@ export type AlgorandConfig = {
 /**
  * State for Myalgo Wallet
  */
-type MyAlgoState = {
+export type MyAlgoState = {
     accounts: _Accounts3[];
     isConnected: boolean;
 };
 /**
  * Signer for Myalgo Wallet
  */
-type MyAlgoSigner = Signer<AlgorandSignerTxn, SignedTx>;
+export type MyAlgoSigner = Signer<AlgorandSignerTxn, SignedTx>;
 /**
  * Myalgo Assets
  */
-type MyAlgoAsset = {
+export type MyAlgoAsset = {
     chainId: string;
     name: string;
     unit_name: string;
@@ -403,17 +434,12 @@ export class Algorand implements WalletInterface<unknown>, ChainWalletInterface<
 export const CHAIN_ALGORAND = "ALGORAND";
 export type Wallet = AlgorandWallet | EthereumWallet;
 export type ChainWallet = Algorand | Ethereum;
-export interface useWallets {
-    use(walletName: 'MYALGO'): MyAlgo;
-    use(walletName: 'METAMASK'): Metamask;
-    use(walletName: 'WALLETCONNECT'): WalletConnect;
-}
 export type Signer<T, S> = (transactions: T) => Promise<S[]>;
 export interface WalletInterface<T> {
     /**
      * initializes the wallet
      * @remarks this requires the wallet to be installed in the browser
-     * @remarks wallet init script to be added at a later date
+     * wallet init script to be added at a later date
      * @returns wallet status
      */
     init: () => Promise<WALLET_STATUS>;
@@ -431,7 +457,7 @@ export interface WalletInterface<T> {
     /**
      * get the current signer object for a wallet
      * @remarks the signer object is usually a function that will take an unsigned transaction and return a signed transaction
-     * @remarks custom signers may be available directly from the wallet provider depending on the blockchain
+     * custom signers may be available directly from the wallet provider depending on the blockchain
      * @returns signer object
      */
     getSigner: () => Promise<unknown>;
@@ -476,18 +502,67 @@ export interface WalletInterface<T> {
      */
     toJSON: () => T;
 }
+/**
+ * Implement Wallet hooks for Wallets
+ */
 export interface WalletHookHandlerInterface {
+    /**
+     * call hook when account changes. Either an account was removed or an account was added.
+     * will return a list accounts to compare the changes.
+     * @remarks this hook is also called when the wallet is initialized for the first time
+     */
     onAccountChange: (cb: (accounts: unknown) => void | Promise<void>) => HookEvent;
+    /**
+     * call hook when the user signs out of all accounts either by calling @see signOut or by manually disconnecting from all accounts in their wallet.
+     * @remarks is not called when the user signs out of their account assuming there is another account available
+     */
     onAccountDisconnect: (cb: () => void | Promise<void>) => HookEvent;
+    /**
+     * call hook when the user triggers a chain change event. Can use this hook to trigger a @see switchChainFromWallet to force the user to force the chain back to a
+     * predefined hook. Also see @see forceCurrentChainID to throw an error if the user attempts to sign a transaction on the wrong chain
+     * @remarks only available on certain chains/wallet. @see Metamask
+     */
     onChainChange: (cb: (chainId: string) => void | Promise<void>) => HookEvent;
+    /**
+     * call hook whenever a new block is added to the blockchain
+     * @remarks right now only available for @see Ethereum as relies on the ethereum.on events an is not being polled.
+     */
     onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;
 }
+/**
+ * Implement Wallet hooks for "Chain Wallets" or a higher level wallet that manages multiple wallets.
+ * @remarks since this is a higher level component, the wallet id is pass into every callback that is wallet specific to allow more fine tuning
+ */
 export interface ChainHookHandlerInterface<WalletType> {
+    /**
+     * call hook when account changes. Either an account was removed or an account was added.
+     * will return a list accounts to compare the changes.
+     * @remarks this hook is also called when the wallet is initialized for the first time
+     */
     onAccountChange: (cb: (walletType: WalletType, accounts: unknown) => void | Promise<void>) => HookEvent;
+    /**
+     * call hook when the user signs out of all accounts either by calling @see signOut or by manually disconnecting from all accounts in their wallet.
+     * @remarks is not called when the user signs out of their account assuming there is another account available
+     */
     onAccountDisconnect: (cb: (walletType: WalletType) => void | Promise<void>) => HookEvent;
+    /**
+     * call hook when the user triggers a chain change event. Can use this hook to trigger a @see switchChainFromWallet to force the user to force the chain back to a
+     * predefined hook. Also see @see forceCurrentChainID to throw an error if the user attempts to sign a transaction on the wrong chain
+     * @remarks only available on certain chains/wallet. @see Metamask
+     */
     onChainChange: (cb: (walletType: WalletType, chainId: string) => void | Promise<void>) => HookEvent;
+    /**
+     * call hook whenever a new block is added to the blockchain
+     * @remarks right now only available for @see Ethereum as relies on the ethereum.on events an is not being polled.
+     * onBlockAdded is a chain and not a wallet specific event so wallet type is not required
+     */
     onBlockAdded: (cb: (block: unknown) => void | Promise<void>) => HookEvent;
 }
+/**
+ * Additional methods for Chain Wallets
+ * Chain Wallets allow high level control over many wallets
+ * @remarks does not include SuperWallet. @see SuperWallet
+ */
 export interface ChainWalletInterface<Wallet, WalletType> {
     init: () => Promise<WALLET_STATUS>;
     getAvailableWallets: () => WalletType[];

@@ -1,54 +1,55 @@
 {
-  "name": "wallet-component",
-  "version": "2.3.0",
-  "source": "src/index.ts",
-  "main": "dist/index.js",
-  "module": "dist/module.js",
-  "types": "dist/types.d.ts",
-  "author": "julien <julien@undercurrent.tech>",
-  "license": "MIT",
-  "scripts": {
-    "test": "jest",
-    "build": "parcel build",
-    "dev": "parcel watch",
-    "lint": "eslint src/* --ext .ts"
-  },
-  "devDependencies": {
-    "@parcel/packager-ts": "2.6.2",
-    "@parcel/transformer-typescript-types": "2.6.2",
-    "@types/jest": "^28.1.4",
-    "@types/node": "^18.0.0",
-    "@types/react": "^18.0.21",
-    "@typescript-eslint/eslint-plugin": "^5.38.1",
-    "@typescript-eslint/parser": "^5.38.1",
-    "eslint": "^8.24.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-tsdoc": "^0.2.17",
-    "jest": "^28.1.2",
-    "jest-environment-jsdom": "^28.1.1",
-    "parcel": "^2.6.2",
-    "prettier": "^2.7.1",
-    "ts-jest": "^28.0.5",
-    "typedoc": "^0.23.15",
-    "typescript": ">=3.0.0"
-  },
-  "dependencies": {
-    "@json-rpc-tools/utils": "^1.7.6",
-    "@perawallet/connect": "^0.2.3",
-    "@randlabs/myalgo-connect": "^1.2.0",
-    "@walletconnect/client": "^1.8.0",
-    "@walletconnect/web3-provider": "^1.8.0",
-    "algorand-walletconnect-qrcode-modal": "^1.8.0",
-    "algosdk": "^1.19.1",
-    "bufferutil": "^4.0.6",
-    "ethers": "^5.6.9",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "utf-8-validate": "^5.0.9",
-    "ws": "^8.8.1"
-  },
-  "files": [
-    "/dist"
-  ]
+    "name": "wallet-component",
+    "version": "2.3.0",
+    "source": "src/index.ts",
+    "main": "dist/index.js",
+    "module": "dist/module.js",
+    "types": "dist/types.d.ts",
+    "author": "julien <julien@undercurrent.tech>",
+    "license": "MIT",
+    "scripts": {
+        "test": "jest",
+        "build": "parcel build",
+        "dev": "parcel watch",
+        "lint": "eslint src/* --ext .ts",
+        "docs": "typedoc src/index.ts"
+    },
+    "devDependencies": {
+        "@parcel/packager-ts": "2.6.2",
+        "@parcel/transformer-typescript-types": "2.6.2",
+        "@types/jest": "^28.1.4",
+        "@types/node": "^18.0.0",
+        "@types/react": "^18.0.21",
+        "@typescript-eslint/eslint-plugin": "^5.38.1",
+        "@typescript-eslint/parser": "^5.38.1",
+        "eslint": "^8.24.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "eslint-plugin-tsdoc": "^0.2.17",
+        "jest": "^28.1.2",
+        "jest-environment-jsdom": "^28.1.1",
+        "parcel": "^2.6.2",
+        "prettier": "^2.7.1",
+        "ts-jest": "^28.0.5",
+        "typedoc": "^0.23.15",
+        "typescript": ">=3.0.0"
+    },
+    "dependencies": {
+        "@json-rpc-tools/utils": "^1.7.6",
+        "@perawallet/connect": "^0.2.3",
+        "@randlabs/myalgo-connect": "^1.2.0",
+        "@walletconnect/client": "^1.8.0",
+        "@walletconnect/web3-provider": "^1.8.0",
+        "algorand-walletconnect-qrcode-modal": "^1.8.0",
+        "algosdk": "^1.19.1",
+        "bufferutil": "^4.0.6",
+        "ethers": "^5.6.9",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "utf-8-validate": "^5.0.9",
+        "ws": "^8.8.1"
+    },
+    "files": [
+        "/dist"
+    ]
 }

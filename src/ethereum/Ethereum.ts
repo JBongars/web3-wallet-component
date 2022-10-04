@@ -8,11 +8,17 @@ import { Metamask } from './metamask';
 import { EthereumConfig, EthereumWallet, EthereumState, EthereumSigner, EthereumWalletType } from './types';
 import { EthWalletConnect } from './walletconnect';
 
+/**
+ * Default config
+ */
 const defaultEthereumConfig: EthereumConfig = {
     hookType: 'active',
     defaultWallet: WALLET_TYPE.ETHEREUM_METAMASK
 };
 
+/***
+ * Ethereum Chain Wallet used to manage ethereum wallets and invoke ethereum transactions
+ */
 class Ethereum
     implements
         WalletInterface<unknown>,
@@ -36,12 +42,21 @@ class Ethereum
     public type: CHAIN_TYPE = CHAIN_TYPE.ETHEREUM;
     public name = 'ETHEREUM';
 
+    /**
+     * Constructor for Ethereum
+     * @param config - Partial Ethereum Config to be overwritten with defaults
+     * @param data - Ethereum Data to initialize with
+     */
     constructor(config: Partial<EthereumConfig>, data?: EthereumState) {
         this._metaMask = new Metamask(data?.metaMask);
         this._walletConnect = new EthWalletConnect(data?.walletConnect);
         this._config = { ...defaultEthereumConfig, ...config };
     }
 
+    /**
+     * Mount internal hooks that make managing active wallet possible
+     * @param wallet - wallet type
+     */
     private _mountInternalHooks = (wallet: EthereumWallet) => {
         const verifyWallet = (walletType: EthereumWalletType) => {
             switch (this._config.hookType) {
@@ -93,15 +108,27 @@ class Ethereum
         }
     };
 
+    /**
+     * Register a wallet as active
+     * @param type - Wallet type
+     */
     private _registerActiveWallet = (type: EthereumWalletType) => {
         this._activeWallets.unshift(type);
     };
 
+    /**
+     * Deregister a new wallet from active
+     * @param type - Wallet type
+     */
     private _deregisterActiveWallet = (type: EthereumWalletType) => {
         const index = this._activeWallets.indexOf(type);
         this._activeWallets = this._activeWallets.splice(index, 1);
     };
 
+    /**
+     * Internally initialize wallet
+     * @param algoWallet - wallet
+     */
     private _initEthereumWallet = async (wallet: EthereumWallet) => {
         if (wallet.getIsWalletInstalled()) {
             await wallet.init();
@@ -112,6 +139,11 @@ class Ethereum
         }
     };
 
+    /**
+     * Initializes the chain wallet
+     * @returns wallet status
+     * @remarks Should be called separately from constructor
+     */
     public async init(): Promise<WALLET_STATUS> {
         if (this._initialized) {
             return WALLET_STATUS.OK;

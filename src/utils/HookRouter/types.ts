@@ -1,8 +1,27 @@
+/**
+ * Wallet statuses
+ */
 enum WALLET_STATUS {
+    /**
+     * Wallet is OK
+     */
     OK,
+    /**
+     * There was a problem logging in
+     * @remarks user may have cancelled the transaction
+     */
     LOGIN_ERROR,
+    /**
+     * There was a problem initializing the wallet
+     */
     WALLET_ERROR,
+    /**
+     * There was a problem initializing the  wallet because the extension was not found
+     */
     EXTENSION_NOT_FOUND,
+    /**
+     * The Wallet account was not found
+     */
     ACCOUNT_NOT_FOUND
 }
 
@@ -18,7 +37,14 @@ enum WALLET_ID {
     ALGORAND_PERAWALLET = 5
 }
 
+/**
+ * Wallet Hook events
+ * @remarks events are based on Metamask
+ */
 enum WALLET_HOOK {
+    /**
+     * User has prompted to change chains on the wallet
+     */
     CHAIN_ON_CHANGE,
     CHAIN_ON_DISCONNECT,
     ACCOUNT_ON_CHANGE,

@@ -9,11 +9,17 @@ import { PeraWallet } from './perawallet';
 import { AlgorandConfig, AlgorandSigner, AlgorandState, AlgorandWallet, AlgorandWalletType } from './types';
 import { WalletConnect } from './walletconnect';
 
+/**
+ * Default config
+ */
 const defaultAlgorandConfig: AlgorandConfig = {
     hookType: 'active',
     defaultWallet: WALLET_TYPE.ALGORAND_MYALGO
 };
 
+/***
+ * Algorand Chain Wallet used to manage algorand wallets and invoke algorand transactions
+ */
 class Algorand
     implements
         WalletInterface<unknown>,
@@ -38,6 +44,11 @@ class Algorand
     public type: CHAIN_TYPE = CHAIN_TYPE.ALGORAND;
     public name = 'ALGORAND';
 
+    /**
+     * Constructor for Algorand
+     * @param config - Algorand Config
+     * @param data - Algorand Data to initialize with
+     */
     constructor(config: Partial<AlgorandConfig>, data?: AlgorandState) {
         this._myAlgo = new MyAlgo(data?.myAlgo);
         this._walletConnect = new WalletConnect(data?.walletConnect);
@@ -45,14 +56,26 @@ class Algorand
         this._config = { ...defaultAlgorandConfig, ...config };
     }
 
+    /**
+     * Register a wallet as active
+     * @param type - Wallet type
+     */
     private _registerActiveWallet = (type: AlgorandWalletType): void => {
         this._activeWallets.unshift(type);
     };
 
+    /**
+     * Deregister a new wallet from active
+     * @param type - Wallet type
+     */
     private _deregisterActiveWallet = (type: AlgorandWalletType): void => {
         this._activeWallets = this._activeWallets.filter((elem) => elem !== type);
     };
 
+    /**
+     * Mount internal hooks that make managing active wallet possible
+     * @param wallet - wallet type
+     */
     private _mountInternalHooks = (wallet: AlgorandWallet) => {
         const verifyWallet = (walletType: AlgorandWalletType) => {
             switch (this._config.hookType) {
@@ -94,6 +117,10 @@ class Algorand
         wallet.onAccountDisconnect(onAccountDisconnect);
     };
 
+    /**
+     * Internally initialize wallet
+     * @param algoWallet - wallet
+     */
     private _initAlgorandWallet = async (algoWallet: AlgorandWallet): Promise<void> => {
         if (algoWallet.getIsWalletInstalled()) {
             await algoWallet.init();
@@ -103,6 +130,11 @@ class Algorand
         }
     };
 
+    /**
+     * Initializes the chain wallet
+     * @returns wallet status
+     * @remarks Should be called separately from constructor
+     */
     public async init(): Promise<WALLET_STATUS> {
         if (this._initialized) {
             return WALLET_STATUS.OK;

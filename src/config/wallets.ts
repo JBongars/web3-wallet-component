@@ -1,3 +1,6 @@
+/**
+ * Wallet types representing low level wallets
+ */
 enum WALLET_TYPE {
     ETHEREUM_METAMASK,
     ETHEREUM_WALLETCONNECT,
@@ -6,6 +9,9 @@ enum WALLET_TYPE {
     ALGORAND_PERAWALLET
 }
 
+/**
+ * Chain types representing blockchains above @see WALLET_TYPE are associated to
+ */
 enum CHAIN_TYPE {
     ALGORAND,
     ETHEREUM

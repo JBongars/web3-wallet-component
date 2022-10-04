@@ -2,14 +2,16 @@ import { SignedTx } from '@randlabs/myalgo-connect';
 import { Signer as RootSigner } from '~/src/types';
 import { AlgorandSignerTxn } from '../types';
 
-type WalletConnectState = {
+type AlgorandWalletConnectState = {
     accounts: string[];
     isConnected: boolean;
 };
 
-type WalletConnectSigner = RootSigner<AlgorandSignerTxn, SignedTx>;
+type AlgorandWalletConnectSigner = RootSigner<AlgorandSignerTxn, SignedTx>;
 
-type WalletConnectAsset = {
+type AlgorandWalletConnectTransaction = Uint8Array[];
+
+type AlgorandWalletConnectAsset = {
     chainId: string;
     name: string;
     unit_name: string;
@@ -17,4 +19,9 @@ type WalletConnectAsset = {
     sourceDecimals: number;
 };
 
-export type { WalletConnectState, WalletConnectSigner, WalletConnectAsset };
+export type {
+    AlgorandWalletConnectState,
+    AlgorandWalletConnectSigner,
+    AlgorandWalletConnectTransaction,
+    AlgorandWalletConnectAsset
+};

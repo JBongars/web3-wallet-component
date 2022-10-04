@@ -2,27 +2,27 @@ import { Signer as RootSigner } from '~/src/types';
 import { TransactionRequest, TransactionResponse } from '@ethersproject/abstract-provider';
 
 /**
- * State for WalletConnect Wallet
+ * State for EthereumWalletConnect Wallet
  */
-type WalletConnectState = {
+type EthereumWalletConnectState = {
     accounts: string[];
     isConnected: boolean;
 };
 
 /**
- * Signer for WalletConnect Wallet
+ * Signer for EthereumWalletConnect Wallet
  */
-type WalletConnectSigner = RootSigner<TransactionRequest, TransactionResponse>;
+type EthereumWalletConnectSigner = RootSigner<TransactionRequest, TransactionResponse>;
 
 /**
- * WalletConnect Assets
+ * EthereumWalletConnect Assets
  */
-type WalletConnectAsset = {};
+type EthereumWalletConnectAsset = {};
 
 /**
- * Config for WalletConnect initialization
+ * Config for EthereumWalletConnect initialization
  */
-type WalletConnectChainConfig = {
+type EthereumWalletConnectChainConfig = {
     chainName: string;
     chainId: string; // does not follow ChainID
     nativeCurrency: {
@@ -33,4 +33,9 @@ type WalletConnectChainConfig = {
     rpcUrls: string[];
 };
 
-export type { WalletConnectState, WalletConnectSigner, WalletConnectAsset, WalletConnectChainConfig };
+export type {
+    EthereumWalletConnectState,
+    EthereumWalletConnectSigner,
+    EthereumWalletConnectAsset,
+    EthereumWalletConnectChainConfig
+};
