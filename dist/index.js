@@ -139,7 +139,10 @@ let $57b8a5d2d8300786$export$de76a1f31766a0a2;
     WALLET_STATUS1[WALLET_STATUS1["EXTENSION_NOT_FOUND"] = 3] = "EXTENSION_NOT_FOUND";
     WALLET_STATUS1[WALLET_STATUS1["ACCOUNT_NOT_FOUND"] = 4] = "ACCOUNT_NOT_FOUND";
 })($57b8a5d2d8300786$export$de76a1f31766a0a2 || ($57b8a5d2d8300786$export$de76a1f31766a0a2 = {}));
-let $57b8a5d2d8300786$export$7c460c214963f696;
+let /**
+ * Identifier for Wallet
+ * @remarks example Metamask, WalletConnect, etc...
+ */ $57b8a5d2d8300786$export$7c460c214963f696;
 (function(WALLET_ID1) {
     WALLET_ID1[WALLET_ID1["ETHEREUM_METAMASK"] = 1] = "ETHEREUM_METAMASK";
     WALLET_ID1[WALLET_ID1["ALGORAND_MYALGO"] = 2] = "ALGORAND_MYALGO";
@@ -204,7 +207,7 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     hookRouter = new (0, $a71b91c4d64511bd$export$2e2bcd8739ae039)([
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
-        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE
     ]);
     walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4), (0, $57b8a5d2d8300786$export$7c460c214963f696).ALGORAND_MYALGO);
     currentActiveAccountAddress = "";
@@ -312,7 +315,9 @@ class $a75d728b25ccd0d3$export$6ab354d5c56bf95 {
     async fetchCurrentChainID() {
         return "0x1";
     }
-    async mountEventListeners() {}
+    async mountEventListeners() {
+        return;
+    }
     onAccountChange = (cb)=>{
         return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, ()=>{
             return cb(this.getAccounts());
@@ -371,7 +376,7 @@ class $3c9851a538a51e5f$export$6a733d504587e4b0 {
     hookRouter = new (0, $a71b91c4d64511bd$export$2e2bcd8739ae039)([
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
-        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE
     ]);
     walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4), (0, $57b8a5d2d8300786$export$7c460c214963f696).ALGORAND_PERAWALLET);
     type = (0, $eeb7484c2092e8d9$export$353aefc175350117).ALGORAND_PERAWALLET;
@@ -433,7 +438,9 @@ class $3c9851a538a51e5f$export$6a733d504587e4b0 {
         if (!this.provider.connector) await this.provider.reconnectSession();
         try {
             await this.provider?.disconnect();
-        } catch (e) {}
+        } catch (e) {
+            console.error("Failed to kill session...");
+        }
         this.provider = undefined;
         this._updateWalletStorageValue();
         this.hookRouter.applyHooks([
@@ -452,8 +459,8 @@ class $3c9851a538a51e5f$export$6a733d504587e4b0 {
             const jsonRpcRequest = (0, $8zHUo$jsonrpctoolsutils.formatJsonRpcRequest)("algo_signTxn", [
                 txnsToSign
             ]);
-            let signedTxns = await peraWallet?.connector?.sendCustomRequest(jsonRpcRequest);
-            let signedTxns2 = [];
+            const signedTxns = await peraWallet?.connector?.sendCustomRequest(jsonRpcRequest);
+            const signedTxns2 = [];
             for(let i = 0; i < signedTxns.length; i++)if (signedTxns[i] !== null) signedTxns2.push({
                 txID: "",
                 blob: new Uint8Array($3c9851a538a51e5f$require$Buffer.from(signedTxns[i], "base64"))
@@ -540,7 +547,7 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
     hookRouter = new (0, $a71b91c4d64511bd$export$2e2bcd8739ae039)([
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
-        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, 
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE
     ]);
     walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $b94377bbb94beb7e$export$2e84527d78ea64a4), (0, $57b8a5d2d8300786$export$7c460c214963f696).ALGORAND_WALLETCONNECT);
     type = (0, $eeb7484c2092e8d9$export$353aefc175350117).ALGORAND_WALLETCONNECT;
@@ -613,7 +620,9 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
         if (!this.provider) this.getProvider();
         try {
             await this.provider?.killSession();
-        } catch (e) {}
+        } catch (e) {
+            console.error("Failed to kill session...");
+        }
         this.provider = undefined;
         this._updateWalletStorageValue();
         this.hookRouter.applyHooks([
@@ -631,8 +640,8 @@ class $2062ba71daa80b8d$export$ba0ef3a0d99fcc8f {
             const jsonRpcRequest = (0, $8zHUo$jsonrpctoolsutils.formatJsonRpcRequest)("algo_signTxn", [
                 txnsToSign
             ]);
-            let signedTxns = await walletConnect.sendCustomRequest(jsonRpcRequest);
-            let signedTxns2 = [];
+            const signedTxns = await walletConnect.sendCustomRequest(jsonRpcRequest);
+            const signedTxns2 = [];
             for(let i = 0; i < signedTxns.length; i++)if (signedTxns[i] !== null) signedTxns2.push({
                 txID: "",
                 blob: new Uint8Array($2062ba71daa80b8d$require$Buffer.from(signedTxns[i], "base64"))
@@ -716,7 +725,7 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
-        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK
     ]);
     _initialized = false;
     _activeWallets = [];
@@ -800,7 +809,7 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
         const walletTypes = [
             (0, $eeb7484c2092e8d9$export$353aefc175350117).ALGORAND_MYALGO,
             (0, $eeb7484c2092e8d9$export$353aefc175350117).ALGORAND_PERAWALLET,
-            (0, $eeb7484c2092e8d9$export$353aefc175350117).ALGORAND_WALLETCONNECT, 
+            (0, $eeb7484c2092e8d9$export$353aefc175350117).ALGORAND_WALLETCONNECT
         ];
         return walletTypes.filter((walletType)=>this.getWallet(walletType).getIsWalletInstalled());
     }
@@ -808,7 +817,7 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
         const walletTypes = [
             (0, $eeb7484c2092e8d9$export$353aefc175350117).ALGORAND_MYALGO,
             (0, $eeb7484c2092e8d9$export$353aefc175350117).ALGORAND_PERAWALLET,
-            (0, $eeb7484c2092e8d9$export$353aefc175350117).ALGORAND_WALLETCONNECT, 
+            (0, $eeb7484c2092e8d9$export$353aefc175350117).ALGORAND_WALLETCONNECT
         ];
         return walletTypes.filter((walletType)=>this.getWallet(walletType).getIsConnected());
     }
@@ -831,9 +840,6 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
     }
     getBalance() {
         return this.getActiveWallet().getBalance();
-    }
-    getAssets() {
-        return this.getActiveWallet().getAssets();
     }
     getProvider() {
         return this.getActiveWallet().getProvider();
@@ -876,11 +882,15 @@ class $f2b728861576b445$export$2a2454b5976b73ac {
 
 
 
+var $a537c0854f3949b4$exports = {};
+
+
 const $b94377bbb94beb7e$export$2e84527d78ea64a4 = "ALGORAND";
 $parcel$exportWildcard($b94377bbb94beb7e$exports, $a75d728b25ccd0d3$exports);
 $parcel$exportWildcard($b94377bbb94beb7e$exports, $f2b728861576b445$exports);
 $parcel$exportWildcard($b94377bbb94beb7e$exports, $2062ba71daa80b8d$exports);
 $parcel$exportWildcard($b94377bbb94beb7e$exports, $3c9851a538a51e5f$exports);
+$parcel$exportWildcard($b94377bbb94beb7e$exports, $a537c0854f3949b4$exports);
 
 
 var $fc578d3576b0d8ef$exports = {};
@@ -1007,7 +1017,7 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
-        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK
     ]);
     _walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $be737fe08c02d508$export$aef6a8518da1f60c), (0, $57b8a5d2d8300786$export$7c460c214963f696).ETHEREUM_METAMASK);
     chain = null;
@@ -1024,7 +1034,7 @@ class $2b09ea9ee8d63ad1$export$2c78a3b4fc11d8fa {
     }
     async _getProvider() {
         const ethereum = await (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
-        if (!Boolean(ethereum)) throw new (0, $d083fd37dae77b99$export$72563c16b91dfd16)();
+        if (!ethereum) throw new (0, $d083fd37dae77b99$export$72563c16b91dfd16)();
         return new (0, $8zHUo$ethers.ethers).providers.Web3Provider(ethereum);
     }
     _enforceIsConnected() {
@@ -1265,7 +1275,7 @@ class $b4976c18f17a124b$export$9741c3aebc6a0fb7 {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
-        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK
     ]);
     chain = null;
     walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $be737fe08c02d508$export$aef6a8518da1f60c), (0, $57b8a5d2d8300786$export$7c460c214963f696).ETHEREUM_WALLETCONNECT);
@@ -1443,7 +1453,7 @@ class $d5d3dec9ab4b7763$export$aa318bacd7f710c5 {
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
-        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK
     ]);
     _initialized = false;
     _activeWallets = [];
@@ -1532,14 +1542,14 @@ class $d5d3dec9ab4b7763$export$aa318bacd7f710c5 {
     getAvailableWallets() {
         const walletTypes = [
             (0, $eeb7484c2092e8d9$export$353aefc175350117).ETHEREUM_METAMASK,
-            (0, $eeb7484c2092e8d9$export$353aefc175350117).ETHEREUM_WALLETCONNECT, 
+            (0, $eeb7484c2092e8d9$export$353aefc175350117).ETHEREUM_WALLETCONNECT
         ];
         return walletTypes.filter((walletType)=>this.getWallet(walletType).getIsWalletInstalled());
     }
     getConnectedWallets() {
         const walletTypes = [
             (0, $eeb7484c2092e8d9$export$353aefc175350117).ETHEREUM_METAMASK,
-            (0, $eeb7484c2092e8d9$export$353aefc175350117).ETHEREUM_WALLETCONNECT, 
+            (0, $eeb7484c2092e8d9$export$353aefc175350117).ETHEREUM_WALLETCONNECT
         ];
         return walletTypes.filter((walletType)=>this.getWallet(walletType).getIsConnected());
     }
@@ -1562,9 +1572,6 @@ class $d5d3dec9ab4b7763$export$aa318bacd7f710c5 {
     }
     getBalance() {
         return this.getActiveWallet().getBalance();
-    }
-    getAssets() {
-        return this.getActiveWallet().getAssets();
     }
     getProvider() {
         return this.getActiveWallet().getProvider();
@@ -1608,10 +1615,14 @@ class $d5d3dec9ab4b7763$export$aa318bacd7f710c5 {
 
 
 
+var $273d0217424f65b7$exports = {};
+
+
 const $be737fe08c02d508$export$aef6a8518da1f60c = "ETHEREUM";
 $parcel$exportWildcard($be737fe08c02d508$exports, $2b09ea9ee8d63ad1$exports);
 $parcel$exportWildcard($be737fe08c02d508$exports, $d5d3dec9ab4b7763$exports);
 $parcel$exportWildcard($be737fe08c02d508$exports, $b4976c18f17a124b$exports);
+$parcel$exportWildcard($be737fe08c02d508$exports, $273d0217424f65b7$exports);
 
 
 
@@ -1631,13 +1642,16 @@ $parcel$export($6d7ab2c3273ba179$exports, "CHAIN_TYPE", () => $eeb7484c2092e8d9$
 
 
 
-class $6d7ab2c3273ba179$export$f5a985e9820441e {
+/**
+ * Super Class
+ *
+ */ class $6d7ab2c3273ba179$export$f5a985e9820441e {
     hookRouter = new (0, $a4d37c23c6197aec$export$2e2bcd8739ae039)([
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
         (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
-        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK, 
+        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).NEW_BLOCK
     ]);
     _initialized = false;
     _activeChain = [];
@@ -1645,8 +1659,8 @@ class $6d7ab2c3273ba179$export$f5a985e9820441e {
         this._config = config;
         let algorandConfig = (0, $f2b728861576b445$export$24f2ad57db25a90c);
         let ethereumConfig = (0, $d5d3dec9ab4b7763$export$6e71d57116cbd2a7);
-        let algorandState = data?.algorand;
-        let ethereumState = data?.ethereum;
+        const algorandState = data?.algorand;
+        const ethereumState = data?.ethereum;
         this._config.chains.map((chain)=>{
             if (chain.type === (0, $eeb7484c2092e8d9$export$be56259456d697c6).ALGORAND) algorandConfig = {
                 ...algorandConfig,
@@ -1693,7 +1707,7 @@ class $6d7ab2c3273ba179$export$f5a985e9820441e {
     _applyAllChains = (method)=>{
         const CHAIN_TYPES = [
             (0, $eeb7484c2092e8d9$export$be56259456d697c6).ALGORAND,
-            (0, $eeb7484c2092e8d9$export$be56259456d697c6).ETHEREUM, 
+            (0, $eeb7484c2092e8d9$export$be56259456d697c6).ETHEREUM
         ];
         let result = [];
         CHAIN_TYPES.forEach((chainType)=>{

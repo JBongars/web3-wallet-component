@@ -1,6 +1,6 @@
 import { SignedTx } from '@randlabs/myalgo-connect';
 import { Signer as RootSigner } from '~/src/types';
-import { AlgorandSignerTxn } from '../Algorand';
+import { AlgorandSignerTxn } from '../types';
 
 type WalletConnectState = {
     accounts: string[];

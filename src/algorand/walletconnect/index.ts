@@ -6,10 +6,9 @@ import { NotImplementedError, WalletNotConnectedError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { HookEvent, WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
-import { CHAIN_ALGORAND } from '..';
+import { AlgorandSignerTxn, AlgorandWalletType, CHAIN_ALGORAND } from '..';
 import { WALLET_TYPE } from '../../config/wallets';
 import { WalletHookHandlerInterface, WalletInterface } from '../../types';
-import { AlgorandSignerTxn, AlgorandWalletType } from '../Algorand';
 import { WalletConnectAsset, WalletConnectSigner, WalletConnectState } from './types';
 
 type Accounts = {

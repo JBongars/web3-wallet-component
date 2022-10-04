@@ -3,35 +3,11 @@ import { CHAIN_TYPE, WALLET_TYPE } from '../config/wallets';
 import { NotImplementedError } from '../errors';
 import { ChainHookHandlerInterface, ChainWalletInterface, WalletInterface } from '../types';
 import HookRouter from '../utils/HookRouter';
-import { HookEvent, WALLET_HOOK, WALLET_STATUS } from '../utils/HookRouter/types';
-import { MyAlgo, MyAlgoTransaction } from './myalgo';
-import { MyAlgoSigner, MyAlgoState } from './myalgo/types';
-import { PeraWallet, PeraWalletTransaction } from './perawallet';
-import { PeraWalletSigner, PeraWalletState } from './perawallet/types';
-import { WalletConnect, WalletConnectTransaction } from './walletconnect';
-import { WalletConnectSigner, WalletConnectState } from './walletconnect/types';
-
-type AlgorandWallet = MyAlgo | WalletConnect | PeraWallet;
-type AlgorandWalletType =
-    | WALLET_TYPE.ALGORAND_MYALGO
-    | WALLET_TYPE.ALGORAND_PERAWALLET
-    | WALLET_TYPE.ALGORAND_WALLETCONNECT;
-
-// TECH DEBT: needs to be removed
-type AlgorandSignerTxn = MyAlgoTransaction | WalletConnectTransaction | PeraWalletTransaction;
-
-type AlgorandSigner = MyAlgoSigner | WalletConnectSigner | PeraWalletSigner;
-
-type AlgorandState = {
-    myAlgo?: MyAlgoState;
-    walletConnect?: WalletConnectState;
-    peraWallet?: PeraWalletState;
-};
-
-type AlgorandConfig = {
-    hookType: 'all' | 'active' | 'disable';
-    defaultWallet: AlgorandWalletType;
-};
+import { WALLET_HOOK, WALLET_STATUS } from '../utils/HookRouter/types';
+import { MyAlgo } from './myalgo';
+import { PeraWallet } from './perawallet';
+import { AlgorandConfig, AlgorandSigner, AlgorandState, AlgorandWallet, AlgorandWalletType } from './types';
+import { WalletConnect } from './walletconnect';
 
 const defaultAlgorandConfig: AlgorandConfig = {
     hookType: 'active',
@@ -91,7 +67,7 @@ class Algorand
 
         const hook =
             (hookType: WALLET_HOOK) =>
-            (...args: any) => {
+            (...args: unknown[]) => {
                 if (!verifyWallet(wallet.type)) {
                     return;
                 }
@@ -199,10 +175,6 @@ class Algorand
         return this.getActiveWallet().getBalance();
     }
 
-    public getAssets(): Promise<unknown[]> {
-        return this.getActiveWallet().getAssets();
-    }
-
     public getProvider(): unknown {
         return this.getActiveWallet().getProvider();
     }
@@ -252,5 +224,4 @@ class Algorand
     }
 }
 
-export { Algorand, AlgorandWalletType, AlgorandState, defaultAlgorandConfig };
-export type { AlgorandWallet, AlgorandSigner, AlgorandSignerTxn, AlgorandConfig };
+export { Algorand, defaultAlgorandConfig };

@@ -11,7 +11,7 @@
         "ecmaVersion": "latest"
     },
     // "plugins": ["@typescript-eslint"],
-    "plugins": ["prettier"],
+    "plugins": ["prettier", "eslint-plugin-tsdoc"],
     "rules": {
         "prettier/prettier": ["error"],
         "@typescript-eslint/ban-types": ["warn"],
@@ -23,6 +23,7 @@
                 "varsIgnorePattern": "^_",
                 "caughtErrorsIgnorePattern": "^_"
             }
-        ]
+        ],
+        "tsdoc/syntax": ["error"]
     }
 }

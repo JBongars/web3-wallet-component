@@ -6,6 +6,10 @@ enum WALLET_STATUS {
     ACCOUNT_NOT_FOUND
 }
 
+/**
+ * Identifier for Wallet
+ * @remarks example Metamask, WalletConnect, etc...
+ */
 enum WALLET_ID {
     ETHEREUM_METAMASK = 1,
     ALGORAND_MYALGO = 2,

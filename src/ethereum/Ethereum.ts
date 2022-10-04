@@ -1,30 +1,12 @@
 import { ethers } from 'ethers';
 import { CHAIN_TYPE, WALLET_TYPE } from '../config/wallets';
-import { NotImplementedError, WalletNotInstalledError } from '../errors';
+import { NotImplementedError } from '../errors';
 import { ChainHookHandlerInterface, ChainWalletInterface, WalletInterface } from '../types';
 import HookRouter from '../utils/HookRouter';
-import { HookEvent, WALLET_HOOK, WALLET_STATUS } from '../utils/HookRouter/types';
+import { WALLET_HOOK, WALLET_STATUS } from '../utils/HookRouter/types';
 import { Metamask } from './metamask';
-import { MetamaskAsset, MetamaskSigner, MetamaskState } from './metamask/types';
+import { EthereumConfig, EthereumWallet, EthereumState, EthereumSigner, EthereumWalletType } from './types';
 import { EthWalletConnect } from './walletconnect';
-import { WalletConnectState } from './walletconnect/types';
-
-type EthereumWallet = Metamask | EthWalletConnect;
-
-type EthereumWalletType = WALLET_TYPE.ETHEREUM_METAMASK | WALLET_TYPE.ETHEREUM_WALLETCONNECT;
-
-type EthereumSigner = MetamaskSigner;
-
-type EthereumState = {
-    metaMask?: MetamaskState;
-    walletConnect?: WalletConnectState;
-    activeWallets: EthereumWalletType[];
-};
-
-type EthereumConfig = {
-    hookType: 'all' | 'active' | 'disable';
-    defaultWallet: EthereumWalletType;
-};
 
 const defaultEthereumConfig: EthereumConfig = {
     hookType: 'active',
@@ -192,10 +174,6 @@ class Ethereum
         return this.getActiveWallet().getBalance();
     }
 
-    public getAssets(): Promise<MetamaskAsset[]> {
-        return this.getActiveWallet().getAssets();
-    }
-
     public getProvider(): Promise<ethers.providers.Web3Provider> {
         return this.getActiveWallet().getProvider();
     }
@@ -247,5 +225,4 @@ class Ethereum
     }
 }
 
-export type { EthereumWallet, EthereumSigner, EthereumState, EthereumConfig };
-export { Ethereum, EthereumWalletType, defaultEthereumConfig };
+export { Ethereum, defaultEthereumConfig };

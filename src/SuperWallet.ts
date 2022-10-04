@@ -45,6 +45,10 @@ type SuperWalletConfig = {
     chains: ChainConfig[];
 };
 
+/**
+ * Super Class
+ *
+ */
 class SuperWallet implements WalletInterface<unknown> {
     private hookRouter: HookRouter = new HookRouter([
         WALLET_HOOK.CHAIN_ON_CHANGE,
