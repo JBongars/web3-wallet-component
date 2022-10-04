@@ -1823,7 +1823,6 @@ $parcel$exportWildcard($a5ed01349eda98bd$exports, $eeb7484c2092e8d9$exports);
 var $6d7ab2c3273ba179$exports = {};
 
 $parcel$export($6d7ab2c3273ba179$exports, "SuperWallet", () => $6d7ab2c3273ba179$export$f5a985e9820441e);
-$parcel$export($6d7ab2c3273ba179$exports, "CHAIN_TYPE", () => $eeb7484c2092e8d9$export$be56259456d697c6);
 
 
 

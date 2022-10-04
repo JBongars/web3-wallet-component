@@ -1820,7 +1820,6 @@ $parcel$exportWildcard($42db31fbdbd10224$exports, $9ef2866eeb66da86$exports);
 var $24e5985ce7e733e8$exports = {};
 
 $parcel$export($24e5985ce7e733e8$exports, "SuperWallet", () => $24e5985ce7e733e8$export$f5a985e9820441e);
-$parcel$export($24e5985ce7e733e8$exports, "CHAIN_TYPE", () => $9ef2866eeb66da86$export$be56259456d697c6);
 
 
 
@@ -2082,5 +2081,5 @@ $parcel$export($24e5985ce7e733e8$exports, "CHAIN_TYPE", () => $9ef2866eeb66da86$
 
 
 
-export {$28ac839a9eca26f5$export$e162153238934121 as NotImplementedError, $28ac839a9eca26f5$export$72563c16b91dfd16 as WalletNotInstalledError, $28ac839a9eca26f5$export$313d299817c74896 as WalletNotConnectedError, $28ac839a9eca26f5$export$f4d277c155d1965e as HookNotAvailableError, $61dc865ce14f4bf4$export$aef6a8518da1f60c as CHAIN_ETHEREUM, $63a99e75275a61fa$export$2c78a3b4fc11d8fa as Metamask, $85bc198bca370cae$export$6e71d57116cbd2a7 as defaultEthereumConfig, $85bc198bca370cae$export$aa318bacd7f710c5 as Ethereum, $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 as EthWalletConnect, $dc4d60a7eb431eef$export$2e84527d78ea64a4 as CHAIN_ALGORAND, $8f12a92ca31811ed$export$6ab354d5c56bf95 as MyAlgo, $b5af4601982a5fe5$export$24f2ad57db25a90c as defaultAlgorandConfig, $b5af4601982a5fe5$export$2a2454b5976b73ac as Algorand, $42024282ef82c6ee$export$ba0ef3a0d99fcc8f as WalletConnect, $95e4ef1726fa05c6$export$6a733d504587e4b0 as PeraWallet, $412a545945027ba9$export$24b8fbafc4b6a151 as useWindow, $9ef2866eeb66da86$export$353aefc175350117 as WALLET_TYPE, $9ef2866eeb66da86$export$be56259456d697c6 as CHAIN_TYPE, $9ef2866eeb66da86$export$be56259456d697c6 as CHAIN_TYPE, $24e5985ce7e733e8$export$f5a985e9820441e as SuperWallet};
+export {$28ac839a9eca26f5$export$e162153238934121 as NotImplementedError, $28ac839a9eca26f5$export$72563c16b91dfd16 as WalletNotInstalledError, $28ac839a9eca26f5$export$313d299817c74896 as WalletNotConnectedError, $28ac839a9eca26f5$export$f4d277c155d1965e as HookNotAvailableError, $61dc865ce14f4bf4$export$aef6a8518da1f60c as CHAIN_ETHEREUM, $63a99e75275a61fa$export$2c78a3b4fc11d8fa as Metamask, $85bc198bca370cae$export$6e71d57116cbd2a7 as defaultEthereumConfig, $85bc198bca370cae$export$aa318bacd7f710c5 as Ethereum, $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 as EthWalletConnect, $dc4d60a7eb431eef$export$2e84527d78ea64a4 as CHAIN_ALGORAND, $8f12a92ca31811ed$export$6ab354d5c56bf95 as MyAlgo, $b5af4601982a5fe5$export$24f2ad57db25a90c as defaultAlgorandConfig, $b5af4601982a5fe5$export$2a2454b5976b73ac as Algorand, $42024282ef82c6ee$export$ba0ef3a0d99fcc8f as WalletConnect, $95e4ef1726fa05c6$export$6a733d504587e4b0 as PeraWallet, $412a545945027ba9$export$24b8fbafc4b6a151 as useWindow, $9ef2866eeb66da86$export$353aefc175350117 as WALLET_TYPE, $9ef2866eeb66da86$export$be56259456d697c6 as CHAIN_TYPE, $24e5985ce7e733e8$export$f5a985e9820441e as SuperWallet};
 //# sourceMappingURL=module.js.map

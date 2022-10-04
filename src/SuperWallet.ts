@@ -396,5 +396,5 @@ class SuperWallet implements WalletInterface<unknown> {
     }
 }
 
-export { SuperWallet, CHAIN_TYPE, SuperWalletType, SuperWalletState, SuperWalletConfig, ChainConfig };
+export { SuperWallet, SuperWalletType, SuperWalletState, SuperWalletConfig, ChainConfig };
 export type { SuperWalletSigner };
