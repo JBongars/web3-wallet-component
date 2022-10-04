@@ -5,6 +5,7 @@ import { Ethereum, EthereumWallet } from './ethereum';
 import { HookEvent, WALLET_STATUS } from './utils/HookRouter/types';
 
 type Wallet = AlgorandWallet | EthereumWallet;
+type WALLET = Wallet;
 type ChainWallet = Algorand | Ethereum;
 
 type Signer<T, S> = (transactions: T) => Promise<S[]>;
@@ -151,4 +152,4 @@ interface ChainWalletInterface<Wallet, WalletType> {
 }
 
 export { WalletInterface, ChainWalletInterface, WalletHookHandlerInterface, ChainHookHandlerInterface };
-export type { Signer, Wallet, ChainWallet };
+export type { Signer, Wallet, WALLET, ChainWallet };

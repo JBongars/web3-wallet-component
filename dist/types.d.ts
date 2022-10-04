@@ -523,6 +523,7 @@ export class Algorand implements WalletInterface<unknown>, ChainWalletInterface<
 }
 export const CHAIN_ALGORAND = "ALGORAND";
 export type Wallet = AlgorandWallet | EthereumWallet;
+export type WALLET = Wallet;
 export type ChainWallet = Algorand | Ethereum;
 export type Signer<T, S> = (transactions: T) => Promise<S[]>;
 export interface WalletInterface<T> {
