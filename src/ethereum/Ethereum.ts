@@ -71,7 +71,7 @@ class Ethereum
 
         const hook =
             (hookType: WALLET_HOOK) =>
-            (...args: any) => {
+            (...args: unknown[]) => {
                 if (!verifyWallet(wallet.type)) {
                     return;
                 }

@@ -129,7 +129,7 @@ class SuperWallet implements WalletInterface<unknown> {
     private _mountInternalHooks = (chain: ChainWallet) => {
         const hook =
             (hookType: WALLET_HOOK) =>
-            (...args: any) => {
+            (...args: unknown[]) => {
                 this.hookRouter.applyHookWithArgs(hookType, ...[chain, ...args]);
             };
 
@@ -387,7 +387,7 @@ class SuperWallet implements WalletInterface<unknown> {
         return this.hookRouter.registerCallback(WALLET_HOOK.ACCOUNT_ON_DISCONNECT, cb);
     };
 
-    public onBlockAdded = (cb: (chainType: CHAIN_TYPE, newBlock: number) => void | Promise<void>) => {
+    public onBlockAdded = (_cb: (chainType: CHAIN_TYPE, newBlock: number) => void | Promise<void>) => {
         throw new NotImplementedError();
     };
 

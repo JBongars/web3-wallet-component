@@ -17,7 +17,7 @@ type EthereumWalletConnectSigner = RootSigner<TransactionRequest, TransactionRes
 /**
  * EthereumWalletConnect Assets
  */
-type EthereumWalletConnectAsset = {};
+type EthereumWalletConnectAsset = unknown;
 
 /**
  * Config for EthereumWalletConnect initialization

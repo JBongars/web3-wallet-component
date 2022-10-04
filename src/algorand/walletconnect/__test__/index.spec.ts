@@ -1,6 +1,4 @@
 // import MyAlgoConnect, { AlgorandTxn } from "@randlabs/myalgo-connect";
-import { WalletConnect } from '..';
-import { NotImplementedError } from '../../../errors';
 
 describe('#WalletConnect class', () => {
     // test("can sign in", async () => {

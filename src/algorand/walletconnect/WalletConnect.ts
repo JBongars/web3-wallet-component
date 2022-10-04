@@ -32,7 +32,7 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
         WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
         WALLET_HOOK.CHAIN_ON_CHANGE
     ]);
-    public state: AlgorandWalletConnectState;
+    private _state: AlgorandWalletConnectState;
     private provider: WalletConnectClient | undefined;
     private walletStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_WALLETCONNECT);
 
@@ -41,9 +41,9 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
 
     constructor(state?: AlgorandWalletConnectState) {
         if (state) {
-            this.state = { ...state };
+            this._state = { ...state };
         } else {
-            this.state = { ...initialState };
+            this._state = { ...initialState };
         }
 
         this._setupInitialState();
@@ -59,7 +59,7 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
         const storageValue = this.walletStorage.getValue();
 
         if (storageValue) {
-            this.state = {
+            this._state = {
                 isConnected: this.getIsConnected(),
                 accounts: storageValue.accounts
             };
@@ -67,7 +67,7 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
     }
 
     private _updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) {
+        if (this._state.isConnected && this._state.accounts.length > 0) {
             const accounts = this.getAccounts().map((acc) => acc.address);
             const connectedAccount = this.getPrimaryAccount().address;
             this.walletStorage.updateValue(true, connectedAccount, accounts);
@@ -92,8 +92,8 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
         } else {
             const { accounts } = this.provider;
 
-            this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-            this.state.accounts = accounts;
+            this._state.isConnected = Array.isArray(accounts) && accounts.length > 0;
+            this._state.accounts = accounts;
             this._updateWalletStorageValue();
             this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
         }
@@ -105,13 +105,13 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
 
             // Get provided accounts
             const { accounts } = payload.params[0];
-            this.state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-            this.state.accounts = accounts;
+            this._state.isConnected = Array.isArray(accounts) && accounts.length > 0;
+            this._state.accounts = accounts;
             this._updateWalletStorageValue();
             this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
         });
 
-        this.provider.on('disconnect', (error, payload) => {
+        this.provider.on('disconnect', (error, _payload) => {
             if (error) {
                 throw error;
             }
@@ -122,8 +122,8 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
     }
 
     public async signOut(): Promise<WALLET_STATUS> {
-        this.state.accounts = [];
-        this.state.isConnected = false;
+        this._state.accounts = [];
+        this._state.isConnected = false;
 
         if (!this.provider) {
             this.getProvider();
@@ -149,7 +149,7 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
             }));
             const jsonRpcRequest = formatJsonRpcRequest('algo_signTxn', [txnsToSign]);
             const signedTxns = await walletConnect.sendCustomRequest(jsonRpcRequest);
-            const signedTxns2: any = [];
+            const signedTxns2: SignedTx[] = [];
             for (let i = 0; i < signedTxns.length; i++) {
                 if (signedTxns[i] !== null) {
                     signedTxns2.push({
@@ -158,8 +158,8 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
                     });
                 } else {
                     signedTxns2.push({
-                        txId: '',
-                        blob: null
+                        txID: '',
+                        blob: null as unknown as Uint8Array
                     });
                 }
             }
@@ -188,20 +188,22 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
 
     public getPrimaryAccount(): Accounts {
         return {
-            address: this.state.accounts[0],
+            address: this._state.accounts[0],
             name: ''
         };
     }
 
     public getAccounts(): Accounts[] {
-        return this.state.accounts.map((ob) => ({ address: ob, name: '' }));
+        return this._state.accounts.map((ob) => ({ address: ob, name: '' }));
     }
 
     public async fetchCurrentChainID(): Promise<string> {
         return '0x1';
     }
 
-    public async mountEventListeners(): Promise<void> {}
+    public async mountEventListeners(): Promise<void> {
+        return;
+    }
 
     public onAccountChange = (cb: (accounts: Accounts[]) => void | Promise<void>) => {
         return this.hookRouter.registerCallback(WALLET_HOOK.ACCOUNT_ON_CHANGE, () => {
@@ -222,12 +224,23 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
         });
     };
 
-    public onBlockAdded = (cb: (newBlock: unknown) => void | Promise<void>): HookEvent => {
+    public onBlockAdded = (_cb: (newBlock: unknown) => void | Promise<void>): HookEvent => {
         throw new NotImplementedError();
     };
 
     public toJSON(): AlgorandWalletConnectState {
-        return this.state;
+        return this._state;
+    }
+
+    /**
+     * DANGER - REFRAIN from using in production as can have some unintended side effect. NOT FULLY SUPPORTED!
+     * @param data - New State for wallet
+     */
+    public _dangerouslyUpdateInternalState(data: AlgorandWalletConnectState) {
+        console.warn(
+            `WARNING - You are about to update the internal state for ${this.name}!! Functionality may not work correctly...`
+        );
+        this._state = data;
     }
 
     public getProvider(): WalletConnectClient {

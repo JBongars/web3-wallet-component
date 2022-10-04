@@ -247,7 +247,7 @@ class Algorand
         return this.hookRouter.registerCallback(WALLET_HOOK.ACCOUNT_ON_DISCONNECT, cb);
     };
 
-    public onBlockAdded = (cb: (newBlock: number) => void | Promise<void>) => {
+    public onBlockAdded = (_cb: (newBlock: number) => void | Promise<void>) => {
         throw new NotImplementedError();
     };
 

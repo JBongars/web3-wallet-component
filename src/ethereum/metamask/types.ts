@@ -16,7 +16,7 @@ type MetamaskSigner = ethers.providers.JsonRpcSigner;
 /**
  * Metamask Assets
  */
-type MetamaskAsset = {};
+type MetamaskAsset = unknown;
 
 /**
  * Config for Metamask initialization

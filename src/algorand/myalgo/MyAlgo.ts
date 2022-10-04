@@ -25,7 +25,7 @@ class MyAlgo implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface
         WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
         WALLET_HOOK.CHAIN_ON_CHANGE
     ]);
-    public state: MyAlgoState;
+    private _state: MyAlgoState;
     private provider: MyAlgoConnect | undefined;
     private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_MYALGO);
     public currentActiveAccountAddress = '';
@@ -35,9 +35,9 @@ class MyAlgo implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface
 
     constructor(state?: MyAlgoState) {
         if (state) {
-            this.state = { ...state };
+            this._state = { ...state };
         } else {
-            this.state = { ...initialState };
+            this._state = { ...initialState };
         }
 
         this.setupInitialState();
@@ -63,7 +63,7 @@ class MyAlgo implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface
     }
 
     public switchAccount(address: string) {
-        const account = this.state.accounts.find((acc) => acc.address === address);
+        const account = this._state.accounts.find((acc) => acc.address === address);
 
         if (account) {
             this.currentActiveAccountAddress = account.address;
@@ -76,7 +76,7 @@ class MyAlgo implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface
         const storageValue = this.walletStorage.getValue();
 
         if (storageValue) {
-            this.state = {
+            this._state = {
                 isConnected: storageValue.isConnected,
                 accounts: storageValue.accounts
                     ? storageValue.accounts.map((address) => ({
@@ -91,7 +91,7 @@ class MyAlgo implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface
     }
 
     private updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) {
+        if (this._state.isConnected && this._state.accounts.length > 0) {
             const accounts = this.getAccounts().map((acc) => acc.address);
             const connectedAccount = this.getPrimaryAccount().address;
             this.walletStorage.updateValue(true, connectedAccount, accounts);
@@ -105,9 +105,9 @@ class MyAlgo implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface
 
         // forces user to only choose one account.
         // This prevents a lot of edge cases.
-        this.state.accounts = await myAlgoConnect.connect();
+        this._state.accounts = await myAlgoConnect.connect();
 
-        this.state.isConnected = this.state.accounts.length > 0;
+        this._state.isConnected = this._state.accounts.length > 0;
 
         this.updateWalletStorageValue();
         this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
@@ -116,8 +116,8 @@ class MyAlgo implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface
 
     public async signOut(): Promise<WALLET_STATUS> {
         this.enforceIsConnected();
-        this.state.accounts = [];
-        this.state.isConnected = false;
+        this._state.accounts = [];
+        this._state.isConnected = false;
         this.updateWalletStorageValue();
         this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
         return WALLET_STATUS.OK;
@@ -147,7 +147,7 @@ class MyAlgo implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface
     }
 
     public getIsConnected(): boolean {
-        return this.state.isConnected;
+        return this._state.isConnected;
     }
 
     public getPrimaryAccount(): Accounts {
@@ -158,17 +158,17 @@ class MyAlgo implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface
             };
         }
 
-        const account = this.state.accounts.find((acc) => acc.address === this.currentActiveAccountAddress);
+        const account = this._state.accounts.find((acc) => acc.address === this.currentActiveAccountAddress);
 
         if (this.currentActiveAccountAddress && account) {
             return account;
         }
 
-        return this.state.accounts[0];
+        return this._state.accounts[0];
     }
 
     public getAccounts(): Accounts[] {
-        return this.state.accounts;
+        return this._state.accounts;
     }
 
     public async fetchCurrentChainID(): Promise<string> {
@@ -198,12 +198,23 @@ class MyAlgo implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface
         });
     };
 
-    public onBlockAdded = (cb: (newBlock: unknown) => void | Promise<void>): HookEvent => {
+    public onBlockAdded = (_cb: (newBlock: unknown) => void | Promise<void>): HookEvent => {
         throw new NotImplementedError();
     };
 
     public toJSON(): MyAlgoState {
-        return this.state;
+        return this._state;
+    }
+
+    /**
+     * DANGER - REFRAIN from using in production as can have some unintended side effect. NOT FULLY SUPPORTED!
+     * @param data - New State for wallet
+     */
+    public _dangerouslyUpdateInternalState(data: MyAlgoState) {
+        console.warn(
+            `WARNING - You are about to update the internal state for ${this.name}!! Functionality may not work correctly...`
+        );
+        this._state = data;
     }
 }
 

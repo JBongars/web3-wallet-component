@@ -25,16 +25,16 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
     ]);
     private _walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_METAMASK);
     private chain: string | null = null;
-    public state: MetamaskState;
+    private _state: MetamaskState;
     public provider?: ethers.providers.Web3Provider;
     public name = 'METAMASK';
     public type: EthereumWalletType = WALLET_TYPE.ETHEREUM_METAMASK;
 
     constructor(state?: MetamaskState) {
         if (state) {
-            this.state = { ...state };
+            this._state = { ...state };
         } else {
-            this.state = { ...initialState };
+            this._state = { ...initialState };
         }
 
         this._setupInitialState();
@@ -71,7 +71,7 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
         const storageValue = this._walletStorage.getValue();
 
         if (storageValue) {
-            this.state = {
+            this._state = {
                 isConnected: storageValue.isConnected,
                 accounts: storageValue.accounts
             };
@@ -79,8 +79,8 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
     }
 
     private _updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) {
-            this._walletStorage.updateValue(true, this.getPrimaryAccount(), this.state.accounts);
+        if (this._state.isConnected && this._state.accounts.length > 0) {
+            this._walletStorage.updateValue(true, this.getPrimaryAccount(), this._state.accounts);
         } else {
             this._walletStorage.updateValue(false, '', []);
         }
@@ -93,19 +93,19 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
 
     public async signIn(): Promise<WALLET_STATUS> {
         const provider = await this._getProvider();
-        this.state.accounts = await provider.send('eth_requestAccounts', []);
-        this.state.isConnected = this.state.accounts.length > 0;
+        this._state.accounts = await provider.send('eth_requestAccounts', []);
+        this._state.isConnected = this._state.accounts.length > 0;
 
         this._updateWalletStorageValue();
 
-        this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, this.state.accounts);
+        this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, this._state.accounts);
         return WALLET_STATUS.OK;
     }
 
     public async signOut(): Promise<WALLET_STATUS> {
         this._enforceIsConnected();
-        this.state.accounts = [];
-        this.state.isConnected = false;
+        this._state.accounts = [];
+        this._state.isConnected = false;
 
         this._updateWalletStorageValue();
         this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
@@ -126,7 +126,7 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
         this._enforceIsConnected();
 
         const provider = this.provider || (await this._getProvider());
-        const balance = await provider.getBalance(this.state.accounts[0]);
+        const balance = await provider.getBalance(this._state.accounts[0]);
         return balance.toString();
     }
 
@@ -135,11 +135,11 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
     }
 
     public getIsConnected(): boolean {
-        return this.state.isConnected;
+        return this._state.isConnected;
     }
 
     public getIsWalletInstalled(): boolean {
-        const ethereum = useWindow((windowObject) => (windowObject as any).ethereum) as any;
+        const ethereum = useWindow((windowObject) => (windowObject as { ethereum?: unknown }).ethereum) as any;
 
         return Boolean(ethereum);
     }
@@ -148,14 +148,14 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
         this._enforceChain();
         this._enforceIsConnected();
 
-        return this.state.accounts[0];
+        return this._state.accounts[0];
     }
 
     public getAccounts(): string[] {
         this._enforceChain();
         this._enforceIsConnected();
 
-        return this.state.accounts;
+        return this._state.accounts;
     }
 
     public async fetchCurrentChainID(): Promise<string> {
@@ -225,7 +225,7 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
     };
 
     public toJSON(): MetamaskState {
-        return this.state;
+        return this._state;
     }
 
     /**
@@ -238,7 +238,7 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
             const ethereum = useWindow((window: any) => window.ethereum);
             if (ethereum.on) {
                 ethereum.on('accountsChanged', async (accounts: string[]) => {
-                    this.state.accounts = accounts;
+                    this._state.accounts = accounts;
 
                     if (accounts.length === 0) {
                         await this.signOut();
@@ -254,6 +254,8 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
                 });
 
                 ethereum.on('disconnect', async (err: Error) => {
+                    console.warn(`Metamask Disconnected. Error:`);
+                    console.warn(err);
                     this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
                 });
             }

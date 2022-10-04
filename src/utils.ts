@@ -18,7 +18,7 @@ const iffyClone = (obj: { [key: string]: unknown } | null | undefined): { [key: 
  * @param callback - Function that should be called before property gets returned
  * @returns Object property that was intended to be returned
  */
-const useProxy = (callback: (prop: string | symbol) => Promise<unknown> | unknown): any =>
+const useProxy = (callback: (prop: string | symbol) => Promise<unknown> | unknown): ProxyHandler<object> =>
     new Proxy(
         {},
         {

@@ -3,18 +3,18 @@ import { NotImplementedError } from '../../errors';
 import { HookEvent, WALLET_STATUS } from '../../utils/HookRouter/types';
 import { Asset } from './types';
 
-type State = {};
+type State = unknown;
 
 const initialState: Readonly<State> = Object.freeze({});
 
 class Wallet implements WalletInterface<State> {
-    public state: State;
+    private _state: State;
 
     constructor(state?: State) {
         if (state) {
-            this.state = { ...state };
+            this._state = { ...state };
         } else {
-            this.state = { ...initialState };
+            this._state = { ...initialState };
         }
     }
 
@@ -66,26 +66,28 @@ class Wallet implements WalletInterface<State> {
         throw new NotImplementedError();
     }
 
-    public async mountEventListeners(): Promise<void> {}
+    public async mountEventListeners(): Promise<void> {
+        return;
+    }
 
-    public onAccountDisconnect = (cb: () => void | Promise<void>): HookEvent => {
+    public onAccountDisconnect = (_cb: () => void | Promise<void>): HookEvent => {
         throw new NotImplementedError();
     };
 
-    public onAccountChange = (cb: (accounts: unknown) => void | Promise<void>): HookEvent => {
+    public onAccountChange = (_cb: (accounts: unknown) => void | Promise<void>): HookEvent => {
         throw new NotImplementedError();
     };
 
-    public onChainChange = (cb: (chainId: string) => void | Promise<void>): HookEvent => {
+    public onChainChange = (_cb: (chainId: string) => void | Promise<void>): HookEvent => {
         throw new NotImplementedError();
     };
 
-    public onBlockAdded = (cb: (block: unknown) => void | Promise<void>): HookEvent => {
+    public onBlockAdded = (_cb: (block: unknown) => void | Promise<void>): HookEvent => {
         throw new NotImplementedError();
     };
 
     public toJSON(): State {
-        return this.state;
+        return this._state;
     }
 }
 

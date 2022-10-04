@@ -25,7 +25,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         WALLET_HOOK.NEW_BLOCK
     ]);
     private chain: string | null = null;
-    public state: EthereumWalletConnectState;
+    private _state: EthereumWalletConnectState;
     public provider?: ethers.providers.Web3Provider;
     private walletStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_WALLETCONNECT);
     public type: EthereumWalletType = WALLET_TYPE.ETHEREUM_WALLETCONNECT;
@@ -33,9 +33,9 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
     constructor(state?: EthereumWalletConnectState) {
         if (state) {
-            this.state = { ...state };
+            this._state = { ...state };
         } else {
-            this.state = { ...initialState };
+            this._state = { ...initialState };
         }
         this._setupInitialState();
     }
@@ -44,7 +44,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         const storageValue = this.walletStorage.getValue();
 
         if (storageValue) {
-            this.state = {
+            this._state = {
                 isConnected: storageValue.isConnected,
                 accounts: storageValue.accounts
             };
@@ -52,8 +52,8 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     }
 
     private _updateWalletStorageValue() {
-        if (this.state.isConnected && this.state.accounts.length > 0) {
-            this.walletStorage.updateValue(true, this.state.accounts[0], this.state.accounts);
+        if (this._state.isConnected && this._state.accounts.length > 0) {
+            this.walletStorage.updateValue(true, this._state.accounts[0], this._state.accounts);
         } else {
             this.walletStorage.updateValue(false, '', []);
         }
@@ -97,17 +97,17 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
     public async signIn(): Promise<WALLET_STATUS> {
         const provider = await this._getProvider();
-        this.state.accounts = await provider.listAccounts();
-        this.state.isConnected = this.state.accounts.length > 0;
+        this._state.accounts = await provider.listAccounts();
+        this._state.isConnected = this._state.accounts.length > 0;
         this._updateWalletStorageValue();
-        this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, this.state.accounts);
+        this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, this._state.accounts);
         return WALLET_STATUS.OK;
     }
 
     public async signOut(): Promise<WALLET_STATUS> {
         this._enforceIsConnected();
-        this.state.accounts = [];
-        this.state.isConnected = false;
+        this._state.accounts = [];
+        this._state.isConnected = false;
         this.provider = undefined;
         this._updateWalletStorageValue();
         (await this.getWCProvider()).disconnect();
@@ -130,7 +130,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         this._enforceIsConnected();
 
         const provider = await this._getProvider();
-        const balance = await provider.getBalance(this.state.accounts[0]);
+        const balance = await provider.getBalance(this._state.accounts[0]);
         return balance.toString();
     }
 
@@ -139,7 +139,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     }
 
     public getIsConnected(): boolean {
-        return this.state.isConnected;
+        return this._state.isConnected;
     }
 
     public getIsWalletInstalled(): boolean {
@@ -152,14 +152,14 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         this._enforceChain();
         this._enforceIsConnected();
 
-        return this.state.accounts[0];
+        return this._state.accounts[0];
     }
 
     public getAccounts(): string[] {
         this._enforceChain();
         this._enforceIsConnected();
 
-        return this.state.accounts;
+        return this._state.accounts;
     }
 
     public async fetchCurrentChainID(): Promise<string> {
@@ -229,12 +229,16 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     };
 
     public toJSON(): EthereumWalletConnectState {
-        return this.state;
+        return this._state;
     }
 
-    public async mountEventListeners() {}
+    public async mountEventListeners() {
+        return;
+    }
 
-    public async unmountEventListeners() {}
+    public async unmountEventListeners() {
+        return;
+    }
 
     public async getProvider(): Promise<ethers.providers.Web3Provider> {
         await this._enforceChain();

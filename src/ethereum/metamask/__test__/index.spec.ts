@@ -1,7 +1,6 @@
 import { BigNumber, ethers } from 'ethers';
-import { NotImplementedError, WalletNotConnectedError } from '~/src/errors';
 import { Metamask } from '..';
-import { TransactionRequest, TransactionResponse } from '@ethersproject/abstract-provider';
+import { NotImplementedError, WalletNotConnectedError } from '../../../errors';
 
 const WALLET_ADDRESS = 'test-address';
 
@@ -37,8 +36,8 @@ describe('#Metamask Class', () => {
 
         await metamask.signIn();
 
-        expect(metamask.state.isConnected).toBeTruthy();
-        expect(metamask.state.accounts[0]).toEqual('test-address');
+        expect(metamask.toJSON().isConnected).toBeTruthy();
+        expect(metamask.toJSON().accounts[0]).toEqual('test-address');
     });
 
     test('can sign out', async () => {
@@ -49,8 +48,8 @@ describe('#Metamask Class', () => {
 
         await metamask.signOut();
 
-        expect(metamask.state.isConnected).toBeFalsy();
-        expect(metamask.state.accounts).toHaveLength(0);
+        expect(metamask.toJSON().isConnected).toBeFalsy();
+        expect(metamask.toJSON().accounts).toHaveLength(0);
     });
 
     test('get asset should throw NotImplementedError', async () => {
