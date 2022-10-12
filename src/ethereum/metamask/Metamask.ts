@@ -41,13 +41,30 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
     }
 
     private async _getProvider(): Promise<ethers.providers.Web3Provider> {
+        if (this.provider) return this.provider;
+
         const ethereum = (await useWindow(async (windowObject) => (windowObject as any).ethereum)) as any;
 
         if (!ethereum) {
             throw new WalletNotInstalledError();
         }
 
-        return new ethers.providers.Web3Provider(ethereum);
+        // edge case if Metamask and Coinbase Wallet are both installed
+        if ("providers" in ethereum && ethereum.providers?.length) {
+            ethereum.providers.forEach((p: any) => {
+                if (p.isMetaMask) {
+                    this.provider = new ethers.providers.Web3Provider(p);
+                    return this.provider;
+                }
+            });
+        } else {
+            if (ethereum.isMetaMask) {
+                this.provider = new ethers.providers.Web3Provider(ethereum);
+                return this.provider;
+            }
+        }
+
+        throw new WalletNotInstalledError();
     }
 
     private _enforceIsConnected(): void {
@@ -141,7 +158,19 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
     public getIsWalletInstalled(): boolean {
         const ethereum = useWindow((windowObject) => (windowObject as { ethereum?: unknown }).ethereum) as any;
 
-        return Boolean(ethereum);
+        if (!ethereum) return false;
+
+        // edge case if Metamask and Coinbase Wallet are both installed
+        console.log({ ethereum })
+        if ("providers" in ethereum && ethereum.providers?.length) {
+            ethereum.providers.forEach((p: any) => {
+                if (p.isMetaMask) return true;
+            });
+        } else {
+            if (ethereum.isMetaMask) return true;
+        }
+
+        return false;
     }
 
     public getPrimaryAccount(): string {
@@ -176,7 +205,8 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
 
     public async switchChainFromWallet(chain: number) {
         const ethereum = useWindow((window: any) => window.ethereum);
-        if (ethereum.networkVersion !== chain) {
+        const provider = await this._getProvider();
+        if (ethereum.networkVersion !== chain && provider) {
             try {
                 await ethereum.request({
                     method: 'wallet_switchEthereumChain',
