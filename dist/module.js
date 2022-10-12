@@ -1205,9 +1205,9 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
         this._setupInitialState();
     }
     async _getProvider() {
-        const ethereum = await (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
-        if (!ethereum) throw new (0, $28ac839a9eca26f5$export$72563c16b91dfd16)();
-        return new (0, $hgUW1$ethers).providers.Web3Provider(ethereum);
+        if (this.provider) return this.provider;
+        if (!this._ethereum) throw new (0, $28ac839a9eca26f5$export$72563c16b91dfd16)();
+        return new (0, $hgUW1$ethers).providers.Web3Provider(this._ethereum, "any");
     }
     _enforceIsConnected() {
         if (!this.getIsConnected()) throw new (0, $28ac839a9eca26f5$export$313d299817c74896)();
@@ -1272,7 +1272,18 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
     }
     getIsWalletInstalled() {
         const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
-        return Boolean(ethereum);
+        if (!ethereum) return false;
+        // edge case if Metamask and Coinbase Wallet are both installed
+        if ("providers" in ethereum && ethereum.providers?.length) {
+            for (let p of ethereum.providers)if (p.isMetaMask) {
+                this._ethereum = p;
+                return true;
+            }
+        } else if (ethereum.isMetaMask) {
+            this._ethereum = ethereum;
+            return true;
+        }
+        return false;
     }
     getPrimaryAccount() {
         this._enforceChain();
@@ -1290,17 +1301,16 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
         return chainId;
     }
     async addChainToWallet(chainConfig) {
-        return (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (window)=>window.ethereum?.request({
-                method: "wallet_addEthereumChain",
-                params: [
-                    chainConfig
-                ]
-            }));
+        return this._ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+                chainConfig
+            ]
+        });
     }
     async switchChainFromWallet(chain) {
-        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
-        if (ethereum.networkVersion !== chain) try {
-            await ethereum.request({
+        if (this._ethereum.networkVersion !== chain) try {
+            await this._ethereum.request({
                 method: "wallet_switchEthereumChain",
                 params: [
                     {
@@ -1345,30 +1355,27 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
      * @see https://eips.ethereum.org/EIPS/eip-1193#references for list of ethereum hooks
      */ async mountEventListeners() {
         const provider = await this._getProvider();
-        if (typeof window !== "undefined" && "ethereum" in window) {
-            const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
-            if (ethereum.on) {
-                ethereum.on("accountsChanged", async (accounts)=>{
-                    this._state.accounts = accounts;
-                    if (accounts.length === 0) {
-                        await this.signOut();
-                        this.hookRouter.applyHooks([
-                            (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
-                        ]);
-                    } else this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
-                    this._updateWalletStorageValue();
-                });
-                ethereum.on("chainChanged", async (chainId)=>{
-                    this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
-                });
-                ethereum.on("disconnect", async (err)=>{
-                    console.warn(`Metamask Disconnected. Error:`);
-                    console.warn(err);
+        if (this._ethereum && this._ethereum.on) {
+            this._ethereum.on("accountsChanged", async (accounts)=>{
+                this._state.accounts = accounts;
+                if (accounts.length === 0) {
+                    await this.signOut();
                     this.hookRouter.applyHooks([
-                        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
+                        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
                     ]);
-                });
-            }
+                } else this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
+                this._updateWalletStorageValue();
+            });
+            this._ethereum.on("chainChanged", async (chainId)=>{
+                this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
+            });
+            this._ethereum.on("disconnect", async (err)=>{
+                console.warn(`Metamask Disconnected. Error:`);
+                console.warn(err);
+                this.hookRouter.applyHooks([
+                    (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
+                ]);
+            });
         }
         provider.on("block", (block)=>{
             this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, block);
