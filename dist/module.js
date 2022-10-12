@@ -618,7 +618,6 @@ class $95e4ef1726fa05c6$export$6a733d504587e4b0 {
         this._state = data;
     }
     getProvider() {
-        this._enforceIsConnected();
         if (this.provider instanceof (0, $hgUW1$PeraWalletConnect)) return this.provider;
         this.provider = new (0, $hgUW1$PeraWalletConnect)();
         return this.provider;

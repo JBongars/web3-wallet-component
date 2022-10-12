@@ -232,8 +232,6 @@ class PeraWallet implements WalletInterface<PeraWalletState>, WalletHookHandlerI
     }
 
     public getProvider(): PeraWalletConnect {
-        this._enforceIsConnected();
-
         if (this.provider instanceof PeraWalletConnect) {
             return this.provider;
         }
