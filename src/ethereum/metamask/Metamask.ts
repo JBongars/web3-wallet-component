@@ -26,6 +26,7 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
     private _walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_METAMASK);
     private chain: string | null = null;
     private _state: MetamaskState;
+    private _ethereum: any;
     public provider?: ethers.providers.Web3Provider;
     public name = 'METAMASK';
     public type: EthereumWalletType = WALLET_TYPE.ETHEREUM_METAMASK;
@@ -43,28 +44,11 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
     private async _getProvider(): Promise<ethers.providers.Web3Provider> {
         if (this.provider) return this.provider;
 
-        const ethereum = (await useWindow(async (windowObject) => (windowObject as any).ethereum)) as any;
-
-        if (!ethereum) {
+        if (!this._ethereum) {
             throw new WalletNotInstalledError();
         }
 
-        // edge case if Metamask and Coinbase Wallet are both installed
-        if ("providers" in ethereum && ethereum.providers?.length) {
-            ethereum.providers.forEach((p: any) => {
-                if (p.isMetaMask) {
-                    this.provider = new ethers.providers.Web3Provider(p);
-                    return this.provider;
-                }
-            });
-        } else {
-            if (ethereum.isMetaMask) {
-                this.provider = new ethers.providers.Web3Provider(ethereum);
-                return this.provider;
-            }
-        }
-
-        throw new WalletNotInstalledError();
+        return new ethers.providers.Web3Provider(this._ethereum, "any");
     }
 
     private _enforceIsConnected(): void {
@@ -161,13 +145,18 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
         if (!ethereum) return false;
 
         // edge case if Metamask and Coinbase Wallet are both installed
-        console.log({ ethereum })
         if ("providers" in ethereum && ethereum.providers?.length) {
-            ethereum.providers.forEach((p: any) => {
-                if (p.isMetaMask) return true;
-            });
+            for (let p of ethereum.providers) {
+                if (p.isMetaMask) {
+                    this._ethereum = p;
+                    return true;
+                }
+            }
         } else {
-            if (ethereum.isMetaMask) return true;
+            if (ethereum.isMetaMask) {
+                this._ethereum = ethereum;
+                return true;
+            }
         }
 
         return false;
@@ -195,20 +184,16 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
     }
 
     public async addChainToWallet(chainConfig: MetamaskChainConfig): Promise<void> {
-        return useWindow(async (window: any) =>
-            window.ethereum?.request({
-                method: 'wallet_addEthereumChain',
-                params: [chainConfig]
-            })
-        );
+        return this._ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [chainConfig]
+        });
     }
 
     public async switchChainFromWallet(chain: number) {
-        const ethereum = useWindow((window: any) => window.ethereum);
-        const provider = await this._getProvider();
-        if (ethereum.networkVersion !== chain && provider) {
+        if (this._ethereum.networkVersion !== chain) {
             try {
-                await ethereum.request({
+                await this._ethereum.request({
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: `0x${chain}` }]
                 });
@@ -264,31 +249,28 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
      */
     public async mountEventListeners(): Promise<void> {
         const provider = await this._getProvider();
-        if (typeof window !== 'undefined' && 'ethereum' in window) {
-            const ethereum = useWindow((window: any) => window.ethereum);
-            if (ethereum.on) {
-                ethereum.on('accountsChanged', async (accounts: string[]) => {
-                    this._state.accounts = accounts;
+        if (this._ethereum && this._ethereum.on) {
+            this._ethereum.on('accountsChanged', async (accounts: string[]) => {
+                this._state.accounts = accounts;
 
-                    if (accounts.length === 0) {
-                        await this.signOut();
-                        this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
-                    } else {
-                        this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, accounts);
-                    }
-                    this._updateWalletStorageValue();
-                });
+                if (accounts.length === 0) {
+                    await this.signOut();
+                    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
+                } else {
+                    this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, accounts);
+                }
+                this._updateWalletStorageValue();
+            });
 
-                ethereum.on('chainChanged', async (chainId: string) => {
-                    this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, chainId);
-                });
+            this._ethereum.on('chainChanged', async (chainId: string) => {
+                this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, chainId);
+            });
 
-                ethereum.on('disconnect', async (err: Error) => {
-                    console.warn(`Metamask Disconnected. Error:`);
-                    console.warn(err);
-                    this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
-                });
-            }
+            this._ethereum.on('disconnect', async (err: Error) => {
+                console.warn(`Metamask Disconnected. Error:`);
+                console.warn(err);
+                this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
+            });
         }
 
         provider.on('block', (block: number) => {
