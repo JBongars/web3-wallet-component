@@ -1143,20 +1143,8 @@ var $3b49e6787d3f4e23$export$2e2bcd8739ae039 = $3b49e6787d3f4e23$var$WalletState
 
 
 
-const $6efec99b285d035b$export$92de899abf5da75a = {
-    chainName: "Rinkeby Test Network",
-    chainId: "0x4",
-    nativeCurrency: {
-        name: "ETH",
-        decimals: 18,
-        symbol: "ETH"
-    },
-    rpcUrls: [
-        "https://rinkeby.etherscan.io"
-    ]
-};
 const $6efec99b285d035b$export$abdf78135f8407bb = {
-    chainName: "Rinkeby Test Network",
+    chainName: "Ethereum Mainnet",
     chainId: "0x1",
     nativeCurrency: {
         name: "ETH",
@@ -1167,12 +1155,80 @@ const $6efec99b285d035b$export$abdf78135f8407bb = {
         "https://rinkeby.etherscan.io"
     ]
 };
+const $6efec99b285d035b$var$ropstenEth = {
+    chainName: "Ropsten Test Network",
+    chainId: "0x3",
+    nativeCurrency: {
+        name: "RopstenETH",
+        decimals: 18,
+        symbol: "RopstenETH"
+    },
+    rpcUrls: [
+        "https://ropsten.etherscan.io"
+    ]
+};
+const $6efec99b285d035b$export$92de899abf5da75a = {
+    chainName: "Rinkeby Test Network",
+    chainId: "0x4",
+    nativeCurrency: {
+        name: "RinkebyETH",
+        decimals: 18,
+        symbol: "RinkebyETH"
+    },
+    rpcUrls: [
+        "https://rinkeby.etherscan.io"
+    ]
+};
+const $6efec99b285d035b$var$goerliEth = {
+    chainName: "Goerli Test Network",
+    chainId: "0x5",
+    nativeCurrency: {
+        name: "GoerliETH",
+        decimals: 18,
+        symbol: "GoerliETH"
+    },
+    rpcUrls: [
+        "https://goerli.etherscan.io"
+    ]
+};
+const $6efec99b285d035b$var$kovanEth = {
+    chainName: "Kovan Test Network",
+    chainId: "0x2a",
+    nativeCurrency: {
+        name: "KovanETH",
+        decimals: 18,
+        symbol: "KovanETH"
+    },
+    rpcUrls: [
+        "https://kovan.etherscan.io"
+    ]
+};
+const $6efec99b285d035b$var$sepoliaEth = {
+    chainName: "Sepolia Test Network",
+    chainId: "0xaa36a7",
+    nativeCurrency: {
+        name: "SepoliaETH",
+        decimals: 18,
+        symbol: "SepoliaETH"
+    },
+    rpcUrls: [
+        "https://sepolia.etherscan.io"
+    ]
+};
 const $6efec99b285d035b$export$703a843624f42e6c = (chainId)=>{
     switch(chainId){
         case 1:
             return $6efec99b285d035b$export$abdf78135f8407bb;
+        case 3:
+            return $6efec99b285d035b$var$ropstenEth;
         case 4:
             return $6efec99b285d035b$export$92de899abf5da75a;
+        case 5:
+            return $6efec99b285d035b$var$goerliEth;
+        case 42:
+            return $6efec99b285d035b$var$kovanEth;
+        case 11155111:
+            return $6efec99b285d035b$var$sepoliaEth;
         default:
             throw new Error(`ChainId ${chainId} configuration not found`);
     }
