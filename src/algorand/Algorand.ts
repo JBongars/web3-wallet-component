@@ -252,7 +252,23 @@ class Algorand
     };
 
     public toJSON(): unknown {
-        throw new NotImplementedError();
+        return [
+            {
+                type: this._myAlgo.type,
+                name: this._myAlgo.name,
+                state: this._myAlgo.toJSON()
+            },
+            {
+                type: this._walletConnect.type,
+                name: this._walletConnect.name,
+                state: this._walletConnect.toJSON()
+            },
+            {
+                type: this._peraWallet.type,
+                name: this._peraWallet.name,
+                state: this._peraWallet.toJSON()
+            }
+        ];
     }
 }
 
