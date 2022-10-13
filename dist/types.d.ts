@@ -63,7 +63,8 @@ enum WALLET_ID {
     ALGORAND_MYALGO = 2,
     ALGORAND_WALLETCONNECT = 3,
     ETHEREUM_WALLETCONNECT = 4,
-    ALGORAND_PERAWALLET = 5
+    ALGORAND_PERAWALLET = 5,
+    ETHEREUM_COINBASE = 6
 }
 type HookEvent = {
     destroy: () => void;
@@ -76,9 +77,10 @@ export const useWindow: <T>(cb: (windowObject: unknown) => T) => T | null;
 export enum WALLET_TYPE {
     ETHEREUM_METAMASK = 0,
     ETHEREUM_WALLETCONNECT = 1,
-    ALGORAND_MYALGO = 2,
-    ALGORAND_WALLETCONNECT = 3,
-    ALGORAND_PERAWALLET = 4
+    ETHEREUM_COINBASE = 2,
+    ALGORAND_MYALGO = 3,
+    ALGORAND_WALLETCONNECT = 4,
+    ALGORAND_PERAWALLET = 5
 }
 /**
  * Chain types representing blockchains above @see WALLET_TYPE are associated to
@@ -213,7 +215,7 @@ export type EthereumWallet = Metamask | EthWalletConnect;
 /**
  * wallet enum to be used as identifier
  */
-export type EthereumWalletType = WALLET_TYPE.ETHEREUM_METAMASK | WALLET_TYPE.ETHEREUM_WALLETCONNECT;
+export type EthereumWalletType = WALLET_TYPE.ETHEREUM_METAMASK | WALLET_TYPE.ETHEREUM_WALLETCONNECT | WALLET_TYPE.ETHEREUM_COINBASE;
 /**
  * Signer object passed
  */

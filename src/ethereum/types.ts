@@ -11,7 +11,10 @@ type EthereumWallet = Metamask | EthWalletConnect;
 /**
  * wallet enum to be used as identifier
  */
-type EthereumWalletType = WALLET_TYPE.ETHEREUM_METAMASK | WALLET_TYPE.ETHEREUM_WALLETCONNECT;
+type EthereumWalletType =
+    | WALLET_TYPE.ETHEREUM_METAMASK
+    | WALLET_TYPE.ETHEREUM_WALLETCONNECT
+    | WALLET_TYPE.ETHEREUM_COINBASE;
 
 /**
  * Signer object passed
