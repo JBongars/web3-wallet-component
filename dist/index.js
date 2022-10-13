@@ -1301,13 +1301,13 @@ class $bde3ffd6d211cef9$export$2c78a3b4fc11d8fa {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signOut() {
-        this._enforceIsConnected();
         this._state.accounts = [];
         this._state.isConnected = false;
         this._updateWalletStorageValue();
         this.hookRouter.applyHooks([
             (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
         ]);
+        if (!this.getIsConnected()) return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).WALLET_ERROR;
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async getSigner() {
