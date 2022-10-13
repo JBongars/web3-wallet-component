@@ -108,14 +108,7 @@ class PeraWallet implements WalletInterface<PeraWalletState>, WalletHookHandlerI
 
         if (!this.provider) {
             this.provider = this.getProvider();
-        }
-
-        if (!this.provider.connector) {
             await this.provider.reconnectSession();
-        }
-
-        if (!this.provider.bridge) {
-            this.provider.bridge = localStorage.getItem('PeraWallet.BridgeURL') || '';
         }
 
         try {

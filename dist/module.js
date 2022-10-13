@@ -526,9 +526,10 @@ class $95e4ef1726fa05c6$export$6a733d504587e4b0 {
     async signOut() {
         this._state.accounts = [];
         this._state.isConnected = false;
-        if (!this.provider) this.provider = this.getProvider();
-        if (!this.provider.connector) await this.provider.reconnectSession();
-        if (!this.provider.bridge) this.provider.bridge = localStorage.getItem("PeraWallet.BridgeURL") || "";
+        if (!this.provider) {
+            this.provider = this.getProvider();
+            await this.provider.reconnectSession();
+        }
         try {
             await this.provider?.disconnect();
         } catch (e) {
