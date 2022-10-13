@@ -187,21 +187,21 @@ var $826e60e3117e96ce$export$2e2bcd8739ae039 = $826e60e3117e96ce$var$HookRouter;
 let /**
  * Wallet statuses
  */ $90bab4f8b8f7e96d$export$de76a1f31766a0a2;
-(function(WALLET_STATUS1) {
-    WALLET_STATUS1[WALLET_STATUS1[/**
+(function(WALLET_STATUS) {
+    WALLET_STATUS[WALLET_STATUS[/**
      * Wallet is OK
      */ "OK"] = 0] = "OK";
-    WALLET_STATUS1[WALLET_STATUS1[/**
+    WALLET_STATUS[WALLET_STATUS[/**
      * There was a problem logging in
      * @remarks user may have cancelled the transaction
      */ "LOGIN_ERROR"] = 1] = "LOGIN_ERROR";
-    WALLET_STATUS1[WALLET_STATUS1[/**
+    WALLET_STATUS[WALLET_STATUS[/**
      * There was a problem initializing the wallet
      */ "WALLET_ERROR"] = 2] = "WALLET_ERROR";
-    WALLET_STATUS1[WALLET_STATUS1[/**
+    WALLET_STATUS[WALLET_STATUS[/**
      * There was a problem initializing the  wallet because the extension was not found
      */ "EXTENSION_NOT_FOUND"] = 3] = "EXTENSION_NOT_FOUND";
-    WALLET_STATUS1[WALLET_STATUS1[/**
+    WALLET_STATUS[WALLET_STATUS[/**
      * The Wallet account was not found
      */ "ACCOUNT_NOT_FOUND"] = 4] = "ACCOUNT_NOT_FOUND";
 })($90bab4f8b8f7e96d$export$de76a1f31766a0a2 || ($90bab4f8b8f7e96d$export$de76a1f31766a0a2 = {}));
@@ -209,26 +209,26 @@ let /**
  * Identifier for Wallet
  * @remarks example Metamask, WalletConnect, etc...
  */ $90bab4f8b8f7e96d$export$7c460c214963f696;
-(function(WALLET_ID1) {
-    WALLET_ID1[WALLET_ID1["ETHEREUM_METAMASK"] = 1] = "ETHEREUM_METAMASK";
-    WALLET_ID1[WALLET_ID1["ALGORAND_MYALGO"] = 2] = "ALGORAND_MYALGO";
-    WALLET_ID1[WALLET_ID1["ALGORAND_WALLETCONNECT"] = 3] = "ALGORAND_WALLETCONNECT";
-    WALLET_ID1[WALLET_ID1["ETHEREUM_WALLETCONNECT"] = 4] = "ETHEREUM_WALLETCONNECT";
-    WALLET_ID1[WALLET_ID1["ALGORAND_PERAWALLET"] = 5] = "ALGORAND_PERAWALLET";
+(function(WALLET_ID) {
+    WALLET_ID[WALLET_ID["ETHEREUM_METAMASK"] = 1] = "ETHEREUM_METAMASK";
+    WALLET_ID[WALLET_ID["ALGORAND_MYALGO"] = 2] = "ALGORAND_MYALGO";
+    WALLET_ID[WALLET_ID["ALGORAND_WALLETCONNECT"] = 3] = "ALGORAND_WALLETCONNECT";
+    WALLET_ID[WALLET_ID["ETHEREUM_WALLETCONNECT"] = 4] = "ETHEREUM_WALLETCONNECT";
+    WALLET_ID[WALLET_ID["ALGORAND_PERAWALLET"] = 5] = "ALGORAND_PERAWALLET";
 })($90bab4f8b8f7e96d$export$7c460c214963f696 || ($90bab4f8b8f7e96d$export$7c460c214963f696 = {}));
 let /**
  * Wallet Hook events
  * @remarks events are based on Metamask
  */ $90bab4f8b8f7e96d$export$5ee9bf08a91850b9;
-(function(WALLET_HOOK1) {
-    WALLET_HOOK1[WALLET_HOOK1[/**
+(function(WALLET_HOOK) {
+    WALLET_HOOK[WALLET_HOOK[/**
      * User has prompted to change chains on the wallet
      */ "CHAIN_ON_CHANGE"] = 0] = "CHAIN_ON_CHANGE";
-    WALLET_HOOK1[WALLET_HOOK1["CHAIN_ON_DISCONNECT"] = 1] = "CHAIN_ON_DISCONNECT";
-    WALLET_HOOK1[WALLET_HOOK1["ACCOUNT_ON_CHANGE"] = 2] = "ACCOUNT_ON_CHANGE";
-    WALLET_HOOK1[WALLET_HOOK1["ACCOUNT_ON_DISCONNECT"] = 3] = "ACCOUNT_ON_DISCONNECT";
-    WALLET_HOOK1[WALLET_HOOK1["NEW_BLOCK"] = 4] = "NEW_BLOCK";
-    WALLET_HOOK1[WALLET_HOOK1["CONNECT"] = 5] = "CONNECT";
+    WALLET_HOOK[WALLET_HOOK["CHAIN_ON_DISCONNECT"] = 1] = "CHAIN_ON_DISCONNECT";
+    WALLET_HOOK[WALLET_HOOK["ACCOUNT_ON_CHANGE"] = 2] = "ACCOUNT_ON_CHANGE";
+    WALLET_HOOK[WALLET_HOOK["ACCOUNT_ON_DISCONNECT"] = 3] = "ACCOUNT_ON_DISCONNECT";
+    WALLET_HOOK[WALLET_HOOK["NEW_BLOCK"] = 4] = "NEW_BLOCK";
+    WALLET_HOOK[WALLET_HOOK["CONNECT"] = 5] = "CONNECT";
 })($90bab4f8b8f7e96d$export$5ee9bf08a91850b9 || ($90bab4f8b8f7e96d$export$5ee9bf08a91850b9 = {}));
 
 
@@ -259,19 +259,19 @@ $parcel$export($9ef2866eeb66da86$exports, "CHAIN_TYPE", () => $9ef2866eeb66da86$
 let /**
  * Wallet types representing low level wallets
  */ $9ef2866eeb66da86$export$353aefc175350117;
-(function(WALLET_TYPE1) {
-    WALLET_TYPE1[WALLET_TYPE1["ETHEREUM_METAMASK"] = 0] = "ETHEREUM_METAMASK";
-    WALLET_TYPE1[WALLET_TYPE1["ETHEREUM_WALLETCONNECT"] = 1] = "ETHEREUM_WALLETCONNECT";
-    WALLET_TYPE1[WALLET_TYPE1["ALGORAND_MYALGO"] = 2] = "ALGORAND_MYALGO";
-    WALLET_TYPE1[WALLET_TYPE1["ALGORAND_WALLETCONNECT"] = 3] = "ALGORAND_WALLETCONNECT";
-    WALLET_TYPE1[WALLET_TYPE1["ALGORAND_PERAWALLET"] = 4] = "ALGORAND_PERAWALLET";
+(function(WALLET_TYPE) {
+    WALLET_TYPE[WALLET_TYPE["ETHEREUM_METAMASK"] = 0] = "ETHEREUM_METAMASK";
+    WALLET_TYPE[WALLET_TYPE["ETHEREUM_WALLETCONNECT"] = 1] = "ETHEREUM_WALLETCONNECT";
+    WALLET_TYPE[WALLET_TYPE["ALGORAND_MYALGO"] = 2] = "ALGORAND_MYALGO";
+    WALLET_TYPE[WALLET_TYPE["ALGORAND_WALLETCONNECT"] = 3] = "ALGORAND_WALLETCONNECT";
+    WALLET_TYPE[WALLET_TYPE["ALGORAND_PERAWALLET"] = 4] = "ALGORAND_PERAWALLET";
 })($9ef2866eeb66da86$export$353aefc175350117 || ($9ef2866eeb66da86$export$353aefc175350117 = {}));
 let /**
  * Chain types representing blockchains above @see WALLET_TYPE are associated to
  */ $9ef2866eeb66da86$export$be56259456d697c6;
-(function(CHAIN_TYPE1) {
-    CHAIN_TYPE1[CHAIN_TYPE1["ALGORAND"] = 0] = "ALGORAND";
-    CHAIN_TYPE1[CHAIN_TYPE1["ETHEREUM"] = 1] = "ETHEREUM";
+(function(CHAIN_TYPE) {
+    CHAIN_TYPE[CHAIN_TYPE["ALGORAND"] = 0] = "ALGORAND";
+    CHAIN_TYPE[CHAIN_TYPE["ETHEREUM"] = 1] = "ETHEREUM";
 })($9ef2866eeb66da86$export$be56259456d697c6 || ($9ef2866eeb66da86$export$be56259456d697c6 = {}));
 
 
@@ -1024,7 +1024,23 @@ $parcel$exportWildcard($6a9b0d356171a818$exports, $3a36ecaae881d84d$exports);
         throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
     };
     toJSON() {
-        throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
+        return [
+            {
+                type: this._myAlgo.type,
+                name: this._myAlgo.name,
+                state: this._myAlgo.toJSON()
+            },
+            {
+                type: this._walletConnect.type,
+                name: this._walletConnect.name,
+                state: this._walletConnect.toJSON()
+            },
+            {
+                type: this._peraWallet.type,
+                name: this._peraWallet.name,
+                state: this._peraWallet.toJSON()
+            }
+        ];
     }
 }
 
@@ -1290,7 +1306,7 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
         return chainId;
     }
     async addChainToWallet(chainConfig) {
-        return (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (window)=>window.ethereum?.request({
+        return (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (window1)=>window1.ethereum?.request({
                 method: "wallet_addEthereumChain",
                 params: [
                     chainConfig
@@ -1298,7 +1314,7 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
             }));
     }
     async switchChainFromWallet(chain) {
-        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
+        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window1)=>window1.ethereum);
         if (ethereum.networkVersion !== chain) try {
             await ethereum.request({
                 method: "wallet_switchEthereumChain",
@@ -1346,7 +1362,7 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
      */ async mountEventListeners() {
         const provider = await this._getProvider();
         if (typeof window !== "undefined" && "ethereum" in window) {
-            const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
+            const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window1)=>window1.ethereum);
             if (ethereum.on) {
                 ethereum.on("accountsChanged", async (accounts)=>{
                     this._state.accounts = accounts;
@@ -1794,7 +1810,18 @@ $parcel$exportWildcard($b82f469e02efa91a$exports, $23e6805a38b2b33b$exports);
         });
     };
     toJSON() {
-        throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
+        return [
+            {
+                type: this._metaMask.type,
+                name: this._metaMask.name,
+                state: this._metaMask.toJSON()
+            },
+            {
+                type: this._walletConnect.type,
+                name: this._walletConnect.name,
+                state: this._walletConnect.toJSON()
+            }
+        ];
     }
 }
 

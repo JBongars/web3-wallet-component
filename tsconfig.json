@@ -14,9 +14,10 @@
         "paths": {
             "~/*": ["./*"]
         },
-        "outDir": "./dist"
+        "outDir": "./dist",
+        "jsx": "react"
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist", "jest.config.js", "**/*.spec.ts"],
+    "exclude": ["node_modules", "dist", "jest.config.js", "**/*.spec.ts", ".storybook/**/*"],
     "types": ["jest"]
 }

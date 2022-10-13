@@ -253,7 +253,18 @@ class Ethereum
     };
 
     public toJSON(): unknown {
-        throw new NotImplementedError();
+        return [
+            {
+                type: this._metaMask.type,
+                name: this._metaMask.name,
+                state: this._metaMask.toJSON()
+            },
+            {
+                type: this._walletConnect.type,
+                name: this._walletConnect.name,
+                state: this._walletConnect.toJSON()
+            }
+        ];
     }
 }
 
