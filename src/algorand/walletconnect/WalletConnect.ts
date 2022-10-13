@@ -130,7 +130,9 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
         }
 
         try {
-            await this.provider?.killSession();
+            if (this.provider?.connected) {
+                await this.provider?.killSession();
+            }
         } catch (e) {
             console.error('Failed to kill session...');
         }

@@ -531,6 +531,7 @@ class $5f075e6dc19036e9$export$6a733d504587e4b0 {
         this._state.isConnected = false;
         if (!this.provider) this.provider = this.getProvider();
         if (!this.provider.connector) await this.provider.reconnectSession();
+        if (!this.provider.bridge) this.provider.bridge = localStorage.getItem("PeraWallet.BridgeURL") || "";
         try {
             await this.provider?.disconnect();
         } catch (e) {
@@ -731,7 +732,7 @@ class $85900a75ff20f989$export$ba0ef3a0d99fcc8f {
         this._state.isConnected = false;
         if (!this.provider) this.getProvider();
         try {
-            await this.provider?.killSession();
+            if (this.provider?.connected) await this.provider?.killSession();
         } catch (e) {
             console.error("Failed to kill session...");
         }
