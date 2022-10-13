@@ -104,12 +104,13 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
     }
 
     public async signOut(): Promise<WALLET_STATUS> {
-        this._enforceIsConnected();
         this._state.accounts = [];
         this._state.isConnected = false;
 
         this._updateWalletStorageValue();
         this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
+
+        if (!this.getIsConnected()) return WALLET_STATUS.WALLET_ERROR;
         return WALLET_STATUS.OK;
     }
 
