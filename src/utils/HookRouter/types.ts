@@ -28,12 +28,13 @@ enum WALLET_STATUS {
 /**
  * Identifier for Wallet
  * @remarks example Metamask, WalletConnect, etc...
+ * sorting should be same as WALLET_TYPE
  */
 enum WALLET_ID {
     ETHEREUM_METAMASK = 0,
-    ALGORAND_MYALGO = 1,
-    ALGORAND_WALLETCONNECT = 2,
-    ETHEREUM_WALLETCONNECT = 3,
+    ETHEREUM_WALLETCONNECT = 1,
+    ALGORAND_MYALGO = 2,
+    ALGORAND_WALLETCONNECT = 3,
     ALGORAND_PERAWALLET = 4
 }
 
