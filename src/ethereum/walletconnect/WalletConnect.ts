@@ -9,6 +9,7 @@ import { WALLET_TYPE } from '../../config/wallets';
 import { useWindow } from '../../containers';
 import { WalletHookHandlerInterface, WalletInterface } from '../../types';
 import { getChainConfig } from '../chains';
+import { ProviderService } from '../services';
 import { EthereumWalletConnectAsset, EthereumWalletConnectChainConfig, EthereumWalletConnectState } from './types';
 
 const initialState: Readonly<EthereumWalletConnectState> = Object.freeze({
@@ -121,8 +122,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         this._enforceIsConnected();
 
         const provider = this.provider || (await this._getProvider());
-
-        return provider.getSigner();
+        return ProviderService.getSigner(provider);
     }
 
     public async getBalance(): Promise<string> {
@@ -130,12 +130,11 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         this._enforceIsConnected();
 
         const provider = await this._getProvider();
-        const balance = await provider.getBalance(this._state.accounts[0]);
-        return balance.toString();
+        return await ProviderService.getBalance(provider, this._state.accounts[0]);
     }
 
     public async getAssets(): Promise<EthereumWalletConnectAsset[]> {
-        throw new NotImplementedError();
+        return await ProviderService.getAssets();
     }
 
     public getIsConnected(): boolean {
@@ -164,9 +163,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
     public async fetchCurrentChainID(): Promise<string> {
         const provider: ethers.providers.Web3Provider = await this._getProvider();
-        const chainId = await provider.send('eth_chainId', []);
-
-        return chainId;
+        return ProviderService.fetchCurrentChainID(provider);
     }
 
     public async addChainToWallet(chainConfig: EthereumWalletConnectChainConfig): Promise<void> {
