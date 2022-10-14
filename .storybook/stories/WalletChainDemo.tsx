@@ -1,7 +1,8 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { CHAIN_TYPE, Wallet } from '../../src';
+import { CHAIN_TYPE, Wallet, WALLET_TYPE } from '../../src';
+import { makeTransaction } from './services';
 import styled from '@emotion/styled';
-import { StringFormatOption } from '@sinclair/typebox';
+import react from 'react';
 
 type WalletChainDemoProps = {
     wallet: Wallet | any;
@@ -36,6 +37,18 @@ const getWallet = (wallet: any, input: number): any => {
     } catch (err) {
         return wallet.getActiveWallet();
     }
+};
+
+const getWalletChainType = (wallet: Wallet): number => {
+    console.log({ t: wallet.type, WALLET_TYPE });
+    if (
+        wallet.type === WALLET_TYPE.ALGORAND_MYALGO ||
+        wallet.type === WALLET_TYPE.ALGORAND_PERAWALLET ||
+        wallet.type === WALLET_TYPE.ALGORAND_WALLETCONNECT
+    ) {
+        return CHAIN_TYPE.ALGORAND;
+    }
+    return CHAIN_TYPE.ETHEREUM;
 };
 
 const getWalletName = (wallet: any, input: number): string => {
@@ -150,6 +163,9 @@ const WalletChainDemo: FunctionComponent<WalletChainDemoProps> = ({ wallet }) =>
                     {genAction('getPrimaryAccount')}
                     {genAction('getAccounts')}
                     {genAction('fetchCurrentChainID')}
+                    <button onClick={() => handleRequest(() => makeTransaction(getWalletChainType(wallet), wallet))}>
+                        Make Transaction
+                    </button>
                     <button onClick={() => console.log(wallet)}>Print THIS</button>
                 </ButtonGroup>
             </FormGroup>

@@ -125,10 +125,14 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         return ProviderService.addChainToWallet(chainConfig as EthereumChainConfig);
     }
 
-    public async switchChainFromWallet(chain: number) {
-        const ethereum = useWindow((window: any) => window.ethereum);
-        if (ethereum.networkVersion !== chain) {
-            return ProviderService.switchChainFromWallet(ethereum, chain);
+    public async switchChainFromWallet(chain: number, noHook: boolean = false) {
+        const ethereum = this._getEthereumProvider();
+        if ((ethereum as any).networkVersion !== String(chain)) {
+            await ProviderService.switchChainFromWallet(ethereum, chain);
+
+            if (noHook) {
+                this.chain = `0x${chain}`;
+            }
         }
     }
 

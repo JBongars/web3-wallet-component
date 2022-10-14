@@ -62,14 +62,14 @@ abstract class ProviderService {
             throw new Error('EthereumProvider.request method is not available');
         }
         try {
-            await ethereum.request({
+            return ethereum.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: `0x${chain}` }]
             });
         } catch (err) {
             if (err && (err as { code: number }).code === 4902) {
                 const chainConfig = getChainConfig(chain);
-                await this.addChainToWallet(chainConfig as EthereumChainConfig);
+                return await this.addChainToWallet(chainConfig as EthereumChainConfig);
             } else {
                 throw err;
             }

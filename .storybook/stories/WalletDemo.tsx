@@ -1,7 +1,9 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { CHAIN_TYPE, Wallet, WALLET_TYPE } from '../../src';
+import { CHAIN_TYPE, Metamask, Wallet, WALLET_TYPE } from '../../src';
 import styled from '@emotion/styled';
 import { StringFormatOption } from '@sinclair/typebox';
+import react from 'react';
+import { makeTransaction } from './services';
 
 type WalletDemoProps = {
     wallet: Wallet | any;
@@ -24,11 +26,22 @@ const FormGroup = styled.div`
 `;
 
 const ButtonGroup = styled.div`
-    max-width: 800px;
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
 `;
+
+const getWalletChainType = (wallet: Wallet): number => {
+    console.log({ t: wallet.type, WALLET_TYPE });
+    if (
+        wallet.type === WALLET_TYPE.ALGORAND_MYALGO ||
+        wallet.type === WALLET_TYPE.ALGORAND_PERAWALLET ||
+        wallet.type === WALLET_TYPE.ALGORAND_WALLETCONNECT
+    ) {
+        return CHAIN_TYPE.ALGORAND;
+    }
+    return CHAIN_TYPE.ETHEREUM;
+};
 
 function tryStringifyJSON(json: unknown): string {
     try {
@@ -59,7 +72,11 @@ const WalletDemo: FunctionComponent<WalletDemoProps> = ({ wallet }) => {
             console.log(wallet.toJSON());
             setWalletState(wallet.toJSON());
         });
-        if (wallet.type === WALLET_TYPE.ETHEREUM_METAMASK || wallet.type === WALLET_TYPE.ETHEREUM_WALLETCONNECT || wallet.type === WALLET_TYPE.ETHEREUM_COINBASE) {
+        if (
+            wallet.type === WALLET_TYPE.ETHEREUM_METAMASK ||
+            wallet.type === WALLET_TYPE.ETHEREUM_WALLETCONNECT ||
+            wallet.type === WALLET_TYPE.ETHEREUM_COINBASE
+        ) {
             wallet.onBlockAdded((newBlock: number) => {
                 console.log('onBlockAdded', newBlock);
             });
@@ -99,6 +116,12 @@ const WalletDemo: FunctionComponent<WalletDemoProps> = ({ wallet }) => {
                     {genAction('getPrimaryAccount')}
                     {genAction('getAccounts')}
                     {genAction('fetchCurrentChainID')}
+                    <button onClick={() => handleRequest(() => (wallet as Metamask).switchChainFromWallet(5, true))}>
+                        Switch Networks To Goerli
+                    </button>
+                    <button onClick={() => handleRequest(() => makeTransaction(getWalletChainType(wallet), wallet))}>
+                        Make Transaction
+                    </button>
                     <button onClick={() => console.log(wallet)}>Print THIS</button>
                 </ButtonGroup>
             </FormGroup>
