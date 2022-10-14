@@ -1,4 +1,3 @@
-import {ethers as $hgUW1$ethers, providers as $hgUW1$providers} from "ethers";
 import {isValidAddress as $hgUW1$isValidAddress} from "algosdk";
 import {isAddress as $hgUW1$isAddress} from "ethers/lib/utils";
 import $hgUW1$randlabsmyalgoconnect from "@randlabs/myalgo-connect";
@@ -7,6 +6,7 @@ import {PeraWalletConnect as $hgUW1$PeraWalletConnect} from "@perawallet/connect
 import {Buffer as $hgUW1$Buffer} from "buffer";
 import $hgUW1$walletconnectclient from "@walletconnect/client";
 import $hgUW1$algorandwalletconnectqrcodemodal from "algorand-walletconnect-qrcode-modal";
+import {ethers as $hgUW1$ethers, providers as $hgUW1$providers} from "ethers";
 import $hgUW1$coinbasewalletsdk from "@coinbase/wallet-sdk";
 import $hgUW1$walletconnectweb3provider from "@walletconnect/web3-provider";
 
@@ -82,8 +82,6 @@ var $05db05568a951b86$exports = {};
 var $63a99e75275a61fa$exports = {};
 
 $parcel$export($63a99e75275a61fa$exports, "Metamask", () => $63a99e75275a61fa$export$2c78a3b4fc11d8fa);
-
-
 
 /**
  * Handles callback hooks for wallet/ chain events
@@ -211,12 +209,13 @@ let /**
  * @remarks example Metamask, WalletConnect, etc...
  */ $90bab4f8b8f7e96d$export$7c460c214963f696;
 (function(WALLET_ID) {
+    WALLET_ID[WALLET_ID["ETHEREUM_NOWALLET"] = 0] = "ETHEREUM_NOWALLET";
     WALLET_ID[WALLET_ID["ETHEREUM_METAMASK"] = 1] = "ETHEREUM_METAMASK";
-    WALLET_ID[WALLET_ID["ALGORAND_MYALGO"] = 2] = "ALGORAND_MYALGO";
-    WALLET_ID[WALLET_ID["ALGORAND_WALLETCONNECT"] = 3] = "ALGORAND_WALLETCONNECT";
-    WALLET_ID[WALLET_ID["ETHEREUM_WALLETCONNECT"] = 4] = "ETHEREUM_WALLETCONNECT";
-    WALLET_ID[WALLET_ID["ALGORAND_PERAWALLET"] = 5] = "ALGORAND_PERAWALLET";
-    WALLET_ID[WALLET_ID["ETHEREUM_COINBASE"] = 6] = "ETHEREUM_COINBASE";
+    WALLET_ID[WALLET_ID["ETHEREUM_WALLETCONNECT"] = 2] = "ETHEREUM_WALLETCONNECT";
+    WALLET_ID[WALLET_ID["ETHEREUM_COINBASE"] = 3] = "ETHEREUM_COINBASE";
+    WALLET_ID[WALLET_ID["ALGORAND_MYALGO"] = 4] = "ALGORAND_MYALGO";
+    WALLET_ID[WALLET_ID["ALGORAND_WALLETCONNECT"] = 5] = "ALGORAND_WALLETCONNECT";
+    WALLET_ID[WALLET_ID["ALGORAND_PERAWALLET"] = 6] = "ALGORAND_PERAWALLET";
 })($90bab4f8b8f7e96d$export$7c460c214963f696 || ($90bab4f8b8f7e96d$export$7c460c214963f696 = {}));
 let /**
  * Wallet Hook events
@@ -1162,6 +1161,14 @@ var $3b49e6787d3f4e23$export$2e2bcd8739ae039 = $3b49e6787d3f4e23$var$WalletState
 
 
 
+
+
+
+
+
+
+
+
 const $6efec99b285d035b$export$92de899abf5da75a = {
     chainName: "Rinkeby Test Network",
     chainId: "0x4",
@@ -1198,11 +1205,68 @@ const $6efec99b285d035b$export$703a843624f42e6c = (chainId)=>{
 };
 
 
-const $63a99e75275a61fa$var$initialState = Object.freeze({
-    accounts: [],
-    isConnected: false
-});
-class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
+class $d808041ad48ee2f7$export$9e095c387372d0b1 {
+    static getNamedWindowEthereumObject(key, validator) {
+        const ethereumGlobal = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
+        if (!ethereumGlobal) throw new (0, $28ac839a9eca26f5$export$72563c16b91dfd16)();
+        if (!ethereumGlobal.providerMap) {
+            if (!validator(ethereumGlobal)) throw new (0, $28ac839a9eca26f5$export$72563c16b91dfd16)();
+            return ethereumGlobal;
+        }
+        const ethereum = ethereumGlobal.providerMap.get(key);
+        if (!ethereum || !validator(ethereum)) throw new (0, $28ac839a9eca26f5$export$72563c16b91dfd16)();
+        return ethereum;
+    }
+    static getSigner(provider) {
+        return provider.getSigner();
+    }
+    static async getBalance(provider, accountId) {
+        const balance = await provider.getBalance(accountId);
+        return balance.toString();
+    }
+    static async getAssets() {
+        throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
+    }
+    static getIsWalletInstalled(ethereum) {
+        return Boolean(ethereum);
+    }
+    static async fetchCurrentChainID(provider) {
+        return provider.send("eth_chainId", []);
+    }
+    static async addChainToWallet(chainConfig) {
+        return (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (window)=>window.ethereum?.request({
+                method: "wallet_addEthereumChain",
+                params: [
+                    chainConfig
+                ]
+            }));
+    }
+    static async switchChainFromWallet(ethereum, chain) {
+        if (!ethereum.request) throw new Error("EthereumProvider.request method is not available");
+        try {
+            return ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [
+                    {
+                        chainId: `0x${chain}`
+                    }
+                ]
+            });
+        } catch (err) {
+            if (err && err.code === 4902) {
+                const chainConfig = (0, $6efec99b285d035b$export$703a843624f42e6c)(chain);
+                return await this.addChainToWallet(chainConfig);
+            } else throw err;
+        }
+    }
+}
+
+
+
+
+
+
+class $7bc8826faba50ebf$export$bf6aa8a8e97b6c5f {
     hookRouter = new (0, $826e60e3117e96ce$export$2e2bcd8739ae039)([
         (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
         (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT,
@@ -1210,22 +1274,18 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
         (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
         (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK
     ]);
-    _walletStorage = new (0, $3b49e6787d3f4e23$export$2e2bcd8739ae039)((0, $61dc865ce14f4bf4$export$aef6a8518da1f60c), (0, $90bab4f8b8f7e96d$export$7c460c214963f696).ETHEREUM_METAMASK);
+    _walletStorage = new (0, $3b49e6787d3f4e23$export$2e2bcd8739ae039)((0, $61dc865ce14f4bf4$export$aef6a8518da1f60c), (0, $90bab4f8b8f7e96d$export$7c460c214963f696).ETHEREUM_NOWALLET);
     chain = null;
-    name = "METAMASK";
-    type = (0, $9ef2866eeb66da86$export$353aefc175350117).ETHEREUM_METAMASK;
-    constructor(state){
-        if (state) this._state = {
-            ...state
+    constructor(){
+        this._state = {
+            accounts: [],
+            isConnected: false
         };
-        else this._state = {
-            ...$63a99e75275a61fa$var$initialState
-        };
-        this._setupInitialState();
     }
-    async _getProvider() {
-        const ethereum = await (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (windowObject)=>windowObject.ethereum);
-        if (!ethereum) throw new (0, $28ac839a9eca26f5$export$72563c16b91dfd16)();
+    _getEthereumProvider() {
+        throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
+    }
+    _getProvider(ethereum = this._getEthereumProvider()) {
         return new (0, $hgUW1$ethers).providers.Web3Provider(ethereum);
     }
     _enforceIsConnected() {
@@ -1234,7 +1294,7 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
     async _enforceChain() {
         if (this.chain === null) return;
         const provider = await this._getProvider();
-        const currentChain = await provider.send("eth_chainId", []);
+        const currentChain = await (0, $d808041ad48ee2f7$export$9e095c387372d0b1).fetchCurrentChainID(provider);
         if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
     }
     _setupInitialState() {
@@ -1248,50 +1308,26 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
         if (this._state.isConnected && this._state.accounts.length > 0) this._walletStorage.updateValue(true, this.getPrimaryAccount(), this._state.accounts);
         else this._walletStorage.updateValue(false, "", []);
     }
-    async init() {
-        this.provider = await this._getProvider();
-        return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
-    }
-    async signIn() {
-        const provider = await this._getProvider();
-        this._state.accounts = await provider.send("eth_requestAccounts", []);
-        this._state.isConnected = this._state.accounts.length > 0;
-        this._updateWalletStorageValue();
-        this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, this._state.accounts);
-        return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
-    }
-    async signOut() {
-        this._enforceIsConnected();
-        this._state.accounts = [];
-        this._state.isConnected = false;
-        this._updateWalletStorageValue();
-        this.hookRouter.applyHooks([
-            (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
-        ]);
-        return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
-    }
     async getSigner() {
         this._enforceChain();
         this._enforceIsConnected();
-        const provider = this.provider || await this._getProvider();
-        return provider.getSigner();
+        const provider = this._getProvider();
+        return (0, $d808041ad48ee2f7$export$9e095c387372d0b1).getSigner(provider);
     }
     async getBalance() {
         this._enforceChain();
         this._enforceIsConnected();
-        const provider = this.provider || await this._getProvider();
-        const balance = await provider.getBalance(this._state.accounts[0]);
-        return balance.toString();
+        const provider = this._getProvider();
+        return await (0, $d808041ad48ee2f7$export$9e095c387372d0b1).getBalance(provider, this._state.accounts[0]);
+    }
+    async signOut() {
+        throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
     }
     async getAssets() {
-        throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
+        return await (0, $d808041ad48ee2f7$export$9e095c387372d0b1).getAssets();
     }
     getIsConnected() {
         return this._state.isConnected;
-    }
-    getIsWalletInstalled() {
-        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
-        return Boolean(ethereum);
     }
     getPrimaryAccount() {
         this._enforceChain();
@@ -1305,33 +1341,16 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
     }
     async fetchCurrentChainID() {
         const provider = await this._getProvider();
-        const chainId = await provider.send("eth_chainId", []);
-        return chainId;
+        return (0, $d808041ad48ee2f7$export$9e095c387372d0b1).fetchCurrentChainID(provider);
     }
     async addChainToWallet(chainConfig) {
-        return (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (window1)=>window1.ethereum?.request({
-                method: "wallet_addEthereumChain",
-                params: [
-                    chainConfig
-                ]
-            }));
+        return (0, $d808041ad48ee2f7$export$9e095c387372d0b1).addChainToWallet(chainConfig);
     }
-    async switchChainFromWallet(chain) {
-        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window1)=>window1.ethereum);
-        if (ethereum.networkVersion !== chain) try {
-            await ethereum.request({
-                method: "wallet_switchEthereumChain",
-                params: [
-                    {
-                        chainId: `0x${chain}`
-                    }
-                ]
-            });
-        } catch (err) {
-            if (err && err.code === 4902) {
-                const chainConfig = (0, $6efec99b285d035b$export$703a843624f42e6c)(chain);
-                await this.addChainToWallet(chainConfig);
-            } else throw err;
+    async switchChainFromWallet(chain, noHook = false) {
+        const ethereum = this._getEthereumProvider();
+        if (ethereum.networkVersion !== String(chain)) {
+            await (0, $d808041ad48ee2f7$export$9e095c387372d0b1).switchChainFromWallet(ethereum, chain);
+            if (noHook) this.chain = `0x${chain}`;
         }
     }
     async forceCurrentChainID(chain) {
@@ -1356,6 +1375,9 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
             return cb(block);
         });
     };
+    getIsWalletInstalled() {
+        throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
+    }
     toJSON() {
         return this._state;
     }
@@ -1363,32 +1385,30 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
      * Mounts ethereum based event hooks to the hook router
      * @see https://eips.ethereum.org/EIPS/eip-1193#references for list of ethereum hooks
      */ async mountEventListeners() {
-        const provider = await this._getProvider();
-        if (typeof window !== "undefined" && "ethereum" in window) {
-            const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window1)=>window1.ethereum);
-            if (ethereum.on) {
-                ethereum.on("accountsChanged", async (accounts)=>{
-                    this._state.accounts = accounts;
-                    if (accounts.length === 0) {
-                        await this.signOut();
-                        this.hookRouter.applyHooks([
-                            (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
-                        ]);
-                    } else this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
-                    this._updateWalletStorageValue();
-                });
-                ethereum.on("chainChanged", async (chainId)=>{
-                    this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
-                });
-                ethereum.on("disconnect", async (err)=>{
-                    console.warn(`Metamask Disconnected. Error:`);
-                    console.warn(err);
-                    this.hookRouter.applyHooks([
-                        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
-                    ]);
-                });
-            }
-        }
+        if (!this.getIsWalletInstalled()) return;
+        const ethereum = this._getEthereumProvider();
+        const provider = this._getProvider();
+        if (!ethereum.on) return;
+        ethereum.on("accountsChanged", async (accounts)=>{
+            this._state.accounts = accounts;
+            if (accounts.length === 0) {
+                await this.signOut();
+                this.hookRouter.applyHooks([
+                    (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
+                ]);
+            } else this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
+            this._updateWalletStorageValue();
+        });
+        ethereum.on("chainChanged", async (chainId)=>{
+            this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
+        });
+        ethereum.on("disconnect", async (err)=>{
+            console.warn(`BaseEthereum Disconnected. Error:`);
+            console.warn(err);
+            this.hookRouter.applyHooks([
+                (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
+            ]);
+        });
         provider.on("block", (block)=>{
             this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, block);
         });
@@ -1400,6 +1420,69 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
     async getProvider() {
         await this._enforceChain();
         return this._getProvider();
+    }
+}
+
+
+
+
+
+
+
+const $63a99e75275a61fa$var$initialState = Object.freeze({
+    accounts: [],
+    isConnected: false
+});
+class $63a99e75275a61fa$export$2c78a3b4fc11d8fa extends (0, $7bc8826faba50ebf$export$bf6aa8a8e97b6c5f) {
+    hookRouter = new (0, $826e60e3117e96ce$export$2e2bcd8739ae039)([
+        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
+        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT,
+        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
+        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
+        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK
+    ]);
+    _walletStorage = new (0, $3b49e6787d3f4e23$export$2e2bcd8739ae039)((0, $61dc865ce14f4bf4$export$aef6a8518da1f60c), (0, $90bab4f8b8f7e96d$export$7c460c214963f696).ETHEREUM_METAMASK);
+    name = "METAMASK";
+    type = (0, $9ef2866eeb66da86$export$353aefc175350117).ETHEREUM_METAMASK;
+    constructor(state){
+        super();
+        if (state) this._state = {
+            ...state
+        };
+        else this._state = {
+            ...$63a99e75275a61fa$var$initialState
+        };
+        this._setupInitialState();
+    }
+    _getEthereumProvider() {
+        return (0, $d808041ad48ee2f7$export$9e095c387372d0b1).getNamedWindowEthereumObject("MetaMask", (globalWindow)=>globalWindow.isMetaMask);
+    }
+    async init() {
+        this.provider = await this._getProvider();
+        return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
+    }
+    async signIn() {
+        const provider = await this._getProvider();
+        this._state.accounts = await provider.send("eth_requestAccounts", []);
+        this._state.isConnected = this._state.accounts.length > 0;
+        this._updateWalletStorageValue();
+        this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, this._state.accounts);
+        return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
+    }
+    async signOut() {
+        this._enforceIsConnected();
+        this._state.accounts = [];
+        this._state.isConnected = false;
+        this._updateWalletStorageValue();
+        this.hookRouter.applyHooks([
+            (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
+        ]);
+        return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
+    }
+    getIsWalletInstalled() {
+        const ethereumGlobal = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
+        if (!ethereumGlobal) return false;
+        return Boolean(ethereumGlobal.providerMap.get("MetaMask"));
     }
 }
 
@@ -1432,7 +1515,6 @@ $parcel$export($e9480eda56db4579$exports, "Coinbase", () => $e9480eda56db4579$ex
 
 
 
-
 const $e9480eda56db4579$var$initialState = Object.freeze({
     accounts: [],
     isConnected: false
@@ -1446,7 +1528,7 @@ const $e9480eda56db4579$var$defaultConfig = Object.freeze({
     defaultEthJsonRPCUrl: "",
     defaultChainId: 1
 });
-class $e9480eda56db4579$export$bbf33c97e5e72e4f {
+class $e9480eda56db4579$export$bbf33c97e5e72e4f extends (0, $7bc8826faba50ebf$export$bf6aa8a8e97b6c5f) {
     hookRouter = new (0, $826e60e3117e96ce$export$2e2bcd8739ae039)([
         (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
         (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT,
@@ -1459,6 +1541,7 @@ class $e9480eda56db4579$export$bbf33c97e5e72e4f {
     name = "COINBASE";
     type = (0, $9ef2866eeb66da86$export$353aefc175350117).ETHEREUM_COINBASE;
     constructor(state, config = $e9480eda56db4579$var$defaultConfig){
+        super();
         if (state) this._state = {
             ...state
         };
@@ -1469,30 +1552,8 @@ class $e9480eda56db4579$export$bbf33c97e5e72e4f {
         this._wallet = new (0, $hgUW1$coinbasewalletsdk)(config.coinbaseConfig);
         this._setupInitialState();
     }
-    async _getProvider() {
-        const ethereum = this._wallet.makeWeb3Provider(this._config.defaultEthJsonRPCUrl, this._config.defaultChainId);
-        if (!ethereum) throw new (0, $28ac839a9eca26f5$export$72563c16b91dfd16)();
-        return new (0, $hgUW1$ethers).providers.Web3Provider(ethereum);
-    }
-    _enforceIsConnected() {
-        if (!this.getIsConnected()) throw new (0, $28ac839a9eca26f5$export$313d299817c74896)();
-    }
-    async _enforceChain() {
-        if (this.chain === null) return;
-        const provider = await this._getProvider();
-        const currentChain = await provider.send("eth_chainId", []);
-        if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
-    }
-    _setupInitialState() {
-        const storageValue = this._walletStorage.getValue();
-        if (storageValue) this._state = {
-            isConnected: storageValue.isConnected,
-            accounts: storageValue.accounts
-        };
-    }
-    _updateWalletStorageValue() {
-        if (this._state.isConnected && this._state.accounts.length > 0) this._walletStorage.updateValue(true, this.getPrimaryAccount(), this._state.accounts);
-        else this._walletStorage.updateValue(false, "", []);
+    _getEthereumProvider() {
+        return (0, $d808041ad48ee2f7$export$9e095c387372d0b1).getNamedWindowEthereumObject("CoinbaseWallet", (globalWindow)=>globalWindow.isCoinbaseWallet);
     }
     async init() {
         this.provider = await this._getProvider();
@@ -1516,136 +1577,10 @@ class $e9480eda56db4579$export$bbf33c97e5e72e4f {
         ]);
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
-    async getSigner() {
-        this._enforceChain();
-        this._enforceIsConnected();
-        const provider = this.provider || await this._getProvider();
-        return provider.getSigner();
-    }
-    async getBalance() {
-        this._enforceChain();
-        this._enforceIsConnected();
-        const provider = this.provider || await this._getProvider();
-        const balance = await provider.getBalance(this._state.accounts[0]);
-        return balance.toString();
-    }
-    async getAssets() {
-        throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
-    }
-    getIsConnected() {
-        return this._state.isConnected;
-    }
     getIsWalletInstalled() {
-        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
-        return Boolean(ethereum);
-    }
-    getPrimaryAccount() {
-        this._enforceChain();
-        this._enforceIsConnected();
-        return this._state.accounts[0];
-    }
-    getAccounts() {
-        this._enforceChain();
-        this._enforceIsConnected();
-        return this._state.accounts;
-    }
-    async fetchCurrentChainID() {
-        const provider = await this._getProvider();
-        const chainId = await provider.send("eth_chainId", []);
-        return chainId;
-    }
-    async addChainToWallet(chainConfig) {
-        return (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (window1)=>window1.ethereum?.request({
-                method: "wallet_addEthereumChain",
-                params: [
-                    chainConfig
-                ]
-            }));
-    }
-    async switchChainFromWallet(chain) {
-        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window1)=>window1.ethereum);
-        if (ethereum.networkVersion !== chain) try {
-            await ethereum.request({
-                method: "wallet_switchEthereumChain",
-                params: [
-                    {
-                        chainId: `0x${chain}`
-                    }
-                ]
-            });
-        } catch (err) {
-            if (err && err.code === 4902) {
-                const chainConfig = (0, $6efec99b285d035b$export$703a843624f42e6c)(chain);
-                await this.addChainToWallet(chainConfig);
-            } else throw err;
-        }
-    }
-    async forceCurrentChainID(chain) {
-        if (this.chain !== null && this.chain !== `0x${chain}`) throw new Error(`Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`);
-        this.chain = `0x${chain}`;
-        this.switchChainFromWallet(chain);
-    }
-    onAccountChange = (cb)=>{
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, cb);
-    };
-    onChainChange = (cb)=>{
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, cb);
-    };
-    onAccountDisconnect = (cb)=>{
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT, cb);
-    };
-    onChainDisconnect = (cb)=>{
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT, cb);
-    };
-    onBlockAdded = (cb)=>{
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
-            return cb(block);
-        });
-    };
-    toJSON() {
-        return this._state;
-    }
-    /**
-     * Mounts ethereum based event hooks to the hook router
-     * @see https://eips.ethereum.org/EIPS/eip-1193#references for list of ethereum hooks
-     */ async mountEventListeners() {
-        const provider = await this._getProvider();
-        if (typeof window !== "undefined" && "ethereum" in window) {
-            const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window1)=>window1.ethereum);
-            if (ethereum.on) {
-                ethereum.on("accountsChanged", async (accounts)=>{
-                    this._state.accounts = accounts;
-                    if (accounts.length === 0) {
-                        await this.signOut();
-                        this.hookRouter.applyHooks([
-                            (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
-                        ]);
-                    } else this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
-                    this._updateWalletStorageValue();
-                });
-                ethereum.on("chainChanged", async (chainId)=>{
-                    this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, chainId);
-                });
-                ethereum.on("disconnect", async (err)=>{
-                    console.warn(`Coinbase Disconnected. Error:`);
-                    console.warn(err);
-                    this.hookRouter.applyHooks([
-                        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
-                    ]);
-                });
-            }
-        }
-        provider.on("block", (block)=>{
-            this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, block);
-        });
-    }
-    async unmountEventListeners() {
-        const provider = await this._getProvider();
-        provider.removeAllListeners();
-    }
-    async getProvider() {
-        await this._enforceChain();
-        return this._getProvider();
+        const ethereumGlobal = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
+        if (!ethereumGlobal) return false;
+        return Boolean(ethereumGlobal.providerMap.get("Coinbase"));
     }
 }
 
@@ -1668,27 +1603,16 @@ $parcel$export($07e52f3c9fc905f8$exports, "EthWalletConnect", () => $07e52f3c9fc
 
 
 
-
-
-
-
 const $07e52f3c9fc905f8$var$initialState = Object.freeze({
     accounts: [],
     isConnected: false
 });
-class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
-    hookRouter = new (0, $826e60e3117e96ce$export$2e2bcd8739ae039)([
-        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE,
-        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT,
-        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE,
-        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT,
-        (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK
-    ]);
-    chain = null;
-    walletStorage = new (0, $3b49e6787d3f4e23$export$2e2bcd8739ae039)((0, $61dc865ce14f4bf4$export$aef6a8518da1f60c), (0, $90bab4f8b8f7e96d$export$7c460c214963f696).ETHEREUM_WALLETCONNECT);
+class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 extends (0, $7bc8826faba50ebf$export$bf6aa8a8e97b6c5f) {
+    _walletConnectProvider = null;
     type = (0, $9ef2866eeb66da86$export$353aefc175350117).ETHEREUM_WALLETCONNECT;
     name = "ETHEREUM_WALLETCONNECT";
     constructor(state){
+        super();
         if (state) this._state = {
             ...state
         };
@@ -1697,42 +1621,34 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
         };
         this._setupInitialState();
     }
-    _setupInitialState() {
-        const storageValue = this.walletStorage.getValue();
-        if (storageValue) this._state = {
-            isConnected: storageValue.isConnected,
-            accounts: storageValue.accounts
-        };
-    }
-    _updateWalletStorageValue() {
-        if (this._state.isConnected && this._state.accounts.length > 0) this.walletStorage.updateValue(true, this._state.accounts[0], this._state.accounts);
-        else this.walletStorage.updateValue(false, "", []);
-    }
-    async _getProvider() {
-        const provider = await this.getWCProvider();
-        return new (0, $hgUW1$providers).Web3Provider(provider);
-    }
-    _enforceIsConnected() {
-        if (!this.getIsConnected()) throw new (0, $28ac839a9eca26f5$export$313d299817c74896)();
-    }
-    async _enforceChain() {
-        if (this.chain === null) return;
-        const provider = await this._getProvider();
-        const currentChain = await provider.send("eth_chainId", []);
-        if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
-    }
-    async getWCProvider() {
+    _fetchWCProvider() {
         const walletConnectProvider = new (0, $hgUW1$walletconnectweb3provider)({
             infuraId: "f83857b162d64708b25a59585f969fbd",
             qrcode: true
         });
-        await walletConnectProvider.enable();
         return walletConnectProvider;
+    }
+    async _initProvider() {
+        this._walletConnectProvider = this._fetchWCProvider();
+        await this._walletConnectProvider.enable();
+    }
+    async _deinitProvider() {
+        if (this._walletConnectProvider !== null) await this._walletConnectProvider.disconnect();
+        this._walletConnectProvider = null;
+    }
+    _getProvider() {
+        const provider = this.getWCProvider();
+        return new (0, $hgUW1$providers).Web3Provider(provider);
+    }
+    getWCProvider() {
+        if (this._walletConnectProvider === null) throw new (0, $28ac839a9eca26f5$export$313d299817c74896)();
+        return this._walletConnectProvider;
     }
     async init() {
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
+        await this._initProvider();
         const provider = await this._getProvider();
         this._state.accounts = await provider.listAccounts();
         this._state.isConnected = this._state.accounts.length > 0;
@@ -1742,114 +1658,23 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
     }
     async signOut() {
         this._enforceIsConnected();
+        await this._deinitProvider();
         this._state.accounts = [];
         this._state.isConnected = false;
-        this.provider = undefined;
         this._updateWalletStorageValue();
-        (await this.getWCProvider()).disconnect();
         this.hookRouter.applyHooks([
             (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
         ]);
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
-    async getSigner() {
-        this._enforceChain();
-        this._enforceIsConnected();
-        const provider = this.provider || await this._getProvider();
-        return provider.getSigner();
-    }
-    async getBalance() {
-        this._enforceChain();
-        this._enforceIsConnected();
-        const provider = await this._getProvider();
-        const balance = await provider.getBalance(this._state.accounts[0]);
-        return balance.toString();
-    }
-    async getAssets() {
-        throw new (0, $28ac839a9eca26f5$export$e162153238934121)();
-    }
-    getIsConnected() {
-        return this._state.isConnected;
-    }
     getIsWalletInstalled() {
-        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
-        return Boolean(ethereum);
-    }
-    getPrimaryAccount() {
-        this._enforceChain();
-        this._enforceIsConnected();
-        return this._state.accounts[0];
-    }
-    getAccounts() {
-        this._enforceChain();
-        this._enforceIsConnected();
-        return this._state.accounts;
-    }
-    async fetchCurrentChainID() {
-        const provider = await this._getProvider();
-        const chainId = await provider.send("eth_chainId", []);
-        return chainId;
-    }
-    async addChainToWallet(chainConfig) {
-        return (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (window)=>window.ethereum?.request({
-                method: "wallet_addEthereumChain",
-                params: [
-                    chainConfig
-                ]
-            }));
-    }
-    async switchChainFromWallet(chain) {
-        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
-        if (ethereum.networkVersion !== chain) try {
-            await ethereum.request({
-                method: "wallet_switchEthereumChain",
-                params: [
-                    {
-                        chainId: `0x${chain}`
-                    }
-                ]
-            });
-        } catch (err) {
-            if (err && err.code === 4902) {
-                const chainConfig = (0, $6efec99b285d035b$export$703a843624f42e6c)(chain);
-                await this.addChainToWallet(chainConfig);
-            } else throw err;
-        }
-    }
-    async forceCurrentChainID(chain) {
-        if (this.chain !== null && this.chain !== `0x${chain}`) throw new Error(`Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`);
-        this.chain = `0x${chain}`;
-        this.switchChainFromWallet(chain);
-    }
-    onAccountChange = (cb)=>{
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, cb);
-    };
-    onChainChange = (cb)=>{
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, cb);
-    };
-    onAccountDisconnect = (cb)=>{
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT, cb);
-    };
-    onChainDisconnect = (cb)=>{
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT, cb);
-    };
-    onBlockAdded = (cb)=>{
-        return this.hookRouter.registerCallback((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).NEW_BLOCK, (block)=>{
-            return cb(block);
-        });
-    };
-    toJSON() {
-        return this._state;
+        return true; // mobile wallet so wallet is always connected
     }
     async mountEventListeners() {
         return;
     }
     async unmountEventListeners() {
         return;
-    }
-    async getProvider() {
-        await this._enforceChain();
-        return await this._getProvider();
     }
 }
 
