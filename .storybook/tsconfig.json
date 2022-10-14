@@ -1,0 +1,4 @@
+{
+    "extends": "../tsconfig.json",
+    "includes": ["stories", "index.d.ts", "../node_modules", "../dist"]
+}

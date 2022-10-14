@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { CoinbaseWalletSDKOptions } from "@coinbase/wallet-sdk/dist/CoinbaseWalletSDK";
 import { TransactionRequest, TransactionResponse } from "@ethersproject/abstract-provider";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import MyAlgoConnect, { SignedTx, Accounts as _Accounts3, AlgorandTxn, EncodedTransaction } from "@randlabs/myalgo-connect";
@@ -151,6 +152,75 @@ export class Metamask implements WalletInterface<MetamaskState>, WalletHookHandl
     getProvider(): Promise<ethers.providers.Web3Provider>;
 }
 /**
+ * State for Coinbase Wallet
+ */
+export type CoinbaseState = {
+    accounts: string[];
+    isConnected: boolean;
+};
+/**
+ * Signer for Coinbase Wallet
+ */
+export type CoinbaseSigner = ethers.providers.JsonRpcSigner;
+/**
+ * Coinbase Assets
+ */
+export type CoinbaseAsset = unknown;
+/**
+ * Coinbase Requires some initial variables in order to work
+ */
+export type CoinbaseConfig = {
+    coinbaseConfig: CoinbaseWalletSDKOptions;
+    defaultEthJsonRPCUrl: string;
+    defaultChainId: number;
+};
+/**
+ * Config for Coinbase initialization
+ */
+export type CoinbaseChainConfig = {
+    chainName: string;
+    chainId: string;
+    nativeCurrency: {
+        name: string;
+        decimals: 18;
+        symbol: string;
+    };
+    rpcUrls: string[];
+};
+export class Coinbase implements WalletInterface<CoinbaseState>, WalletHookHandlerInterface {
+    provider?: ethers.providers.Web3Provider;
+    name: string;
+    type: EthereumWalletType;
+    constructor(state?: CoinbaseState, config?: CoinbaseConfig);
+    init(): Promise<WALLET_STATUS>;
+    signIn(): Promise<WALLET_STATUS>;
+    signOut(): Promise<WALLET_STATUS>;
+    getSigner(): Promise<ethers.providers.JsonRpcSigner>;
+    getBalance(): Promise<string>;
+    getAssets(): Promise<CoinbaseAsset[]>;
+    getIsConnected(): boolean;
+    getIsWalletInstalled(): boolean;
+    getPrimaryAccount(): string;
+    getAccounts(): string[];
+    fetchCurrentChainID(): Promise<string>;
+    addChainToWallet(chainConfig: CoinbaseChainConfig): Promise<void>;
+    switchChainFromWallet(chain: number): Promise<void>;
+    forceCurrentChainID(chain: number): Promise<void>;
+    onAccountChange: (cb: (accounts: string[]) => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
+    onChainChange: (cb: (chain: string) => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
+    onAccountDisconnect: (cb: () => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
+    onChainDisconnect: (cb: () => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
+    onBlockAdded: (cb: (newBlock: number) => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
+    toJSON(): CoinbaseState;
+    /**
+     * Mounts ethereum based event hooks to the hook router
+     * @see https://eips.ethereum.org/EIPS/eip-1193#references for list of ethereum hooks
+     */
+    mountEventListeners(): Promise<void>;
+    unmountEventListeners(): Promise<void>;
+    getProvider(): Promise<ethers.providers.Web3Provider>;
+}
+/**
  * State for EthereumWalletConnect Wallet
  */
 export type EthereumWalletConnectState = {
@@ -211,7 +281,7 @@ export class EthWalletConnect implements WalletInterface<EthereumWalletConnectSt
 /**
  * Generic interface for low level wallets
  */
-export type EthereumWallet = Metamask | EthWalletConnect;
+export type EthereumWallet = Metamask | EthWalletConnect | Coinbase;
 /**
  * wallet enum to be used as identifier
  */
@@ -226,6 +296,7 @@ export type EthereumSigner = MetamaskSigner;
 export type EthereumState = {
     metaMask?: MetamaskState;
     walletConnect?: EthereumWalletConnectState;
+    coinbase?: CoinbaseState;
     activeWallets: EthereumWalletType[];
 };
 /**

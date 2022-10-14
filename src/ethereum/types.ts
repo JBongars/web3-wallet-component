@@ -1,4 +1,5 @@
 import { WALLET_TYPE } from '../config';
+import { Coinbase, CoinbaseState } from './coinbase';
 import { Metamask } from './metamask';
 import { MetamaskSigner, MetamaskState } from './metamask/types';
 import { EthereumWalletConnectState, EthWalletConnect } from './walletconnect';
@@ -6,7 +7,7 @@ import { EthereumWalletConnectState, EthWalletConnect } from './walletconnect';
 /**
  * Generic interface for low level wallets
  */
-type EthereumWallet = Metamask | EthWalletConnect;
+type EthereumWallet = Metamask | EthWalletConnect | Coinbase;
 
 /**
  * wallet enum to be used as identifier
@@ -27,6 +28,7 @@ type EthereumSigner = MetamaskSigner;
 type EthereumState = {
     metaMask?: MetamaskState;
     walletConnect?: EthereumWalletConnectState;
+    coinbase?: CoinbaseState;
     activeWallets: EthereumWalletType[];
 };
 

@@ -59,7 +59,7 @@ const WalletDemo: FunctionComponent<WalletDemoProps> = ({ wallet }) => {
             console.log(wallet.toJSON());
             setWalletState(wallet.toJSON());
         });
-        if (wallet.type === WALLET_TYPE.ETHEREUM_METAMASK || wallet.type === WALLET_TYPE.ETHEREUM_WALLETCONNECT) {
+        if (wallet.type === WALLET_TYPE.ETHEREUM_METAMASK || wallet.type === WALLET_TYPE.ETHEREUM_WALLETCONNECT || wallet.type === WALLET_TYPE.ETHEREUM_COINBASE) {
             wallet.onBlockAdded((newBlock: number) => {
                 console.log('onBlockAdded', newBlock);
             });

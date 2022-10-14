@@ -4,9 +4,19 @@ import { NotImplementedError } from '../errors';
 import { ChainHookHandlerInterface, ChainWalletInterface, WalletInterface } from '../types';
 import HookRouter from '../utils/HookRouter';
 import { WALLET_HOOK, WALLET_STATUS } from '../utils/HookRouter/types';
+import { Coinbase } from './coinbase';
 import { Metamask } from './metamask';
 import { EthereumConfig, EthereumWallet, EthereumState, EthereumSigner, EthereumWalletType } from './types';
 import { EthWalletConnect } from './walletconnect';
+
+/**
+ * Available Ethereum Wallets
+ */
+const walletTypes: EthereumWalletType[] = [
+    WALLET_TYPE.ETHEREUM_METAMASK,
+    WALLET_TYPE.ETHEREUM_WALLETCONNECT,
+    WALLET_TYPE.ETHEREUM_COINBASE
+];
 
 /**
  * Default config
@@ -35,6 +45,7 @@ class Ethereum
 
     private _metaMask: Metamask;
     private _walletConnect: EthWalletConnect;
+    private _coinbase: Coinbase;
     private _initialized = false;
     private _activeWallets: EthereumWalletType[] = [];
     private _config: EthereumConfig;
@@ -50,6 +61,7 @@ class Ethereum
     constructor(config: Partial<EthereumConfig>, data?: EthereumState) {
         this._metaMask = new Metamask(data?.metaMask);
         this._walletConnect = new EthWalletConnect(data?.walletConnect);
+        this._coinbase = new Coinbase(data?.coinbase);
         this._config = { ...defaultEthereumConfig, ...config };
     }
 
@@ -149,7 +161,7 @@ class Ethereum
             return WALLET_STATUS.OK;
         }
 
-        await Promise.all([this._metaMask, this._walletConnect].map(this._initEthereumWallet));
+        await Promise.all([this._metaMask, this._walletConnect, this._coinbase].map(this._initEthereumWallet));
 
         this._initialized = true;
         return WALLET_STATUS.OK;
@@ -161,20 +173,18 @@ class Ethereum
                 return this._walletConnect;
             case WALLET_TYPE.ETHEREUM_METAMASK:
                 return this._metaMask;
+            case WALLET_TYPE.ETHEREUM_COINBASE:
+                return this._coinbase;
             default:
                 throw new Error(`Wallet type ${type} cannot be found`);
         }
     }
 
     public getAvailableWallets(): EthereumWalletType[] {
-        const walletTypes: EthereumWalletType[] = [WALLET_TYPE.ETHEREUM_METAMASK, WALLET_TYPE.ETHEREUM_WALLETCONNECT];
-
         return walletTypes.filter((walletType) => this.getWallet(walletType).getIsWalletInstalled());
     }
 
     public getConnectedWallets(): EthereumWalletType[] {
-        const walletTypes: EthereumWalletType[] = [WALLET_TYPE.ETHEREUM_METAMASK, WALLET_TYPE.ETHEREUM_WALLETCONNECT];
-
         return walletTypes.filter((walletType) => this.getWallet(walletType).getIsConnected());
     }
 
@@ -263,6 +273,11 @@ class Ethereum
                 type: this._walletConnect.type,
                 name: this._walletConnect.name,
                 state: this._walletConnect.toJSON()
+            },
+            {
+                type: this._coinbase.type,
+                name: this._coinbase.name,
+                state: this._coinbase.toJSON()
             }
         ];
     }

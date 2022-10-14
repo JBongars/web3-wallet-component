@@ -18,6 +18,6 @@
         "jsx": "react"
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist", "jest.config.js", "**/*.spec.ts", ".storybook/**/*"],
+    "exclude": ["node_modules", "dist", "jest.config.js", "**/*.spec.ts"],
     "types": ["jest"]
 }
