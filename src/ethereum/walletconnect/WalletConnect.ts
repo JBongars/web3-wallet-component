@@ -43,7 +43,7 @@ class EthWalletConnect
 
     private async _initProvider(): Promise<void> {
         this._walletConnectProvider = this._fetchWCProvider();
-        await this._walletConnectProvider.init();
+        await this._walletConnectProvider.enable();
     }
 
     private async _deinitProvider(): Promise<void> {
