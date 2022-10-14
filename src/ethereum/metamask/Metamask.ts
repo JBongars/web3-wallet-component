@@ -86,6 +86,7 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
             this._walletStorage.updateValue(false, '', []);
         }
     }
+
     public async init(): Promise<WALLET_STATUS> {
         this.provider = await this._getProvider();
 
@@ -104,13 +105,12 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
     }
 
     public async signOut(): Promise<WALLET_STATUS> {
+        this._enforceIsConnected();
         this._state.accounts = [];
         this._state.isConnected = false;
 
         this._updateWalletStorageValue();
         this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
-
-        if (!this.getIsConnected()) return WALLET_STATUS.WALLET_ERROR;
         return WALLET_STATUS.OK;
     }
 
@@ -145,7 +145,8 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
 
         if (!ethereum) return false;
 
-        // edge case if Metamask and Coinbase Wallet are both installed
+        // Metamask and Coinbase/Other Wallet are both installed
+        // Choose the correct injected wallet
         if ("providers" in ethereum && ethereum.providers?.length) {
             for (let p of ethereum.providers) {
                 if (p.isMetaMask) {
@@ -155,6 +156,8 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
             }
         } else {
             if (ethereum.isMetaMask) {
+                // Force [disable extension/disable overriding Metamask option] of Coin98 Wallet before Metamask can be used
+                if ("isCoin98" in ethereum && ethereum.isCoin98) return false;
                 this._ethereum = ethereum;
                 return true;
             }
