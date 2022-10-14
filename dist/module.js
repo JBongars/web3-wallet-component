@@ -1298,13 +1298,13 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async signOut() {
+        this._enforceIsConnected();
         this._state.accounts = [];
         this._state.isConnected = false;
         this._updateWalletStorageValue();
         this.hookRouter.applyHooks([
             (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
         ]);
-        if (!this.getIsConnected()) return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).WALLET_ERROR;
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async getSigner() {
@@ -1329,13 +1329,16 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
     getIsWalletInstalled() {
         const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
         if (!ethereum) return false;
-        // edge case if Metamask and Coinbase Wallet are both installed
+        // Metamask and Coinbase/Other Wallet are both installed
+        // Choose the correct injected wallet
         if ("providers" in ethereum && ethereum.providers?.length) {
             for (let p of ethereum.providers)if (p.isMetaMask) {
                 this._ethereum = p;
                 return true;
             }
         } else if (ethereum.isMetaMask) {
+            // Force [disable extension/disable overriding Metamask option] of Coin98 Wallet before Metamask can be used
+            if ("isCoin98" in ethereum && ethereum.isCoin98) return false;
             this._ethereum = ethereum;
             return true;
         }
