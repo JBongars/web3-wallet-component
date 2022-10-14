@@ -1300,13 +1300,13 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async signOut() {
-        this._enforceIsConnected();
         this._state.accounts = [];
         this._state.isConnected = false;
         this._updateWalletStorageValue();
         this.hookRouter.applyHooks([
             (0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
         ]);
+        if (!this.getIsConnected()) return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).WALLET_ERROR;
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async getSigner() {
@@ -1338,12 +1338,17 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
                 this._ethereum = p;
                 return true;
             }
-        } else if (ethereum.isMetaMask) {
-            // Force [disable extension/disable overriding Metamask option] of Coin98 Wallet before Metamask can be used
-            if ("isCoin98" in ethereum && ethereum.isCoin98) return false;
-            this._ethereum = ethereum;
-            return true;
+        } else {
+            if (ethereum.isMetaMask) // Force [disable extension/disable overriding Metamask option] of Coin98 Wallet before Metamask can be used
+            {
+                if (!("isCoin98" in ethereum && ethereum.isCoin98)) {
+                    this._ethereum = ethereum;
+                    return true;
+                }
+            }
         }
+        // Force signout to prevent errors when other wallets intercept Metamask
+        this.signOut();
         return false;
     }
     getPrimaryAccount() {
