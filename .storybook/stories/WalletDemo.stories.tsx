@@ -57,5 +57,5 @@ AlgoPera.args = {
     wallet: peraWallet
 };
 
-export { EthereumMetamask, EthereumWalletConnect, AlgorandMyAlgo, AlgoWalletConnect, AlgoPera };
+export { EthereumMetamask, EthereumWalletConnect, EthereumCoinbase, AlgorandMyAlgo, AlgoWalletConnect, AlgoPera };
 export default walletDemo;

@@ -6,15 +6,10 @@ import WalletStateStorage from '~/src/WalletStateStorage';
 import { CHAIN_ETHEREUM } from '..';
 import { useWindow } from '../../containers';
 import { WalletHookHandlerInterface, WalletInterface } from '../../types';
-import { EthereumChainConfig, ProviderService } from '../services';
+import { EthereumChainConfig, EthereumObject, ProviderService } from '../services';
 import { BaseEthereumAsset, BaseEthereumChainConfig, BaseEthereumState } from './types';
 
-const initialState: Readonly<BaseEthereumState> = Object.freeze({
-    accounts: [],
-    isConnected: false
-});
-
-abstract class EthereumWallet implements WalletHookHandlerInterface {
+abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
     protected hookRouter: HookRouter = new HookRouter([
         WALLET_HOOK.CHAIN_ON_CHANGE,
         WALLET_HOOK.CHAIN_ON_DISCONNECT,
@@ -25,17 +20,22 @@ abstract class EthereumWallet implements WalletHookHandlerInterface {
     protected _walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_NOWALLET);
     protected chain: string | null = null;
     protected _state: BaseEthereumState;
-    public provider?: ethers.providers.Web3Provider;
 
-    constructor(state?: unknown) {
+    constructor() {
         this._state = {
             accounts: [],
             isConnected: false
         };
     }
 
-    protected async _getProvider(): Promise<ethers.providers.Web3Provider> {
+    protected _getEthereumProvider(): ethers.providers.ExternalProvider {
         throw new NotImplementedError();
+    }
+
+    protected _getProvider(
+        ethereum: ethers.providers.ExternalProvider = this._getEthereumProvider()
+    ): ethers.providers.Web3Provider {
+        return new ethers.providers.Web3Provider(ethereum);
     }
 
     protected _enforceIsConnected(): void {
@@ -78,7 +78,7 @@ abstract class EthereumWallet implements WalletHookHandlerInterface {
         this._enforceChain();
         this._enforceIsConnected();
 
-        const provider = this.provider || (await this._getProvider());
+        const provider = this._getProvider();
         return ProviderService.getSigner(provider);
     }
 
@@ -86,8 +86,12 @@ abstract class EthereumWallet implements WalletHookHandlerInterface {
         this._enforceChain();
         this._enforceIsConnected();
 
-        const provider = this.provider || (await this._getProvider());
+        const provider = this._getProvider();
         return await ProviderService.getBalance(provider, this._state.accounts[0]);
+    }
+
+    public async signOut(): Promise<WALLET_STATUS> {
+        throw new NotImplementedError();
     }
 
     public async getAssets(): Promise<BaseEthereumAsset[]> {
@@ -159,6 +163,10 @@ abstract class EthereumWallet implements WalletHookHandlerInterface {
         });
     };
 
+    public getIsWalletInstalled(): boolean {
+        throw new NotImplementedError();
+    }
+
     public toJSON(): BaseEthereumState {
         return this._state;
     }
@@ -168,33 +176,37 @@ abstract class EthereumWallet implements WalletHookHandlerInterface {
      * @see https://eips.ethereum.org/EIPS/eip-1193#references for list of ethereum hooks
      */
     public async mountEventListeners(): Promise<void> {
-        const provider = await this._getProvider();
-        if (typeof window !== 'undefined' && 'ethereum' in window) {
-            const ethereum = useWindow((window: any) => window.ethereum);
-            if (ethereum.on) {
-                ethereum.on('accountsChanged', async (accounts: string[]) => {
-                    this._state.accounts = accounts;
-
-                    if (accounts.length === 0) {
-                        await this.signOut();
-                        this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
-                    } else {
-                        this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, accounts);
-                    }
-                    this._updateWalletStorageValue();
-                });
-
-                ethereum.on('chainChanged', async (chainId: string) => {
-                    this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, chainId);
-                });
-
-                ethereum.on('disconnect', async (err: Error) => {
-                    console.warn(`BaseEthereum Disconnected. Error:`);
-                    console.warn(err);
-                    this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
-                });
-            }
+        if (!this.getIsWalletInstalled()) {
+            return;
         }
+        const ethereum = this._getEthereumProvider() as any;
+        const provider = this._getProvider() as any;
+
+        if (!ethereum.on) {
+            return;
+        }
+
+        ethereum.on('accountsChanged', async (accounts: string[]) => {
+            this._state.accounts = accounts;
+
+            if (accounts.length === 0) {
+                await this.signOut();
+                this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
+            } else {
+                this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, accounts);
+            }
+            this._updateWalletStorageValue();
+        });
+
+        ethereum.on('chainChanged', async (chainId: string) => {
+            this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, chainId);
+        });
+
+        ethereum.on('disconnect', async (err: Error) => {
+            console.warn(`BaseEthereum Disconnected. Error:`);
+            console.warn(err);
+            this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
+        });
 
         provider.on('block', (block: number) => {
             this.hookRouter.applyHookWithArgs(WALLET_HOOK.NEW_BLOCK, block);
@@ -208,9 +220,8 @@ abstract class EthereumWallet implements WalletHookHandlerInterface {
 
     public async getProvider(): Promise<ethers.providers.Web3Provider> {
         await this._enforceChain();
-
         return this._getProvider();
     }
 }
 
-export { EthereumWallet };
+export { EthereumBaseWallet };

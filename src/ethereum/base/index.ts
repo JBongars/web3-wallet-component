@@ -1,2 +1,2 @@
-export * from './EthereumWallet';
+export * from './EthereumBaseWallet';
 export * from './types';

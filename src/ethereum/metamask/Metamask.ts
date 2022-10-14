@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { NotImplementedError, WalletNotConnectedError, WalletNotInstalledError } from '~/src/errors';
+import { WalletNotInstalledError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
@@ -7,17 +7,16 @@ import { CHAIN_ETHEREUM, EthereumWalletType } from '..';
 import { WALLET_TYPE } from '../../config/wallets';
 import { useWindow } from '../../containers';
 import { WalletHookHandlerInterface, WalletInterface } from '../../types';
-import { EthereumWallet } from '../base';
-import { getChainConfig } from '../chains';
-import { EthereumChainConfig, ProviderService } from '../services';
-import { MetamaskAsset, MetamaskChainConfig, MetamaskState } from './types';
+import { EthereumBaseWallet } from '../base';
+import { EthereumObject, ProviderService } from '../services';
+import { MetamaskState } from './types';
 
 const initialState: Readonly<MetamaskState> = Object.freeze({
     accounts: [],
     isConnected: false
 });
 
-class Metamask extends EthereumWallet implements WalletInterface<MetamaskState>, WalletHookHandlerInterface {
+class Metamask extends EthereumBaseWallet implements WalletInterface<MetamaskState>, WalletHookHandlerInterface {
     protected hookRouter: HookRouter = new HookRouter([
         WALLET_HOOK.CHAIN_ON_CHANGE,
         WALLET_HOOK.CHAIN_ON_DISCONNECT,
@@ -43,14 +42,8 @@ class Metamask extends EthereumWallet implements WalletInterface<MetamaskState>,
         this._setupInitialState();
     }
 
-    protected async _getProvider(): Promise<ethers.providers.Web3Provider> {
-        const ethereum = (await useWindow(async (windowObject) => (windowObject as any).ethereum)) as any;
-
-        if (!ethereum) {
-            throw new WalletNotInstalledError();
-        }
-
-        return new ethers.providers.Web3Provider(ethereum);
+    protected _getEthereumProvider(): EthereumObject {
+        return ProviderService.getNamedWindowEthereumObject('MetaMask', (globalWindow) => globalWindow.isMetaMask);
     }
 
     public async init(): Promise<WALLET_STATUS> {
@@ -81,9 +74,11 @@ class Metamask extends EthereumWallet implements WalletInterface<MetamaskState>,
     }
 
     public getIsWalletInstalled(): boolean {
-        const ethereum = useWindow((windowObject) => (windowObject as { ethereum?: unknown }).ethereum) as any;
-
-        return Boolean(ethereum);
+        const ethereumGlobal = useWindow((windowObject) => (windowObject as any).ethereum) as any;
+        if (!ethereumGlobal) {
+            return false;
+        }
+        return Boolean(ethereumGlobal.providerMap.get('MetaMask'));
     }
 }
 

@@ -1,7 +1,5 @@
 import { ethers } from 'ethers';
-import { ChainConfig } from '../../SuperWallet';
-import web3 from 'web3';
-import { provider } from 'web3-core';
+import { WALLET_TYPE } from '../../config';
 
 /**
  * Config for Ethereum Chain
@@ -19,6 +17,8 @@ type EthereumChainConfig = {
 
 type Provider = ethers.providers.Web3Provider;
 
+type WindowEthereumMappedKey = 'MetaMask' | 'CoinbaseWallet';
+
 type EthereumObject = ethers.providers.ExternalProvider;
 
-export type { EthereumChainConfig, Provider, EthereumObject };
+export type { EthereumChainConfig, Provider, WindowEthereumMappedKey, EthereumObject };

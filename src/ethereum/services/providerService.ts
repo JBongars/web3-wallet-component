@@ -1,10 +1,32 @@
 import { ethers } from 'ethers';
 import { useWindow } from '../../containers';
-import { NotImplementedError } from '../../errors';
+import { NotImplementedError, WalletNotInstalledError } from '../../errors';
 import { getChainConfig } from '../chains';
-import { EthereumChainConfig, EthereumObject, Provider } from './types';
+import { EthereumChainConfig, EthereumObject, Provider, WindowEthereumMappedKey } from './types';
 
 abstract class ProviderService {
+    public static getNamedWindowEthereumObject(
+        key: WindowEthereumMappedKey,
+        validator: (globalEthereum: any) => boolean
+    ): EthereumObject {
+        const ethereumGlobal = useWindow((windowObject) => (windowObject as any).ethereum) as any;
+        if (!ethereumGlobal) {
+            throw new WalletNotInstalledError();
+        }
+
+        if (!ethereumGlobal.providerMap) {
+            if (!validator(ethereumGlobal)) {
+                throw new WalletNotInstalledError();
+            }
+            return ethereumGlobal;
+        }
+
+        const ethereum = ethereumGlobal.providerMap.get(key);
+        if (!ethereum || !validator(ethereum)) {
+            throw new WalletNotInstalledError();
+        }
+        return ethereum;
+    }
     public static getSigner(provider: Provider): ethers.providers.JsonRpcSigner {
         return provider.getSigner();
     }
