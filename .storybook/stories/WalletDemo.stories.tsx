@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import { Algorand, EthWalletConnect, Metamask, MyAlgo, PeraWallet, WalletConnect } from '../../src';
+import { Algorand, Coinbase, EthWalletConnect, Metamask, MyAlgo, PeraWallet, WalletConnect } from '../../src';
 import { Ethereum } from '../../src/ethereum/Ethereum';
 
 import WalletDemo from './WalletDemo';
@@ -33,9 +33,15 @@ EthereumWalletConnect.args = {
     wallet: ethereumWalletConnect
 };
 
+const ethereumCoinbase = getWallet(() => new Coinbase());
+const EthereumCoinbase = Template.bind({});
+EthereumCoinbase.args = {
+    wallet: ethereumCoinbase
+};
+
 const myalgo = getWallet(() => new MyAlgo());
-const EthereumMyAlgo = Template.bind({});
-EthereumMyAlgo.args = {
+const AlgorandMyAlgo = Template.bind({});
+AlgorandMyAlgo.args = {
     wallet: myalgo
 };
 
@@ -51,5 +57,5 @@ AlgoPera.args = {
     wallet: peraWallet
 };
 
-export { EthereumMetamask, EthereumWalletConnect, EthereumMyAlgo, AlgoWalletConnect, AlgoPera };
+export { EthereumMetamask, EthereumWalletConnect, EthereumCoinbase, AlgorandMyAlgo, AlgoWalletConnect, AlgoPera };
 export default walletDemo;

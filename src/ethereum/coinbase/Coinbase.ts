@@ -1,3 +1,4 @@
+import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import { ethers } from 'ethers';
 import { WalletNotInstalledError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
@@ -7,16 +8,26 @@ import { CHAIN_ETHEREUM, EthereumWalletType } from '..';
 import { WALLET_TYPE } from '../../config/wallets';
 import { useWindow } from '../../containers';
 import { WalletHookHandlerInterface, WalletInterface } from '../../types';
-import { EthereumBaseWallet } from '../base';
+import { EthereumBaseWallet } from '../base/EthereumBaseWallet';
 import { EthereumObject, ProviderService } from '../services';
-import { MetamaskState } from './types';
+import { CoinbaseConfig, CoinbaseState } from './types';
 
-const initialState: Readonly<MetamaskState> = Object.freeze({
+const initialState: Readonly<CoinbaseState> = Object.freeze({
     accounts: [],
     isConnected: false
 });
 
-class Metamask extends EthereumBaseWallet implements WalletInterface<MetamaskState>, WalletHookHandlerInterface {
+const defaultConfig: Readonly<CoinbaseConfig> = Object.freeze({
+    coinbaseConfig: {
+        appName: 'Dapp',
+        appLogoUrl: '',
+        darkMode: false
+    },
+    defaultEthJsonRPCUrl: '',
+    defaultChainId: 1
+});
+
+class Coinbase extends EthereumBaseWallet implements WalletInterface<CoinbaseState>, WalletHookHandlerInterface {
     protected hookRouter: HookRouter = new HookRouter([
         WALLET_HOOK.CHAIN_ON_CHANGE,
         WALLET_HOOK.CHAIN_ON_DISCONNECT,
@@ -24,13 +35,16 @@ class Metamask extends EthereumBaseWallet implements WalletInterface<MetamaskSta
         WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
         WALLET_HOOK.NEW_BLOCK
     ]);
-    protected _walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_METAMASK);
-    protected _state: MetamaskState;
+    protected _walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_COINBASE);
+    protected chain: string | null = null;
+    protected _state: CoinbaseState;
+    protected _config: CoinbaseConfig;
+    protected _wallet: CoinbaseWalletSDK;
     public provider?: ethers.providers.Web3Provider;
-    public name = 'METAMASK';
-    public type: EthereumWalletType = WALLET_TYPE.ETHEREUM_METAMASK;
+    public name = 'COINBASE';
+    public type: EthereumWalletType = WALLET_TYPE.ETHEREUM_COINBASE;
 
-    constructor(state?: MetamaskState) {
+    constructor(state?: CoinbaseState, config: CoinbaseConfig = defaultConfig) {
         super();
 
         if (state) {
@@ -38,12 +52,16 @@ class Metamask extends EthereumBaseWallet implements WalletInterface<MetamaskSta
         } else {
             this._state = { ...initialState };
         }
-
+        this._config = config;
+        this._wallet = new CoinbaseWalletSDK(config.coinbaseConfig);
         this._setupInitialState();
     }
 
     protected _getEthereumProvider(): EthereumObject {
-        return ProviderService.getNamedWindowEthereumObject('MetaMask', (globalWindow) => globalWindow.isMetaMask);
+        return ProviderService.getNamedWindowEthereumObject(
+            'CoinbaseWallet',
+            (globalWindow) => globalWindow.isCoinbaseWallet
+        );
     }
 
     public async init(): Promise<WALLET_STATUS> {
@@ -78,8 +96,8 @@ class Metamask extends EthereumBaseWallet implements WalletInterface<MetamaskSta
         if (!ethereumGlobal) {
             return false;
         }
-        return Boolean(ethereumGlobal.providerMap.get('MetaMask'));
+        return Boolean(ethereumGlobal.providerMap.get('Coinbase'));
     }
 }
 
-export { Metamask };
+export { Coinbase };

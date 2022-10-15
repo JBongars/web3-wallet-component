@@ -4,6 +4,8 @@
         "module": "ESNext",
         "moduleResolution": "Node",
         "lib": ["DOM", "ES2018"],
+        "jsx": "react-jsx",
+        "jsxImportSource": "@emotion/react",
         "esModuleInterop": true,
         "allowJs": true,
         "sourceMap": true,
@@ -14,10 +16,9 @@
         "paths": {
             "~/*": ["./*"]
         },
-        "outDir": "./dist",
-        "jsx": "react"
+        "outDir": "./dist"
     },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist", "jest.config.js", "**/*.spec.ts", ".storybook/**/*"],
+    "include": ["src/**/*", ".storybook/stories/WalletChainDemo.tsx"],
+    "exclude": ["node_modules", "dist", "jest.config.js", "**/*.spec.ts"],
     "types": ["jest"]
 }
