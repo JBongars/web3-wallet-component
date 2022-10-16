@@ -1,8 +1,8 @@
 import { describe, expect, test, beforeEach } from '@jest/globals';
 import { assert } from 'console';
-import { HookNotAvailableError } from '../../errors';
-import HookRouter from './HookRouter';
-import { WALLET_HOOK } from './types';
+import { HookNotAvailableError } from '../../../errors';
+import HookRouter from '../HookRouter';
+import { WALLET_HOOK } from '../types';
 
 describe('# HookRouter', () => {
     test('should init a hookRouter without error', async () => {

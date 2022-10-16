@@ -19,6 +19,6 @@
         "outDir": "./dist"
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist", "jest.config.bak.js", "**/*.spec.ts"],
+    "exclude": ["node_modules", "dist", "jest.config.js", "**/*.spec.ts"],
     "types": ["jest"]
 }
