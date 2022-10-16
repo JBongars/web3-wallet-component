@@ -97,7 +97,7 @@ $parcel$export($bde3ffd6d211cef9$exports, "Metamask", () => $bde3ffd6d211cef9$ex
  * hookRouter.registerCallback(WALLET_HOOK.NEW_BLOCK, () => console.log("hello hook!")); // create a new hook
  * hookRouter.applyHooks([WALLET_HOOK.NEW_BLOCK]); // >> hello hook!
  * ```
- */ class $a71b91c4d64511bd$var$HookRouter {
+ */ class $a71b91c4d64511bd$export$3e7b7dba1fab7538 {
     /**
      * Initializes the hook router to start listening for hooks
      * @param hooks - List of hooks the HookRouter should listen for
@@ -183,7 +183,7 @@ $parcel$export($bde3ffd6d211cef9$exports, "Metamask", () => $bde3ffd6d211cef9$ex
         await Promise.all(callbacksToInvoke.map((fn)=>fn(...args)));
     }
 }
-var $a71b91c4d64511bd$export$2e2bcd8739ae039 = $a71b91c4d64511bd$var$HookRouter;
+var $a71b91c4d64511bd$export$2e2bcd8739ae039 = $a71b91c4d64511bd$export$3e7b7dba1fab7538;
 
 
 let /**

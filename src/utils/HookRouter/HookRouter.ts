@@ -129,4 +129,5 @@ class HookRouter {
     }
 }
 
+export { HookRouter };
 export default HookRouter;
