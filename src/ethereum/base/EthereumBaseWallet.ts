@@ -4,9 +4,8 @@ import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
 import { CHAIN_ETHEREUM } from '..';
-import { useWindow } from '../../containers';
-import { WalletHookHandlerInterface, WalletInterface } from '../../types';
-import { EthereumChainConfig, EthereumObject, ProviderService } from '../services';
+import { WalletHookHandlerInterface } from '../../types';
+import { EthereumChainConfig, EthereumObject, Provider, ProviderService } from '../services';
 import { BaseEthereumAsset, BaseEthereumChainConfig, BaseEthereumState } from './types';
 
 abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
@@ -28,7 +27,7 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         };
     }
 
-    protected _getEthereumProvider(): ethers.providers.ExternalProvider {
+    protected _getEthereumProvider(): EthereumObject {
         throw new NotImplementedError();
     }
 
@@ -125,9 +124,9 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         return ProviderService.addChainToWallet(chainConfig as EthereumChainConfig);
     }
 
-    public async switchChainFromWallet(chain: number, noHook: boolean = false) {
+    public async switchChainFromWallet(chain: number, noHook = false) {
         const ethereum = this._getEthereumProvider();
-        if ((ethereum as any).networkVersion !== String(chain)) {
+        if ((ethereum as EthereumObject).networkVersion !== String(chain)) {
             await ProviderService.switchChainFromWallet(ethereum, chain);
 
             if (noHook) {
@@ -183,8 +182,8 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         if (!this.getIsWalletInstalled()) {
             return;
         }
-        const ethereum = this._getEthereumProvider() as any;
-        const provider = this._getProvider() as any;
+        const ethereum = this._getEthereumProvider() as EthereumObject;
+        const provider = this._getProvider() as Provider;
 
         if (!ethereum.on) {
             return;

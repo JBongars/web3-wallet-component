@@ -122,7 +122,7 @@ class WalletStateStorage {
     }
 
     private _storage(): Storage | null {
-        return useWindow((windowObject) => (windowObject as any).localStorage);
+        return useWindow((windowObject) => (windowObject as Window).localStorage);
     }
 }
 

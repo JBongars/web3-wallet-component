@@ -1,5 +1,4 @@
 import { ethers } from 'ethers';
-import { WalletNotInstalledError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
@@ -43,7 +42,9 @@ class Metamask extends EthereumBaseWallet implements WalletInterface<MetamaskSta
     }
 
     protected _getEthereumProvider(): EthereumObject {
-        return ProviderService.getNamedWindowEthereumObject('MetaMask', (globalWindow) => globalWindow.isMetaMask);
+        return ProviderService.getNamedWindowEthereumObject('MetaMask', (ethereumObject: EthereumObject) =>
+            Boolean(ethereumObject.isMetaMask)
+        );
     }
 
     public async init(): Promise<WALLET_STATUS> {
@@ -74,7 +75,7 @@ class Metamask extends EthereumBaseWallet implements WalletInterface<MetamaskSta
     }
 
     public getIsWalletInstalled(): boolean {
-        const ethereumGlobal = useWindow((windowObject) => (windowObject as any).ethereum) as any;
+        const ethereumGlobal = useWindow((windowObject) => (windowObject as Window).ethereum) as EthereumObject;
         if (!ethereumGlobal) {
             return false;
         }

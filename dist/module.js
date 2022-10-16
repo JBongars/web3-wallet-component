@@ -1206,8 +1206,11 @@ const $6efec99b285d035b$export$703a843624f42e6c = (chainId)=>{
 
 
 class $d808041ad48ee2f7$export$9e095c387372d0b1 {
+    static getWindowEthereumObject() {
+        return (0, $412a545945027ba9$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
+    }
     static getNamedWindowEthereumObject(key, validator) {
-        const ethereumGlobal = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
+        const ethereumGlobal = $d808041ad48ee2f7$export$9e095c387372d0b1.getWindowEthereumObject();
         if (!ethereumGlobal) throw new (0, $28ac839a9eca26f5$export$72563c16b91dfd16)();
         if (!ethereumGlobal.providerMap) {
             if (!validator(ethereumGlobal)) throw new (0, $28ac839a9eca26f5$export$72563c16b91dfd16)();
@@ -1234,12 +1237,15 @@ class $d808041ad48ee2f7$export$9e095c387372d0b1 {
         return provider.send("eth_chainId", []);
     }
     static async addChainToWallet(chainConfig) {
-        return (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (window)=>window.ethereum?.request({
+        (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (window)=>{
+            const ethereum = window.ethereum;
+            if (ethereum && ethereum.request) ethereum.request({
                 method: "wallet_addEthereumChain",
                 params: [
                     chainConfig
                 ]
-            }));
+            });
+        });
     }
     static async switchChainFromWallet(ethereum, chain) {
         if (!ethereum.request) throw new Error("EthereumProvider.request method is not available");
@@ -1455,7 +1461,7 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa extends (0, $7bc8826faba50ebf$ex
         this._setupInitialState();
     }
     _getEthereumProvider() {
-        return (0, $d808041ad48ee2f7$export$9e095c387372d0b1).getNamedWindowEthereumObject("MetaMask", (globalWindow)=>globalWindow.isMetaMask);
+        return (0, $d808041ad48ee2f7$export$9e095c387372d0b1).getNamedWindowEthereumObject("MetaMask", (ethereumObject)=>Boolean(ethereumObject.isMetaMask));
     }
     async init() {
         this.provider = await this._getProvider();
@@ -1553,7 +1559,7 @@ class $e9480eda56db4579$export$bbf33c97e5e72e4f extends (0, $7bc8826faba50ebf$ex
         this._setupInitialState();
     }
     _getEthereumProvider() {
-        return (0, $d808041ad48ee2f7$export$9e095c387372d0b1).getNamedWindowEthereumObject("CoinbaseWallet", (globalWindow)=>globalWindow.isCoinbaseWallet);
+        return (0, $d808041ad48ee2f7$export$9e095c387372d0b1).getNamedWindowEthereumObject("CoinbaseWallet", (ethereum)=>Boolean(ethereum.isCoinbaseWallet));
     }
     async init() {
         this.provider = await this._getProvider();

@@ -88,6 +88,7 @@ type HookEvent = {
     destroy: () => void;
     id: symbol;
 };
+type HookFunction = (...args: any[]) => void | Promise<void>;
 /**
  * Handles callback hooks for wallet/ chain events
  * @see WALLET_HOOK for available hooks
@@ -129,7 +130,7 @@ declare class HookRouter {
      * @see applyHooks
      * @remarks if a hook is expecting to be called with an argument, use @see applyHookWithArgs
      */
-    registerCallback(hook: WALLET_HOOK, cb: Function): HookEvent;
+    registerCallback(hook: WALLET_HOOK, cb: HookFunction): HookEvent;
     /**
      * Deregisters a particular hook
      * @param hook - hook enum
@@ -149,9 +150,9 @@ declare class HookRouter {
      * @param args - argument to pass to the hook callback
      * @remarks args are destructured
      */
-    applyHookWithArgs(hook: WALLET_HOOK, ...args: any[]): Promise<void>;
+    applyHookWithArgs(hook: WALLET_HOOK, ...args: unknown[]): Promise<void>;
 }
-export const useWindow: <T>(cb: (windowObject: unknown) => T) => T | null;
+export const useWindow: <T>(cb: (windowObject: Window) => T) => T | null;
 /**
  * Wallet types representing low level wallets
  */
@@ -170,7 +171,28 @@ export enum CHAIN_TYPE {
     ALGORAND = 0,
     ETHEREUM = 1
 }
-type EthereumObject = ethers.providers.ExternalProvider;
+type ConnectInfo = {
+    chainId: string;
+};
+type ProviderRpcError = Error & {
+    message: string;
+    code: number;
+    data?: unknown;
+};
+type EthereumEventAccountsChanged = (accounts: string[]) => Promise<void>;
+type EthereumEventChainChanged = (chainId: string) => Promise<void>;
+type EthereumEventConnect = (connectInfo: ConnectInfo) => Promise<void>;
+type EthereumEventDisconnect = (error: ProviderRpcError) => Promise<void>;
+type EthereumEventMessage = (message: unknown) => Promise<void>;
+type EthereumEvent = ((key: 'accountsChanged', cb: EthereumEventAccountsChanged) => void) & ((key: 'chainChanged', cb: EthereumEventChainChanged) => void) & ((key: 'connect', cb: EthereumEventConnect) => void) & ((key: 'disconnect', cb: EthereumEventDisconnect) => void) & ((key: 'message', cb: EthereumEventMessage) => void);
+type EthereumObject = ethers.providers.ExternalProvider & {
+    providerMap: Map<string, EthereumObject>;
+    provider: EthereumObject[];
+    networkVersion: string;
+    isCoinbaseWallet?: boolean;
+    isMetaMask?: boolean;
+    on: EthereumEvent;
+};
 /**
  * State for BaseEthereum Wallet
  */
@@ -201,7 +223,7 @@ declare abstract class EthereumBaseWallet implements WalletHookHandlerInterface 
     protected chain: string | null;
     protected _state: BaseEthereumState;
     constructor();
-    protected _getEthereumProvider(): ethers.providers.ExternalProvider;
+    protected _getEthereumProvider(): EthereumObject;
     protected _getProvider(ethereum?: ethers.providers.ExternalProvider): ethers.providers.Web3Provider;
     protected _enforceIsConnected(): void;
     protected _enforceChain(): Promise<void>;

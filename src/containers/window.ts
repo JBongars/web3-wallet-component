@@ -1,4 +1,4 @@
-const useWindow = <T>(cb: (windowObject: unknown) => T): T | null => {
+const useWindow = <T>(cb: (windowObject: Window) => T): T | null => {
     if (Object.keys(globalThis).includes('window')) {
         return cb(globalThis.window);
     } else {

@@ -35,6 +35,8 @@
         "@storybook/react": "^6.5.12",
         "@storybook/testing-library": "^0.0.13",
         "@types/react": "^18.0.21",
+        "@typescript-eslint/eslint-plugin": "^5.40.0",
+        "@typescript-eslint/parser": "^5.40.0",
         "eslint": "^8.24.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-prettier": "^4.2.1",

@@ -1,6 +1,5 @@
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import { ethers } from 'ethers';
-import { WalletNotInstalledError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
@@ -58,9 +57,8 @@ class Coinbase extends EthereumBaseWallet implements WalletInterface<CoinbaseSta
     }
 
     protected _getEthereumProvider(): EthereumObject {
-        return ProviderService.getNamedWindowEthereumObject(
-            'CoinbaseWallet',
-            (globalWindow) => globalWindow.isCoinbaseWallet
+        return ProviderService.getNamedWindowEthereumObject('CoinbaseWallet', (ethereum: EthereumObject) =>
+            Boolean(ethereum.isCoinbaseWallet)
         );
     }
 
@@ -92,7 +90,7 @@ class Coinbase extends EthereumBaseWallet implements WalletInterface<CoinbaseSta
     }
 
     public getIsWalletInstalled(): boolean {
-        const ethereumGlobal = useWindow((windowObject) => (windowObject as any).ethereum) as any;
+        const ethereumGlobal = useWindow((windowObject) => (windowObject as Window).ethereum) as EthereumObject;
         if (!ethereumGlobal) {
             return false;
         }

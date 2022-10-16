@@ -1,9 +1,8 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers, providers } from 'ethers';
 import { WalletNotConnectedError } from '~/src/errors';
-import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
-import WalletStateStorage from '~/src/WalletStateStorage';
-import { CHAIN_ETHEREUM, EthereumWalletType } from '..';
+import { WALLET_HOOK, WALLET_STATUS } from '~/src/utils/HookRouter/types';
+import { EthereumWalletType } from '..';
 import { WALLET_TYPE } from '../../config/wallets';
 import { WalletHookHandlerInterface, WalletInterface } from '../../types';
 import { EthereumBaseWallet } from '../base';
