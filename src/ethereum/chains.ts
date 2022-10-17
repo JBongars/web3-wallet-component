@@ -71,14 +71,16 @@ const getChainConfig = async (chainId: number): Promise<ChainConfig> => {
         case 11155111:
             return sepoliaEth;
         default:
-            return {
-                chainName: item.title,
-                chainId: ethers.utils.hexlify(item.networkId),
-                nativeCurrency: item.nativeCurrency,
-                rpcUrls: item.rpc
-            };
-
-        // throw new Error(`ChainId ${chainId} configuration not found`);
+            if (item) {
+                return {
+                    chainName: item.title,
+                    chainId: ethers.utils.hexlify(item.networkId),
+                    nativeCurrency: item.nativeCurrency,
+                    rpcUrls: item.rpc
+                };
+            } else {
+                throw new Error(`ChainId ${chainId} configuration not found`);
+            }
     }
 };
 

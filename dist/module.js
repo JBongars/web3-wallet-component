@@ -7,6 +7,7 @@ import {PeraWalletConnect as $hgUW1$PeraWalletConnect} from "@perawallet/connect
 import {Buffer as $hgUW1$Buffer} from "buffer";
 import $hgUW1$walletconnectclient from "@walletconnect/client";
 import $hgUW1$algorandwalletconnectqrcodemodal from "algorand-walletconnect-qrcode-modal";
+import $hgUW1$axios from "axios";
 import $hgUW1$walletconnectweb3provider from "@walletconnect/web3-provider";
 
 function $parcel$export(e, n, v, s) {
@@ -1145,6 +1146,8 @@ var $3b49e6787d3f4e23$export$2e2bcd8739ae039 = $3b49e6787d3f4e23$var$WalletState
 
 
 
+
+
 const $6efec99b285d035b$export$abdf78135f8407bb = {
     chainName: "Ethereum Mainnet",
     chainId: "0x1",
@@ -1217,8 +1220,9 @@ const $6efec99b285d035b$var$sepoliaEth = {
         "https://sepolia.etherscan.io"
     ]
 };
-const $6efec99b285d035b$export$703a843624f42e6c = (chainId)=>{
-    console.log("run here");
+const $6efec99b285d035b$export$703a843624f42e6c = async (chainId)=>{
+    const { data: data  } = await (0, $hgUW1$axios).get("https://chainid.network/chains.json");
+    const item = data.find((datum)=>datum.networkId === chainId);
     switch(chainId){
         case 1:
             return $6efec99b285d035b$export$abdf78135f8407bb;
@@ -1233,7 +1237,13 @@ const $6efec99b285d035b$export$703a843624f42e6c = (chainId)=>{
         case 11155111:
             return $6efec99b285d035b$var$sepoliaEth;
         default:
-            throw new Error(`ChainId ${chainId} configuration not found`);
+            if (item) return {
+                chainName: item.title,
+                chainId: (0, $hgUW1$ethers).utils.hexlify(item.networkId),
+                nativeCurrency: item.nativeCurrency,
+                rpcUrls: item.rpc
+            };
+            else throw new Error(`ChainId ${chainId} configuration not found`);
     }
 };
 

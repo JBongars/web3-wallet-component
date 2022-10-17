@@ -7,6 +7,7 @@ var $8zHUo$perawalletconnect = require("@perawallet/connect");
 var $8zHUo$buffer = require("buffer");
 var $8zHUo$walletconnectclient = require("@walletconnect/client");
 var $8zHUo$algorandwalletconnectqrcodemodal = require("algorand-walletconnect-qrcode-modal");
+var $8zHUo$axios = require("axios");
 var $8zHUo$walletconnectweb3provider = require("@walletconnect/web3-provider");
 
 function $parcel$exportWildcard(dest, source) {
@@ -1148,6 +1149,8 @@ var $430794692bff5f59$export$2e2bcd8739ae039 = $430794692bff5f59$var$WalletState
 
 
 
+
+
 const $44a3b7c9aba96e50$export$abdf78135f8407bb = {
     chainName: "Ethereum Mainnet",
     chainId: "0x1",
@@ -1220,8 +1223,9 @@ const $44a3b7c9aba96e50$var$sepoliaEth = {
         "https://sepolia.etherscan.io"
     ]
 };
-const $44a3b7c9aba96e50$export$703a843624f42e6c = (chainId)=>{
-    console.log("run here");
+const $44a3b7c9aba96e50$export$703a843624f42e6c = async (chainId)=>{
+    const { data: data  } = await (0, ($parcel$interopDefault($8zHUo$axios))).get("https://chainid.network/chains.json");
+    const item = data.find((datum)=>datum.networkId === chainId);
     switch(chainId){
         case 1:
             return $44a3b7c9aba96e50$export$abdf78135f8407bb;
@@ -1236,7 +1240,13 @@ const $44a3b7c9aba96e50$export$703a843624f42e6c = (chainId)=>{
         case 11155111:
             return $44a3b7c9aba96e50$var$sepoliaEth;
         default:
-            throw new Error(`ChainId ${chainId} configuration not found`);
+            if (item) return {
+                chainName: item.title,
+                chainId: (0, $8zHUo$ethers.ethers).utils.hexlify(item.networkId),
+                nativeCurrency: item.nativeCurrency,
+                rpcUrls: item.rpc
+            };
+            else throw new Error(`ChainId ${chainId} configuration not found`);
     }
 };
 
