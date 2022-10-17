@@ -1218,6 +1218,7 @@ const $6efec99b285d035b$var$sepoliaEth = {
     ]
 };
 const $6efec99b285d035b$export$703a843624f42e6c = (chainId)=>{
+    console.log("run here");
     switch(chainId){
         case 1:
             return $6efec99b285d035b$export$abdf78135f8407bb;
@@ -1386,7 +1387,7 @@ class $63a99e75275a61fa$export$2c78a3b4fc11d8fa {
             });
         } catch (err) {
             if (err && err.code === 4902) {
-                const chainConfig = (0, $6efec99b285d035b$export$703a843624f42e6c)(chain);
+                const chainConfig = await (0, $6efec99b285d035b$export$703a843624f42e6c)(chain);
                 await this.addChainToWallet(chainConfig);
             } else throw err;
         }
@@ -1539,7 +1540,15 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
     }
     async getWCProvider() {
         const walletConnectProvider = new (0, $hgUW1$walletconnectweb3provider)({
-            infuraId: "f83857b162d64708b25a59585f969fbd",
+            // infuraId: process.env.INFURA_ID || '', // Required
+            rpc: {
+                1: "https://rpc.ankr.com/eth",
+                3: "https://rpc.ankr.com/eth_ropsten",
+                4: "https://rpc.ankr.com/eth_rinkeby",
+                5: "https://rpc.ankr.com/eth_goerli",
+                42: "https://kovan.etherscan.io",
+                11155111: "https://sepolia.etherscan.io"
+            },
             qrcode: true
         });
         await walletConnectProvider.enable();
@@ -1627,7 +1636,7 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
             });
         } catch (err) {
             if (err && err.code === 4902) {
-                const chainConfig = (0, $6efec99b285d035b$export$703a843624f42e6c)(chain);
+                const chainConfig = await (0, $6efec99b285d035b$export$703a843624f42e6c)(chain);
                 await this.addChainToWallet(chainConfig);
             } else throw err;
         }

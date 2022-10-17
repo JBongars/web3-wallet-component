@@ -1,3 +1,6 @@
+import axios from "axios";
+import { ethers } from "ethers";
+
 type ChainConfig = {
     chainName: string;
     chainId: string;
@@ -51,7 +54,9 @@ const sepoliaEth: ChainConfig = {
     rpcUrls: ['https://sepolia.etherscan.io']
 };
 
-const getChainConfig = (chainId: number): ChainConfig => {
+const getChainConfig = async (chainId: number): Promise<ChainConfig> => {
+    const { data } = await axios.get('https://chainid.network/chains.json');
+    const item = data.find((datum: any) => datum.networkId === chainId);
     switch (chainId) {
         case 1:
             return mainnetEth;
@@ -66,7 +71,14 @@ const getChainConfig = (chainId: number): ChainConfig => {
         case 11155111:
             return sepoliaEth;
         default:
-            throw new Error(`ChainId ${chainId} configuration not found`);
+            return {
+                chainName: item.title,
+                chainId: ethers.utils.hexlify(item.networkId),
+                nativeCurrency: item.nativeCurrency,
+                rpcUrls: item.rpc
+            };
+
+        // throw new Error(`ChainId ${chainId} configuration not found`);
     }
 };
 

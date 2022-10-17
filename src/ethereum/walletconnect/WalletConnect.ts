@@ -83,7 +83,16 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
     public async getWCProvider(): Promise<WalletConnectProvider> {
         const walletConnectProvider = new WalletConnectProvider({
-            infuraId: process.env.INFURA_ID || '', // Required
+            // infuraId: process.env.INFURA_ID || '', // Required
+            rpc: {
+                1: 'https://rpc.ankr.com/eth',
+                3: 'https://rpc.ankr.com/eth_ropsten',
+                4: 'https://rpc.ankr.com/eth_rinkeby',
+                5: 'https://rpc.ankr.com/eth_goerli',
+                42: 'https://kovan.etherscan.io',
+                11155111: 'https://sepolia.etherscan.io'
+            },
+
             qrcode: true
         });
         await walletConnectProvider.enable();
@@ -188,7 +197,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
                 });
             } catch (err) {
                 if (err && (err as { code: number }).code === 4902) {
-                    const chainConfig = getChainConfig(chain);
+                    const chainConfig = await getChainConfig(chain);
                     await this.addChainToWallet(chainConfig as EthereumWalletConnectChainConfig);
                 } else {
                     throw err;

@@ -208,7 +208,7 @@ class Metamask implements WalletInterface<MetamaskState>, WalletHookHandlerInter
                 });
             } catch (err) {
                 if (err && (err as { code: number }).code === 4902) {
-                    const chainConfig = getChainConfig(chain);
+                    const chainConfig = await getChainConfig(chain);
                     await this.addChainToWallet(chainConfig as MetamaskChainConfig);
                 } else {
                     throw err;
