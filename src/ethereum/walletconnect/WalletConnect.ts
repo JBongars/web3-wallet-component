@@ -83,7 +83,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
     public async getWCProvider(): Promise<WalletConnectProvider> {
         const walletConnectProvider = new WalletConnectProvider({
-            infuraId: 'f83857b162d64708b25a59585f969fbd', // Required
+            infuraId: process.env.INFURA_ID || '', // Required
             qrcode: true
         });
         await walletConnectProvider.enable();
