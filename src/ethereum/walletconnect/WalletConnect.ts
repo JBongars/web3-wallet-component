@@ -6,6 +6,7 @@ import { EthereumWalletType } from '..';
 import { WALLET_TYPE } from '../../config/wallets';
 import { WalletHookHandlerInterface, WalletInterface } from '../../types';
 import { EthereumBaseWallet } from '../base';
+import { ProviderService } from '../services';
 import { EthereumWalletConnectState } from './types';
 
 const initialState: Readonly<EthereumWalletConnectState> = Object.freeze({
@@ -24,6 +25,7 @@ class EthWalletConnect
 
     constructor(state?: EthereumWalletConnectState) {
         super();
+
         if (state) {
             this._state = { ...state };
         } else {

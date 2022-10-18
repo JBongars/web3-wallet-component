@@ -4,7 +4,7 @@ import { NotImplementedError, WalletNotInstalledError } from '../../errors';
 import { getChainConfig } from '../chains';
 import { EthereumChainConfig, EthereumObject, Provider, WindowEthereumMappedKey } from './types';
 
-abstract class ProviderService {
+class ProviderService {
     public static getWindowEthereumObject(): EthereumObject {
         return useWindow((windowObject: Window) => windowObject.ethereum) as EthereumObject;
     }
@@ -64,18 +64,18 @@ abstract class ProviderService {
         });
     }
 
-    public static async switchChainFromWallet(ethereum: EthereumObject, chain: number) {
+    public static async switchChainFromWallet(ethereum: EthereumObject, chainId: string) {
         if (!ethereum.request) {
             throw new Error('EthereumProvider.request method is not available');
         }
         try {
             return ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: `0x${chain}` }]
+                params: [{ chainId }]
             });
         } catch (err) {
             if (err && (err as { code: number }).code === 4902) {
-                const chainConfig = getChainConfig(chain);
+                const chainConfig = getChainConfig(chainId);
                 return await this.addChainToWallet(chainConfig as EthereumChainConfig);
             } else {
                 throw err;

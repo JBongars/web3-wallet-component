@@ -2,8 +2,8 @@ import { ethers } from 'ethers';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
-import { CHAIN_ETHEREUM, EthereumWalletType } from '..';
-import { WALLET_TYPE } from '../../config/wallets';
+import { EthereumWalletType } from '..';
+import { CHAIN_TYPE, WALLET_TYPE } from '../../config/wallets';
 import { useWindow } from '../../containers';
 import { WalletHookHandlerInterface, WalletInterface } from '../../types';
 import { EthereumBaseWallet } from '../base';
@@ -23,7 +23,10 @@ class Metamask extends EthereumBaseWallet implements WalletInterface<MetamaskSta
         WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
         WALLET_HOOK.NEW_BLOCK
     ]);
-    protected _walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_METAMASK);
+    protected _walletStorage: WalletStateStorage = new WalletStateStorage(
+        CHAIN_TYPE.ETHEREUM,
+        WALLET_ID.ETHEREUM_METAMASK
+    );
     protected _state: MetamaskState;
     public provider?: ethers.providers.Web3Provider;
     public name = 'METAMASK';

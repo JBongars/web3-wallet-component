@@ -6,8 +6,8 @@ import { WalletHookHandlerInterface, WalletInterface } from '~/src/types';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { HookEvent, WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
-import { AlgorandSignerTxn, AlgorandWalletType, CHAIN_ALGORAND } from '..';
-import { WALLET_TYPE } from '../../config/wallets';
+import { AlgorandSignerTxn, AlgorandWalletType } from '..';
+import { CHAIN_TYPE, WALLET_TYPE } from '../../config/wallets';
 import { PeraWalletAsset, PeraWalletSigner, PeraWalletState } from './types';
 
 type Accounts = {
@@ -30,7 +30,7 @@ class PeraWallet implements WalletInterface<PeraWalletState>, WalletHookHandlerI
     ]);
     private _state: PeraWalletState;
     private provider: PeraWalletConnect | undefined;
-    private walletStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_PERAWALLET);
+    private walletStorage = new WalletStateStorage(CHAIN_TYPE.ALGORAND, WALLET_ID.ALGORAND_PERAWALLET);
 
     public type: AlgorandWalletType = WALLET_TYPE.ALGORAND_PERAWALLET;
     public name = 'ALGORAND_PERAWALLET';

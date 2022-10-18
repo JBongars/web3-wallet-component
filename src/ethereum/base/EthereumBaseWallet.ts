@@ -3,7 +3,7 @@ import { NotImplementedError, WalletNotConnectedError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
-import { CHAIN_ETHEREUM } from '..';
+import { CHAIN_TYPE } from '../../config';
 import { WalletHookHandlerInterface } from '../../types';
 import { EthereumChainConfig, EthereumObject, Provider, ProviderService } from '../services';
 import { BaseEthereumAsset, BaseEthereumChainConfig, BaseEthereumState } from './types';
@@ -16,7 +16,10 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
         WALLET_HOOK.NEW_BLOCK
     ]);
-    protected _walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_NOWALLET);
+    protected _walletStorage: WalletStateStorage = new WalletStateStorage(
+        CHAIN_TYPE.ETHEREUM,
+        WALLET_ID.ETHEREUM_NOWALLET
+    );
     protected chain: string | null = null;
     protected _state: BaseEthereumState;
 
@@ -124,23 +127,23 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         return ProviderService.addChainToWallet(chainConfig as EthereumChainConfig);
     }
 
-    public async switchChainFromWallet(chain: number, noHook = false) {
+    public async switchChainFromWallet(chain: string, updateChain = false) {
         const ethereum = this._getEthereumProvider();
         if ((ethereum as EthereumObject).networkVersion !== String(chain)) {
             await ProviderService.switchChainFromWallet(ethereum, chain);
 
-            if (noHook) {
-                this.chain = `0x${chain}`;
+            if (updateChain) {
+                this.chain = chain;
             }
         }
     }
 
-    public async forceCurrentChainID(chain: number): Promise<void> {
-        if (this.chain !== null && this.chain !== `0x${chain}`) {
+    public async forceCurrentChainID(chain: string): Promise<void> {
+        if (this.chain !== null && this.chain !== chain) {
             throw new Error(`Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`);
         }
 
-        this.chain = `0x${chain}`;
+        this.chain = chain;
         this.switchChainFromWallet(chain);
     }
 
@@ -190,6 +193,7 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         }
 
         ethereum.on('accountsChanged', async (accounts: string[]) => {
+            console.log({ accounts });
             this._state.accounts = accounts;
 
             if (accounts.length === 0) {

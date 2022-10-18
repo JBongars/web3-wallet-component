@@ -6,7 +6,7 @@ import react from 'react';
 import { makeTransaction } from './services';
 
 type WalletDemoProps = {
-    wallet: Wallet | any;
+    wallet: Wallet;
 };
 
 const Wrapper = styled.div`
@@ -51,25 +51,31 @@ function tryStringifyJSON(json: unknown): string {
     }
 }
 
-const WalletDemo: FunctionComponent<WalletDemoProps> = ({ wallet }) => {
+const WalletDemo: FunctionComponent<WalletDemoProps> = ({ wallet }: WalletDemoProps) => {
     const [walletState, setWalletState] = useState<any>(wallet.toJSON());
     const [output, setOutput] = useState<unknown>({});
     const [forceUpdate, setForceUpdate] = useState<{}>({});
 
     useEffect(() => {
-        wallet.onAccountChange((accounts: string[]) => {
-            console.log('onAccountChange', accounts);
-            console.log(wallet.toJSON());
+        wallet.mountEventListeners();
+        wallet.onAccountChange((accounts: any[]) => {
+            setOutput({
+                event: 'onAccountChange',
+                accounts
+            });
             setWalletState(wallet.toJSON());
         });
         wallet.onAccountDisconnect(() => {
-            console.log('onAccountDisconnect');
-            console.log(wallet.toJSON());
+            setOutput({
+                event: 'onAccountDisconnect'
+            });
             setWalletState(wallet.toJSON());
         });
         wallet.onChainChange((chain: string) => {
-            console.log('onChainChange', chain);
-            console.log(wallet.toJSON());
+            setOutput({
+                event: 'onChainChange',
+                chain
+            });
             setWalletState(wallet.toJSON());
         });
         if (

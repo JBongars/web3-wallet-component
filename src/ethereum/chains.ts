@@ -23,11 +23,11 @@ const mainnetEth: ChainConfig = {
     rpcUrls: ['https://rinkeby.etherscan.io']
 };
 
-const getChainConfig = (chainId: number): ChainConfig => {
+const getChainConfig = (chainId: string): ChainConfig => {
     switch (chainId) {
-        case 1:
+        case '0x1':
             return mainnetEth;
-        case 4:
+        case '0x4':
             return rinkebyEth;
         default:
             throw new Error(`ChainId ${chainId} configuration not found`);
