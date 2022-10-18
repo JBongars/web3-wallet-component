@@ -1552,8 +1552,7 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
         if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
     }
     async getWCProvider() {
-        const walletConnectProvider = new (0, ($parcel$interopDefault($8zHUo$walletconnectweb3provider)))({
-            // infuraId: process.env.INFURA_ID || '', // Required
+        const provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectweb3provider)))({
             rpc: {
                 1: "https://rpc.ankr.com/eth",
                 3: "https://rpc.ankr.com/eth_ropsten",
@@ -1564,8 +1563,18 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
             },
             qrcode: true
         });
-        await walletConnectProvider.enable();
-        return walletConnectProvider;
+        await provider.enable();
+        provider.on("accountsChanged", async (accounts)=>{
+            this._state.accounts = accounts;
+            if (accounts.length === 0) {
+                await this.signOut();
+                this.hookRouter.applyHooks([
+                    (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
+                ]);
+            } else this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
+            this._updateWalletStorageValue();
+        });
+        return provider;
     }
     async init() {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;

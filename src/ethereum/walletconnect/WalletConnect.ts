@@ -82,8 +82,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     }
 
     public async getWCProvider(): Promise<WalletConnectProvider> {
-        const walletConnectProvider = new WalletConnectProvider({
-            // infuraId: process.env.INFURA_ID || '', // Required
+        const provider = new WalletConnectProvider({
             rpc: {
                 1: 'https://rpc.ankr.com/eth',
                 3: 'https://rpc.ankr.com/eth_ropsten',
@@ -92,12 +91,23 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
                 42: 'https://kovan.etherscan.io',
                 11155111: 'https://sepolia.etherscan.io'
             },
-
             qrcode: true
         });
-        await walletConnectProvider.enable();
+        await provider.enable();
 
-        return walletConnectProvider;
+        provider.on('accountsChanged', async (accounts: string[]) => {
+            this._state.accounts = accounts;
+
+            if (accounts.length === 0) {
+                await this.signOut();
+                this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
+            } else {
+                this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, accounts);
+            }
+            this._updateWalletStorageValue();
+        });
+
+        return provider;
     }
 
     public async init(): Promise<WALLET_STATUS> {
