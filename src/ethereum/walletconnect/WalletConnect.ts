@@ -107,6 +107,11 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
             this._updateWalletStorageValue();
         });
 
+        provider.on('chainChanged', async (chainId: number) => {
+            const id = ethers.utils.hexValue(chainId);
+            this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, id);
+        });
+
         return provider;
     }
 

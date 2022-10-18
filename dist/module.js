@@ -1571,6 +1571,10 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
             } else this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
             this._updateWalletStorageValue();
         });
+        provider.on("chainChanged", async (chainId)=>{
+            const id = (0, $hgUW1$ethers).utils.hexValue(chainId);
+            this.hookRouter.applyHookWithArgs((0, $90bab4f8b8f7e96d$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, id);
+        });
         return provider;
     }
     async init() {
