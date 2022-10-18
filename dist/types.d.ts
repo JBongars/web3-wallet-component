@@ -527,6 +527,21 @@ export type Wallet = AlgorandWallet | EthereumWallet;
 export type WALLET = Wallet;
 export type ChainWallet = Algorand | Ethereum;
 export type Signer<T, S> = (transactions: T) => Promise<S[]>;
+export type EVMBasedChain = {
+    chain: string;
+    chainId: number;
+    faucets: unknown[];
+    infoURL: string;
+    name: string;
+    nativeCurrency: {
+        name: string;
+        symbol: string;
+        decimals: number;
+    };
+    networkId: number;
+    rpc: string[];
+    shortName: string;
+};
 export interface WalletInterface<T> {
     /**
      * initializes the wallet

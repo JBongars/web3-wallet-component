@@ -10,6 +10,22 @@ type ChainWallet = Algorand | Ethereum;
 
 type Signer<T, S> = (transactions: T) => Promise<S[]>;
 
+type EVMBasedChain = {
+    chain: string;
+    chainId: number;
+    faucets: unknown[];
+    infoURL: string;
+    name: string;
+    nativeCurrency: {
+        name: string;
+        symbol: string;
+        decimals: number;
+    };
+    networkId: number;
+    rpc: string[];
+    shortName: string;
+};
+
 interface WalletInterface<T> {
     /**
      * initializes the wallet
@@ -152,4 +168,4 @@ interface ChainWalletInterface<Wallet, WalletType> {
 }
 
 export { WalletInterface, ChainWalletInterface, WalletHookHandlerInterface, ChainHookHandlerInterface };
-export type { Signer, Wallet, WALLET, ChainWallet };
+export type { Signer, Wallet, WALLET, ChainWallet, EVMBasedChain };

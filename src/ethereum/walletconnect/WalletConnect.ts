@@ -1,4 +1,5 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import axios from 'axios';
 import { ethers, providers } from 'ethers';
 import { NotImplementedError, WalletNotConnectedError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
@@ -7,7 +8,7 @@ import WalletStateStorage from '~/src/WalletStateStorage';
 import { CHAIN_ETHEREUM, EthereumWalletType } from '..';
 import { WALLET_TYPE } from '../../config/wallets';
 import { useWindow } from '../../containers';
-import { WalletHookHandlerInterface, WalletInterface } from '../../types';
+import { EVMBasedChain, WalletHookHandlerInterface, WalletInterface } from '../../types';
 import { getChainConfig } from '../chains';
 import { EthereumWalletConnectAsset, EthereumWalletConnectChainConfig, EthereumWalletConnectState } from './types';
 
@@ -82,17 +83,32 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     }
 
     public async getWCProvider(): Promise<WalletConnectProvider> {
+        const { data: chains }: { data: EVMBasedChain[] } = await axios.get('https://chainid.network/chains.json');
+        const ignoredChainIds = [1, 3, 4, 5, 42, 11155111];
+        const filteredChains = chains.filter((chain: EVMBasedChain) => {
+            return !ignoredChainIds.includes(chain.networkId);
+        });
+
+        const rpc: { [key: string]: string } = {
+            1: 'https://rpc.ankr.com/eth',
+            3: 'https://rpc.ankr.com/eth_ropsten',
+            4: 'https://rpc.ankr.com/eth_rinkeby',
+            5: 'https://rpc.ankr.com/eth_goerli',
+            42: 'https://kovan.etherscan.io',
+            11155111: 'https://sepolia.etherscan.io'
+        };
+
+        if (filteredChains && filteredChains.length) {
+            filteredChains.forEach((chain: EVMBasedChain) => {
+                rpc[chain.networkId] = chain.rpc[0];
+            });
+        }
+
         const provider = new WalletConnectProvider({
-            rpc: {
-                1: 'https://rpc.ankr.com/eth',
-                3: 'https://rpc.ankr.com/eth_ropsten',
-                4: 'https://rpc.ankr.com/eth_rinkeby',
-                5: 'https://rpc.ankr.com/eth_goerli',
-                42: 'https://kovan.etherscan.io',
-                11155111: 'https://sepolia.etherscan.io'
-            },
+            rpc,
             qrcode: true
         });
+
         await provider.enable();
 
         provider.on('accountsChanged', async (accounts: string[]) => {
@@ -110,6 +126,10 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         provider.on('chainChanged', async (chainId: number) => {
             const id = ethers.utils.hexValue(chainId);
             this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, id);
+        });
+
+        provider.on('disconnect', async (_code: number, _reason: string) => {
+            this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
         });
 
         return provider;

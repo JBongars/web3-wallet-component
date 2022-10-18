@@ -1502,6 +1502,7 @@ $parcel$export($bf08368245b76476$exports, "EthWalletConnect", () => $bf08368245b
 
 
 
+
 const $bf08368245b76476$var$initialState = Object.freeze({
     accounts: [],
     isConnected: false
@@ -1552,15 +1553,31 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
         if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
     }
     async getWCProvider() {
+        const { data: chains  } = await (0, ($parcel$interopDefault($8zHUo$axios))).get("https://chainid.network/chains.json");
+        const ignoredChainIds = [
+            1,
+            3,
+            4,
+            5,
+            42,
+            11155111
+        ];
+        const filteredChains = chains.filter((chain)=>{
+            return !ignoredChainIds.includes(chain.networkId);
+        });
+        const rpc = {
+            1: "https://rpc.ankr.com/eth",
+            3: "https://rpc.ankr.com/eth_ropsten",
+            4: "https://rpc.ankr.com/eth_rinkeby",
+            5: "https://rpc.ankr.com/eth_goerli",
+            42: "https://kovan.etherscan.io",
+            11155111: "https://sepolia.etherscan.io"
+        };
+        if (filteredChains && filteredChains.length) filteredChains.forEach((chain)=>{
+            rpc[chain.networkId] = chain.rpc[0];
+        });
         const provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectweb3provider)))({
-            rpc: {
-                1: "https://rpc.ankr.com/eth",
-                3: "https://rpc.ankr.com/eth_ropsten",
-                4: "https://rpc.ankr.com/eth_rinkeby",
-                5: "https://rpc.ankr.com/eth_goerli",
-                42: "https://kovan.etherscan.io",
-                11155111: "https://sepolia.etherscan.io"
-            },
+            rpc: rpc,
             qrcode: true
         });
         await provider.enable();
@@ -1577,6 +1594,11 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
         provider.on("chainChanged", async (chainId)=>{
             const id = (0, $8zHUo$ethers.ethers).utils.hexValue(chainId);
             this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, id);
+        });
+        provider.on("disconnect", async (_code, _reason)=>{
+            this.hookRouter.applyHooks([
+                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
+            ]);
         });
         return provider;
     }
