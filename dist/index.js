@@ -1596,8 +1596,14 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
             this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, id);
         });
         provider.on("disconnect", async (_code, _reason)=>{
+            this._state.accounts = [];
+            this._state.isConnected = false;
+            this.provider = undefined;
             this.hookRouter.applyHooks([
                 (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
+            ]);
+            this.hookRouter.applyHooks([
+                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
             ]);
         });
         return provider;
