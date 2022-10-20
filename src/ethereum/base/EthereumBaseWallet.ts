@@ -187,15 +187,11 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         }
 
         ethereum.on('accountsChanged', async (accounts: string[]) => {
-            console.log({ accounts });
             this._state.accounts = accounts;
-            console.log({ accounts });
-
             if (accounts.length === 0) {
                 await this.signOut();
                 this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
             } else {
-                console.log('INSIDE');
                 this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, accounts);
             }
             this._updateWalletStorageValue();
