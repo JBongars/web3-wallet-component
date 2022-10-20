@@ -96,6 +96,9 @@ class Coinbase extends EthereumBaseWallet implements WalletInterface<CoinbaseSta
         if (!ethereumGlobal) {
             return false;
         }
+        if (!ethereumGlobal.provider || !ethereumGlobal.providerMap) {
+            return ethereumGlobal.isCoinbaseWallet || false;
+        }
         return Boolean(ethereumGlobal.providerMap.get('Coinbase'));
     }
 }

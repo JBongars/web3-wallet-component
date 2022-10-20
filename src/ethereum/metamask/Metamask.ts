@@ -82,6 +82,9 @@ class Metamask extends EthereumBaseWallet implements WalletInterface<MetamaskSta
         if (!ethereumGlobal) {
             return false;
         }
+        if (!ethereumGlobal.provider || !ethereumGlobal.providerMap) {
+            return ethereumGlobal.isMetaMask || false;
+        }
         return Boolean(ethereumGlobal.providerMap.get('MetaMask'));
     }
 }

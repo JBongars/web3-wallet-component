@@ -101,6 +101,9 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
     }
 
     public getIsConnected(): boolean {
+        if (this._state.isConnected && this._state.accounts.length < 1) {
+            console.warn('wallet is marked as connected but the state.account length is 0');
+        }
         return this._state.isConnected;
     }
 
@@ -108,12 +111,20 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         this._enforceChain();
         this._enforceIsConnected();
 
+        if (this._state.accounts.length < 1) {
+            throw new Error('wallet is marked as connected but could not find primary account');
+        }
+
         return this._state.accounts[0];
     }
 
     public getAccounts(): string[] {
         this._enforceChain();
         this._enforceIsConnected();
+
+        if (this._state.accounts.length < 1) {
+            console.warn('wallet is marked as connected but could not find primary account');
+        }
 
         return this._state.accounts;
     }

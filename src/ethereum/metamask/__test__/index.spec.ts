@@ -22,7 +22,7 @@ jest.mock('~/src/containers/window', () => {
     };
 });
 
-describe('#Metamask Class', () => {
+describe.skip('#Metamask Class', () => {
     test('can get provider', async () => {
         const metamask = new Metamask();
 

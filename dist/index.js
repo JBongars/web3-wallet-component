@@ -540,16 +540,19 @@ class $8077658bdae097e7$export$bf6aa8a8e97b6c5f {
         return await (0, $0012831bc1085df5$export$9e095c387372d0b1).getAssets();
     }
     getIsConnected() {
+        if (this._state.isConnected && this._state.accounts.length < 1) console.warn("wallet is marked as connected but the state.account length is 0");
         return this._state.isConnected;
     }
     getPrimaryAccount() {
         this._enforceChain();
         this._enforceIsConnected();
+        if (this._state.accounts.length < 1) throw new Error("wallet is marked as connected but could not find primary account");
         return this._state.accounts[0];
     }
     getAccounts() {
         this._enforceChain();
         this._enforceIsConnected();
+        if (this._state.accounts.length > 1) console.warn("wallet is marked as connected but could not find primary account");
         return this._state.accounts;
     }
     async fetchCurrentChainID() {
@@ -698,6 +701,7 @@ class $bde3ffd6d211cef9$export$2c78a3b4fc11d8fa extends (0, $8077658bdae097e7$ex
     getIsWalletInstalled() {
         const ethereumGlobal = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
         if (!ethereumGlobal) return false;
+        if (!ethereumGlobal.provider || !ethereumGlobal.providerMap) return ethereumGlobal.isMetaMask || false;
         return Boolean(ethereumGlobal.providerMap.get("MetaMask"));
     }
 }
@@ -798,6 +802,7 @@ class $3e27f8031b2910f0$export$bbf33c97e5e72e4f extends (0, $8077658bdae097e7$ex
     getIsWalletInstalled() {
         const ethereumGlobal = (0, $ff033dcd1750fc9d$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
         if (!ethereumGlobal) return false;
+        if (!ethereumGlobal.provider || !ethereumGlobal.providerMap) return ethereumGlobal.isCoinbaseWallet || false;
         return Boolean(ethereumGlobal.providerMap.get("Coinbase"));
     }
 }

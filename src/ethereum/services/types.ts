@@ -22,8 +22,8 @@ type WindowEthereumMappedKey = 'MetaMask' | 'CoinbaseWallet';
 // type EthereumRequest = {}; // https://docs.walletconnect.com/json-rpc-api-methods/ethereum
 
 type EthereumObject = ethers.providers.ExternalProvider & {
-    providerMap: Map<string, EthereumObject>;
-    provider: EthereumObject[];
+    providerMap?: Map<string, EthereumObject>;
+    provider?: EthereumObject[];
     networkVersion: string;
     isCoinbaseWallet?: boolean;
     isMetaMask?: boolean;

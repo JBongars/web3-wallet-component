@@ -454,8 +454,8 @@ type EthereumEventDisconnect = (error: ProviderRpcError) => Promise<void>;
 type EthereumEventMessage = (message: unknown) => Promise<void>;
 type EthereumEvent = ((key: 'accountsChanged', cb: EthereumEventAccountsChanged) => void) & ((key: 'chainChanged', cb: EthereumEventChainChanged) => void) & ((key: 'connect', cb: EthereumEventConnect) => void) & ((key: 'disconnect', cb: EthereumEventDisconnect) => void) & ((key: 'message', cb: EthereumEventMessage) => void);
 type EthereumObject = ethers.providers.ExternalProvider & {
-    providerMap: Map<string, EthereumObject>;
-    provider: EthereumObject[];
+    providerMap?: Map<string, EthereumObject>;
+    provider?: EthereumObject[];
     networkVersion: string;
     isCoinbaseWallet?: boolean;
     isMetaMask?: boolean;

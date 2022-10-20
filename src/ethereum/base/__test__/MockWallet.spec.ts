@@ -12,6 +12,7 @@ class MockEthereumWallet
     extends EthereumBaseWallet
     implements WalletInterface<MetamaskState>, WalletHookHandlerInterface
 {
+    // public chain: string | null = null;
     public ethereumWindowMock: EthereumObject = {} as unknown as EthereumObject;
     public providerMock: Web3Provider = {} as unknown as Web3Provider;
 
@@ -31,7 +32,7 @@ class MockEthereumWallet
         this.providerMock = mock;
     }
 
-    public _getProvider(ethereum?: ExternalProvider): Web3Provider {
+    public _getProvider(_ethereum?: ExternalProvider): Web3Provider {
         return this.providerMock;
     }
 
@@ -39,8 +40,16 @@ class MockEthereumWallet
         this._state = state;
     }
 
+    public _getState(): BaseEthereumState {
+        return this._state;
+    }
+
     public _setChain(chain: string): void {
-        this.chain;
+        this.chain = chain;
+    }
+
+    public _getChain(): string | null {
+        return this.chain;
     }
 
     public async init(): Promise<WALLET_STATUS> {
