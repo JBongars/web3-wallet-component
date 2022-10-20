@@ -1,6 +1,10 @@
+import { template } from '@babel/core';
 import { stringLiteral } from '@babel/types';
 import { Web3Provider } from '@ethersproject/providers';
 import { beforeEach, describe, expect, test } from '@jest/globals';
+import HookRouter from '../../../utils/HookRouter';
+import { WALLET_HOOK } from '../../../utils/HookRouter/types';
+import WalletStateStorage from '../../../WalletStateStorage';
 import { EthereumObject, ProviderService } from '../../services';
 import { EthereumEvent } from '../../services/ethereumEvents';
 import { BaseEthereumChainConfig, BaseEthereumState } from '../types';
@@ -319,7 +323,221 @@ describe('# EthereumBaseWallet', () => {
 
             expect(result).toBeUndefined();
             expect(providerServiceMock.switchChainFromWallet).toBeCalledWith(ethereumProviderMock, nextChain);
-            // expect(wallet.chain).toEqual(nextChain);
+            expect(wallet._getChain()).toEqual(nextChain);
+        });
+    });
+
+    describe('## toJSON', () => {
+        let ethereumProviderMock: EthereumObject;
+        beforeEach(() => {
+            ethereumProviderMock = {
+                networkVersion: '0x1',
+                on: jest.fn(() => {}) as EthereumEvent
+            };
+            stateMock = { isConnected: true, accounts: ['test-account-1', 'test-account-2'] };
+            wallet = new MockEthereumWallet();
+            wallet._setState(stateMock);
+            wallet._setProvider(providerMock);
+            wallet._setEthereumProvider(ethereumProviderMock);
+            jest.resetAllMocks();
+        });
+
+        test('should return state', () => {
+            const result = wallet.toJSON();
+            expect(result).toEqual(stateMock);
+        });
+    });
+
+    describe('## getProvider', () => {
+        let ethereumProviderMock: EthereumObject;
+        beforeEach(() => {
+            ethereumProviderMock = {
+                networkVersion: '0x1',
+                on: jest.fn(() => {}) as EthereumEvent
+            };
+            stateMock = { isConnected: true, accounts: ['test-account-1', 'test-account-2'] };
+            wallet = new MockEthereumWallet();
+            wallet._setState(stateMock);
+            wallet._setProvider(providerMock);
+            wallet._setEthereumProvider(ethereumProviderMock);
+            jest.resetAllMocks();
+        });
+
+        test('should return provider', async () => {
+            const result = await wallet.getProvider();
+            expect(result).toEqual(providerMock);
+        });
+    });
+
+    describe('## Event Listeners', () => {
+        let ethereumProviderMock: EthereumObject;
+        let walletStorageSpy: WalletStateStorage;
+        let hookRouterSpy: HookRouter;
+        beforeEach(() => {
+            ethereumProviderMock = {
+                networkVersion: '0x1',
+                on: jest.fn(() => {}) as EthereumEvent
+            };
+            stateMock = { isConnected: true, accounts: ['test-account-1', 'test-account-2'] };
+            wallet = new MockEthereumWallet();
+            wallet._setState(stateMock);
+            wallet._setProvider(providerMock);
+            wallet._setEthereumProvider(ethereumProviderMock);
+
+            hookRouterSpy = {
+                registerCallback: jest.spyOn(wallet._getHookRouter(), 'registerCallback') as any,
+                applyHooks: jest.spyOn(wallet._getHookRouter(), 'applyHooks') as any,
+                applyHookWithArgs: jest.spyOn(wallet._getHookRouter(), 'applyHookWithArgs') as any
+            } as any;
+
+            walletStorageSpy = {
+                updateValue: jest.spyOn(wallet._getStorageValue(), 'updateValue') as any
+            } as any;
+
+            jest.resetAllMocks();
+        });
+
+        test('### onAccountChange', async () => {
+            wallet.onAccountChange('some-function' as any);
+            expect(hookRouterSpy.registerCallback).toBeCalledWith(WALLET_HOOK.ACCOUNT_ON_CHANGE, 'some-function');
+        });
+
+        test('### onChainChange', async () => {
+            wallet.onChainChange('some-function' as any);
+            expect(hookRouterSpy.registerCallback).toBeCalledWith(WALLET_HOOK.CHAIN_ON_CHANGE, 'some-function');
+        });
+
+        test('### onAccountDisconnect', async () => {
+            wallet.onAccountDisconnect('some-function' as any);
+            expect(hookRouterSpy.registerCallback).toBeCalledWith(WALLET_HOOK.ACCOUNT_ON_DISCONNECT, 'some-function');
+        });
+
+        test('### onChainDisconnect', async () => {
+            wallet.onChainDisconnect('some-function' as any);
+            expect(hookRouterSpy.registerCallback).toBeCalledWith(WALLET_HOOK.CHAIN_ON_DISCONNECT, 'some-function');
+        });
+
+        test('### onBlockAdded', async () => {
+            wallet.onBlockAdded('some-function' as any);
+            expect(hookRouterSpy.registerCallback).toBeCalledWith(
+                WALLET_HOOK.NEW_BLOCK,
+                expect.anything() // function
+            );
+        });
+
+        describe('### mountEventListeners', () => {
+            let providerEvents: Record<string, Function> = {};
+            let ethereumEvents: Record<string, Function> = {};
+
+            beforeEach(() => {
+                providerEvents = {};
+                ethereumEvents = {};
+                providerMock.on = jest.fn().mockImplementation((eventName: string, cb: Function) => {
+                    providerEvents[eventName] = cb;
+                });
+                ethereumProviderMock.on = jest.fn().mockImplementation((eventName: string, cb: Function) => {
+                    ethereumEvents[eventName] = cb;
+                });
+            });
+
+            test('should mount all event listeners', async () => {
+                await wallet.mountEventListeners();
+
+                expect(ethereumProviderMock.on).toBeCalledTimes(3);
+                expect(ethereumProviderMock.on).toBeCalledWith('accountsChanged', expect.anything());
+                expect(ethereumProviderMock.on).toBeCalledWith('chainChanged', expect.anything());
+                expect(ethereumProviderMock.on).toBeCalledWith('disconnect', expect.anything());
+                expect(providerMock.on).toBeCalledTimes(1);
+                expect(providerMock.on).toBeCalledWith('block', expect.anything());
+
+                expect(hookRouterSpy.applyHookWithArgs).not.toBeCalled();
+                expect(hookRouterSpy.applyHooks).not.toBeCalled();
+            });
+
+            describe('#### onAccountChange', () => {
+                test('should update for one account', async () => {
+                    await wallet.mountEventListeners();
+
+                    await ethereumEvents.accountsChanged(['test-account-3']);
+                    expect(wallet._getState().accounts).toEqual(['test-account-3']);
+                    expect(hookRouterSpy.applyHookWithArgs).toBeCalledWith(WALLET_HOOK.ACCOUNT_ON_CHANGE, [
+                        'test-account-3'
+                    ]);
+                    expect(hookRouterSpy.applyHooks).not.toBeCalled();
+                    expect(walletStorageSpy.updateValue).toBeCalledWith(true, 'test-account-3', ['test-account-3']);
+                });
+
+                test('should update for many accounts', async () => {
+                    await wallet.mountEventListeners();
+
+                    await ethereumEvents.accountsChanged(['test-account-3', 'test-account-4']);
+                    expect(wallet._getState().accounts).toEqual(['test-account-3', 'test-account-4']);
+                    expect(hookRouterSpy.applyHookWithArgs).toBeCalledWith(WALLET_HOOK.ACCOUNT_ON_CHANGE, [
+                        'test-account-3',
+                        'test-account-4'
+                    ]);
+                    expect(hookRouterSpy.applyHooks).not.toBeCalled();
+                    expect(walletStorageSpy.updateValue).toBeCalledWith(true, 'test-account-3', [
+                        'test-account-3',
+                        'test-account-4'
+                    ]);
+                });
+
+                test('should disconnect the wallet for no accounts available', async () => {
+                    await wallet.mountEventListeners();
+
+                    await ethereumEvents.accountsChanged([]);
+                    expect(wallet._getState().accounts).toEqual([]);
+                    expect(hookRouterSpy.applyHooks).toBeCalledWith([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
+                    expect(hookRouterSpy.applyHookWithArgs).not.toBeCalled();
+                    expect(walletStorageSpy.updateValue).toBeCalledWith(false, '', []);
+                });
+            });
+
+            describe('#### chainChanged', () => {
+                test('should apply hook for chain change', async () => {
+                    await wallet.mountEventListeners();
+
+                    await ethereumEvents.chainChanged('0x2');
+                    expect(wallet._getState()).toEqual(stateMock);
+                    expect(hookRouterSpy.applyHookWithArgs).toBeCalledWith(WALLET_HOOK.CHAIN_ON_CHANGE, '0x2');
+                    expect(hookRouterSpy.applyHooks).not.toBeCalled();
+                    expect(walletStorageSpy.updateValue).not.toBeCalledWith();
+                });
+            });
+
+            describe('#### disconnect', () => {
+                test('should apply hook for chain change', async () => {
+                    await wallet.mountEventListeners();
+
+                    await ethereumEvents.disconnect();
+                    expect(wallet._getState()).toEqual(stateMock);
+                    expect(hookRouterSpy.applyHooks).toBeCalledWith([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
+                    expect(hookRouterSpy.applyHookWithArgs).not.toBeCalled();
+                    expect(walletStorageSpy.updateValue).not.toBeCalledWith();
+                });
+            });
+
+            describe('#### block', () => {
+                test('should apply hook for chain change', async () => {
+                    await wallet.mountEventListeners();
+
+                    await providerEvents.block(123);
+                    expect(wallet._getState()).toEqual(stateMock);
+                    expect(hookRouterSpy.applyHookWithArgs).toBeCalledWith(WALLET_HOOK.NEW_BLOCK, 123);
+                    expect(hookRouterSpy.applyHooks).not.toBeCalled();
+                    expect(walletStorageSpy.updateValue).not.toBeCalledWith();
+                });
+            });
+
+            describe('### unmountEventListeners', () => {
+                test('should remove event listeners by calling the provider service', async () => {
+                    providerMock.removeAllListeners = jest.fn();
+
+                    await wallet.unmountEventListeners();
+                    expect(providerMock.removeAllListeners).toBeCalledTimes(1);
+                });
+            });
         });
     });
 });

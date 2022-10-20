@@ -46,17 +46,6 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         }
     }
 
-    protected async _enforceChain(): Promise<void> {
-        if (this.chain === null) return;
-
-        const provider = await this._getProvider();
-        const currentChain: string = await ProviderService.fetchCurrentChainID(provider);
-
-        if (currentChain !== this.chain) {
-            throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
-        }
-    }
-
     protected _setupInitialState() {
         const storageValue = this._walletStorage.getValue();
 
@@ -77,7 +66,6 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
     }
 
     public async getSigner(): Promise<ethers.providers.JsonRpcSigner> {
-        this._enforceChain();
         this._enforceIsConnected();
 
         const provider = this._getProvider();
@@ -85,7 +73,6 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
     }
 
     public async getBalance(): Promise<string> {
-        this._enforceChain();
         this._enforceIsConnected();
 
         const provider = this._getProvider();
@@ -108,7 +95,6 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
     }
 
     public getPrimaryAccount(): string {
-        this._enforceChain();
         this._enforceIsConnected();
 
         if (this._state.accounts.length < 1) {
@@ -119,7 +105,6 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
     }
 
     public getAccounts(): string[] {
-        this._enforceChain();
         this._enforceIsConnected();
 
         if (this._state.accounts.length < 1) {
@@ -149,15 +134,6 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         }
     }
 
-    public async forceCurrentChainID(chain: string): Promise<void> {
-        if (this.chain !== null && this.chain !== chain) {
-            throw new Error(`Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`);
-        }
-
-        this.chain = chain;
-        this.switchChainFromWallet(chain);
-    }
-
     public onAccountChange = (cb: (accounts: string[]) => void | Promise<void>) => {
         return this.hookRouter.registerCallback(WALLET_HOOK.ACCOUNT_ON_CHANGE, cb);
     };
@@ -184,12 +160,16 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         throw new NotImplementedError();
     }
 
+    public async getProvider(): Promise<ethers.providers.Web3Provider> {
+        return this._getProvider();
+    }
+
     public toJSON(): BaseEthereumState {
         return this._state;
     }
 
     /**
-     * Mounts ethereum based event hooks to the hook router
+     * Mounts ethereum based event hooks t the hook router
      * @see https://eips.ethereum.org/EIPS/eip-1193#references for list of ethereum hooks
      */
     public async mountEventListeners(): Promise<void> {
@@ -200,17 +180,22 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         const provider = this._getProvider() as Provider;
 
         if (!ethereum.on) {
+            console.warn(
+                'ethereum.on was not found and event listeners could not be mounted. web3-wallet might fall out of sync'
+            );
             return;
         }
 
         ethereum.on('accountsChanged', async (accounts: string[]) => {
             console.log({ accounts });
             this._state.accounts = accounts;
+            console.log({ accounts });
 
             if (accounts.length === 0) {
                 await this.signOut();
                 this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
             } else {
+                console.log('INSIDE');
                 this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, accounts);
             }
             this._updateWalletStorageValue();
@@ -234,11 +219,6 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
     public async unmountEventListeners() {
         const provider = await this._getProvider();
         provider.removeAllListeners();
-    }
-
-    public async getProvider(): Promise<ethers.providers.Web3Provider> {
-        await this._enforceChain();
-        return this._getProvider();
     }
 }
 

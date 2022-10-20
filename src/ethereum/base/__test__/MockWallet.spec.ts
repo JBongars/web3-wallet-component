@@ -1,10 +1,12 @@
 import { ExternalProvider, Web3Provider } from '@ethersproject/providers';
 import { WalletHookHandlerInterface, WalletInterface } from '../../../types';
+import HookRouter from '../../../utils/HookRouter';
 import { WALLET_STATUS } from '../../../utils/HookRouter/types';
 import { MetamaskState } from '../../metamask';
 import { EthereumObject, ProviderService } from '../../services';
 import { EthereumBaseWallet } from '../EthereumBaseWallet';
 import { BaseEthereumState } from '../types';
+import WalletStateStorage from '../../../WalletStateStorage';
 
 class EthereumBaseWalletEx extends EthereumBaseWallet {}
 
@@ -44,12 +46,20 @@ class MockEthereumWallet
         return this._state;
     }
 
+    public _getStorageValue(): WalletStateStorage {
+        return this._walletStorage;
+    }
+
     public _setChain(chain: string): void {
         this.chain = chain;
     }
 
     public _getChain(): string | null {
         return this.chain;
+    }
+
+    public _getHookRouter(): HookRouter {
+        return this.hookRouter;
     }
 
     public async init(): Promise<WALLET_STATUS> {

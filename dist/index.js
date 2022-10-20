@@ -552,7 +552,7 @@ class $8077658bdae097e7$export$bf6aa8a8e97b6c5f {
     getAccounts() {
         this._enforceChain();
         this._enforceIsConnected();
-        if (this._state.accounts.length > 1) console.warn("wallet is marked as connected but could not find primary account");
+        if (this._state.accounts.length < 1) console.warn("wallet is marked as connected but could not find primary account");
         return this._state.accounts;
     }
     async fetchCurrentChainID() {
