@@ -3,10 +3,9 @@ import { NotImplementedError, WalletNotConnectedError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
-import { CHAIN_ETHEREUM } from '..';
-import { useWindow } from '../../containers';
-import { WalletHookHandlerInterface, WalletInterface } from '../../types';
-import { EthereumChainConfig, EthereumObject, ProviderService } from '../services';
+import { CHAIN_TYPE } from '../../config';
+import { WalletHookHandlerInterface } from '../../types';
+import { EthereumChainConfig, EthereumObject, Provider, ProviderService } from '../services';
 import { BaseEthereumAsset, BaseEthereumChainConfig, BaseEthereumState } from './types';
 
 abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
@@ -17,7 +16,10 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
         WALLET_HOOK.NEW_BLOCK
     ]);
-    protected _walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_NOWALLET);
+    protected _walletStorage: WalletStateStorage = new WalletStateStorage(
+        CHAIN_TYPE.ETHEREUM,
+        WALLET_ID.ETHEREUM_NOWALLET
+    );
     protected chain: string | null = null;
     protected _state: BaseEthereumState;
 
@@ -28,7 +30,7 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         };
     }
 
-    protected _getEthereumProvider(): ethers.providers.ExternalProvider {
+    protected _getEthereumProvider(): EthereumObject {
         throw new NotImplementedError();
     }
 
@@ -41,17 +43,6 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
     protected _enforceIsConnected(): void {
         if (!this.getIsConnected()) {
             throw new WalletNotConnectedError();
-        }
-    }
-
-    protected async _enforceChain(): Promise<void> {
-        if (this.chain === null) return;
-
-        const provider = await this._getProvider();
-        const currentChain: string = await ProviderService.fetchCurrentChainID(provider);
-
-        if (currentChain !== this.chain) {
-            throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
         }
     }
 
@@ -75,7 +66,6 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
     }
 
     public async getSigner(): Promise<ethers.providers.JsonRpcSigner> {
-        this._enforceChain();
         this._enforceIsConnected();
 
         const provider = this._getProvider();
@@ -83,7 +73,6 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
     }
 
     public async getBalance(): Promise<string> {
-        this._enforceChain();
         this._enforceIsConnected();
 
         const provider = this._getProvider();
@@ -99,19 +88,28 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
     }
 
     public getIsConnected(): boolean {
+        if (this._state.isConnected && this._state.accounts.length < 1) {
+            console.warn('wallet is marked as connected but the state.account length is 0');
+        }
         return this._state.isConnected;
     }
 
     public getPrimaryAccount(): string {
-        this._enforceChain();
         this._enforceIsConnected();
+
+        if (this._state.accounts.length < 1) {
+            throw new Error('wallet is marked as connected but could not find primary account');
+        }
 
         return this._state.accounts[0];
     }
 
     public getAccounts(): string[] {
-        this._enforceChain();
         this._enforceIsConnected();
+
+        if (this._state.accounts.length < 1) {
+            console.warn('wallet is marked as connected but could not find primary account');
+        }
 
         return this._state.accounts;
     }
@@ -125,24 +123,15 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         return ProviderService.addChainToWallet(chainConfig as EthereumChainConfig);
     }
 
-    public async switchChainFromWallet(chain: number, noHook: boolean = false) {
+    public async switchChainFromWallet(chain: string, updateChain = false) {
         const ethereum = this._getEthereumProvider();
-        if ((ethereum as any).networkVersion !== String(chain)) {
+        if ((ethereum as EthereumObject).networkVersion !== String(chain)) {
             await ProviderService.switchChainFromWallet(ethereum, chain);
 
-            if (noHook) {
-                this.chain = `0x${chain}`;
+            if (updateChain) {
+                this.chain = chain;
             }
         }
-    }
-
-    public async forceCurrentChainID(chain: number): Promise<void> {
-        if (this.chain !== null && this.chain !== `0x${chain}`) {
-            throw new Error(`Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`);
-        }
-
-        this.chain = `0x${chain}`;
-        this.switchChainFromWallet(chain);
     }
 
     public onAccountChange = (cb: (accounts: string[]) => void | Promise<void>) => {
@@ -171,32 +160,42 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
         throw new NotImplementedError();
     }
 
+    public async getProvider(): Promise<ethers.providers.Web3Provider> {
+        return this._getProvider();
+    }
+
     public toJSON(): BaseEthereumState {
         return this._state;
     }
 
     /**
-     * Mounts ethereum based event hooks to the hook router
+     * Mounts ethereum based event hooks t the hook router
      * @see https://eips.ethereum.org/EIPS/eip-1193#references for list of ethereum hooks
      */
     public async mountEventListeners(): Promise<void> {
         if (!this.getIsWalletInstalled()) {
             return;
         }
-        const ethereum = this._getEthereumProvider() as any;
-        const provider = this._getProvider() as any;
+        const ethereum = this._getEthereumProvider() as EthereumObject;
+        const provider = this._getProvider() as Provider;
 
         if (!ethereum.on) {
+            console.warn(
+                'ethereum.on was not found and event listeners could not be mounted. web3-wallet might fall out of sync'
+            );
             return;
         }
 
         ethereum.on('accountsChanged', async (accounts: string[]) => {
+            console.log({ accounts });
             this._state.accounts = accounts;
+            console.log({ accounts });
 
             if (accounts.length === 0) {
                 await this.signOut();
                 this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
             } else {
+                console.log('INSIDE');
                 this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, accounts);
             }
             this._updateWalletStorageValue();
@@ -220,11 +219,6 @@ abstract class EthereumBaseWallet implements WalletHookHandlerInterface {
     public async unmountEventListeners() {
         const provider = await this._getProvider();
         provider.removeAllListeners();
-    }
-
-    public async getProvider(): Promise<ethers.providers.Web3Provider> {
-        await this._enforceChain();
-        return this._getProvider();
     }
 }
 

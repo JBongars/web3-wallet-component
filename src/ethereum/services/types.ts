@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { WALLET_TYPE } from '../../config';
+import { EthereumEvent } from './ethereumEvents';
 
 /**
  * Config for Ethereum Chain
@@ -19,6 +19,15 @@ type Provider = ethers.providers.Web3Provider;
 
 type WindowEthereumMappedKey = 'MetaMask' | 'CoinbaseWallet';
 
-type EthereumObject = ethers.providers.ExternalProvider;
+// type EthereumRequest = {}; // https://docs.walletconnect.com/json-rpc-api-methods/ethereum
+
+type EthereumObject = ethers.providers.ExternalProvider & {
+    providerMap?: Map<string, EthereumObject>;
+    provider?: EthereumObject[];
+    networkVersion: string;
+    isCoinbaseWallet?: boolean;
+    isMetaMask?: boolean;
+    on: EthereumEvent;
+};
 
 export type { EthereumChainConfig, Provider, WindowEthereumMappedKey, EthereumObject };

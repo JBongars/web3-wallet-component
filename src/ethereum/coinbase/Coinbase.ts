@@ -1,11 +1,10 @@
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import { ethers } from 'ethers';
-import { WalletNotInstalledError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
-import { CHAIN_ETHEREUM, EthereumWalletType } from '..';
-import { WALLET_TYPE } from '../../config/wallets';
+import { EthereumWalletType } from '..';
+import { CHAIN_TYPE, WALLET_TYPE } from '../../config/wallets';
 import { useWindow } from '../../containers';
 import { WalletHookHandlerInterface, WalletInterface } from '../../types';
 import { EthereumBaseWallet } from '../base/EthereumBaseWallet';
@@ -35,7 +34,10 @@ class Coinbase extends EthereumBaseWallet implements WalletInterface<CoinbaseSta
         WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
         WALLET_HOOK.NEW_BLOCK
     ]);
-    protected _walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_COINBASE);
+    protected _walletStorage: WalletStateStorage = new WalletStateStorage(
+        CHAIN_TYPE.ETHEREUM,
+        WALLET_ID.ETHEREUM_COINBASE
+    );
     protected chain: string | null = null;
     protected _state: CoinbaseState;
     protected _config: CoinbaseConfig;
@@ -46,7 +48,6 @@ class Coinbase extends EthereumBaseWallet implements WalletInterface<CoinbaseSta
 
     constructor(state?: CoinbaseState, config: CoinbaseConfig = defaultConfig) {
         super();
-
         if (state) {
             this._state = { ...state };
         } else {
@@ -58,9 +59,8 @@ class Coinbase extends EthereumBaseWallet implements WalletInterface<CoinbaseSta
     }
 
     protected _getEthereumProvider(): EthereumObject {
-        return ProviderService.getNamedWindowEthereumObject(
-            'CoinbaseWallet',
-            (globalWindow) => globalWindow.isCoinbaseWallet
+        return ProviderService.getNamedWindowEthereumObject('CoinbaseWallet', (ethereum: EthereumObject) =>
+            Boolean(ethereum.isCoinbaseWallet)
         );
     }
 
@@ -92,9 +92,12 @@ class Coinbase extends EthereumBaseWallet implements WalletInterface<CoinbaseSta
     }
 
     public getIsWalletInstalled(): boolean {
-        const ethereumGlobal = useWindow((windowObject) => (windowObject as any).ethereum) as any;
+        const ethereumGlobal = useWindow((windowObject) => (windowObject as Window).ethereum) as EthereumObject;
         if (!ethereumGlobal) {
             return false;
+        }
+        if (!ethereumGlobal.provider || !ethereumGlobal.providerMap) {
+            return ethereumGlobal.isCoinbaseWallet || false;
         }
         return Boolean(ethereumGlobal.providerMap.get('Coinbase'));
     }

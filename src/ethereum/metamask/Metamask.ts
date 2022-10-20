@@ -1,10 +1,9 @@
 import { ethers } from 'ethers';
-import { WalletNotInstalledError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
-import { CHAIN_ETHEREUM, EthereumWalletType } from '..';
-import { WALLET_TYPE } from '../../config/wallets';
+import { EthereumWalletType } from '..';
+import { CHAIN_TYPE, WALLET_TYPE } from '../../config/wallets';
 import { useWindow } from '../../containers';
 import { WalletHookHandlerInterface, WalletInterface } from '../../types';
 import { EthereumBaseWallet } from '../base';
@@ -24,7 +23,10 @@ class Metamask extends EthereumBaseWallet implements WalletInterface<MetamaskSta
         WALLET_HOOK.ACCOUNT_ON_DISCONNECT,
         WALLET_HOOK.NEW_BLOCK
     ]);
-    protected _walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_METAMASK);
+    protected _walletStorage: WalletStateStorage = new WalletStateStorage(
+        CHAIN_TYPE.ETHEREUM,
+        WALLET_ID.ETHEREUM_METAMASK
+    );
     protected _state: MetamaskState;
     public provider?: ethers.providers.Web3Provider;
     public name = 'METAMASK';
@@ -43,7 +45,9 @@ class Metamask extends EthereumBaseWallet implements WalletInterface<MetamaskSta
     }
 
     protected _getEthereumProvider(): EthereumObject {
-        return ProviderService.getNamedWindowEthereumObject('MetaMask', (globalWindow) => globalWindow.isMetaMask);
+        return ProviderService.getNamedWindowEthereumObject('MetaMask', (ethereumObject: EthereumObject) =>
+            Boolean(ethereumObject.isMetaMask)
+        );
     }
 
     public async init(): Promise<WALLET_STATUS> {
@@ -74,9 +78,12 @@ class Metamask extends EthereumBaseWallet implements WalletInterface<MetamaskSta
     }
 
     public getIsWalletInstalled(): boolean {
-        const ethereumGlobal = useWindow((windowObject) => (windowObject as any).ethereum) as any;
+        const ethereumGlobal = useWindow((windowObject) => (windowObject as Window).ethereum) as EthereumObject;
         if (!ethereumGlobal) {
             return false;
+        }
+        if (!ethereumGlobal.provider || !ethereumGlobal.providerMap) {
+            return ethereumGlobal.isMetaMask || false;
         }
         return Boolean(ethereumGlobal.providerMap.get('MetaMask'));
     }

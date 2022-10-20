@@ -1,5 +1,5 @@
 import { HookNotAvailableError } from '../../errors';
-import { HookEvent, WALLET_HOOK } from './types';
+import { HookEvent, HookFunction, WALLET_HOOK } from './types';
 
 /**
  * Handles callback hooks for wallet/ chain events
@@ -15,7 +15,7 @@ import { HookEvent, WALLET_HOOK } from './types';
  */
 class HookRouter {
     private availableHooks: WALLET_HOOK[];
-    private hooks: Map<WALLET_HOOK, Map<symbol, Function>>;
+    private hooks: Map<WALLET_HOOK, Map<symbol, HookFunction>>;
 
     /**
      * Initializes the hook router to start listening for hooks
@@ -75,7 +75,7 @@ class HookRouter {
      * @see applyHooks
      * @remarks if a hook is expecting to be called with an argument, use @see applyHookWithArgs
      */
-    public registerCallback(hook: WALLET_HOOK, cb: Function): HookEvent {
+    public registerCallback(hook: WALLET_HOOK, cb: HookFunction): HookEvent {
         this.checkIfValidHook(hook);
 
         const id = Symbol();
@@ -105,10 +105,10 @@ class HookRouter {
      * @remarks Use @see applyHookWithArgs if hooks should be called with args
      */
     public async applyHooks(hooks: WALLET_HOOK[]): Promise<void> {
-        const callbacksToInvoke: Function[] = [];
+        const callbacksToInvoke: HookFunction[] = [];
 
         hooks.forEach((hook) => {
-            this.hooks.get(hook)?.forEach((fn: Function) => callbacksToInvoke.push(fn));
+            this.hooks.get(hook)?.forEach((fn: HookFunction) => callbacksToInvoke.push(fn));
         });
 
         await Promise.all(callbacksToInvoke.map((fn) => fn()));
@@ -120,13 +120,14 @@ class HookRouter {
      * @param args - argument to pass to the hook callback
      * @remarks args are destructured
      */
-    public async applyHookWithArgs(hook: WALLET_HOOK, ...args: any[]): Promise<void> {
-        const callbacksToInvoke: Function[] = [];
+    public async applyHookWithArgs(hook: WALLET_HOOK, ...args: unknown[]): Promise<void> {
+        const callbacksToInvoke: HookFunction[] = [];
 
-        this.hooks.get(hook)?.forEach((fn: Function) => callbacksToInvoke.push(fn));
+        this.hooks.get(hook)?.forEach((fn: HookFunction) => callbacksToInvoke.push(fn));
 
         await Promise.all(callbacksToInvoke.map((fn) => fn(...args)));
     }
 }
 
+export { HookRouter };
 export default HookRouter;

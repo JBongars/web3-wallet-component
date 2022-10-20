@@ -60,5 +60,7 @@ type HookEvent = {
     id: symbol;
 };
 
+type HookFunction = (...args: any[]) => void | Promise<void>;
+
 export { WALLET_HOOK, WALLET_STATUS, WALLET_ID };
-export type { HookEvent };
+export type { HookEvent, HookFunction };

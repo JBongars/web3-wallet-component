@@ -1,5 +1,9 @@
 /* eslint-disable */
 module.exports = {
+    preset: 'ts-jest',
+    globals: {
+        '**/*.spec.ts': ['ts-jets', 'tsconfig.test.json']
+    },
     moduleDirectories: ['node_modules', 'src'],
     moduleNameMapper: {
         '~/(.*)': '<rootDir>/$1'

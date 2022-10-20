@@ -4,12 +4,16 @@ import { NotImplementedError, WalletNotInstalledError } from '../../errors';
 import { getChainConfig } from '../chains';
 import { EthereumChainConfig, EthereumObject, Provider, WindowEthereumMappedKey } from './types';
 
-abstract class ProviderService {
+class ProviderService {
+    public static getWindowEthereumObject(): EthereumObject {
+        return useWindow((windowObject: Window) => windowObject.ethereum) as EthereumObject;
+    }
+
     public static getNamedWindowEthereumObject(
         key: WindowEthereumMappedKey,
-        validator: (globalEthereum: any) => boolean
+        validator: (globalEthereum: EthereumObject) => boolean
     ): EthereumObject {
-        const ethereumGlobal = useWindow((windowObject) => (windowObject as any).ethereum) as any;
+        const ethereumGlobal = ProviderService.getWindowEthereumObject();
         if (!ethereumGlobal) {
             throw new WalletNotInstalledError();
         }
@@ -49,26 +53,29 @@ abstract class ProviderService {
     }
 
     public static async addChainToWallet(chainConfig: EthereumChainConfig): Promise<void> {
-        return useWindow(async (window: any) =>
-            window.ethereum?.request({
-                method: 'wallet_addEthereumChain',
-                params: [chainConfig]
-            })
-        );
+        useWindow(async (window: Window): Promise<void> => {
+            const ethereum = window.ethereum as EthereumObject;
+            if (ethereum && ethereum.request) {
+                ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [chainConfig]
+                });
+            }
+        });
     }
 
-    public static async switchChainFromWallet(ethereum: EthereumObject, chain: number) {
+    public static async switchChainFromWallet(ethereum: EthereumObject, chainId: string) {
         if (!ethereum.request) {
             throw new Error('EthereumProvider.request method is not available');
         }
         try {
             return ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: `0x${chain}` }]
+                params: [{ chainId }]
             });
         } catch (err) {
             if (err && (err as { code: number }).code === 4902) {
-                const chainConfig = getChainConfig(chain);
+                const chainConfig = getChainConfig(chainId);
                 return await this.addChainToWallet(chainConfig as EthereumChainConfig);
             } else {
                 throw err;

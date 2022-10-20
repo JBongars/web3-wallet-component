@@ -1,8 +1,7 @@
 import { isValidAddress } from 'algosdk';
 import { isAddress } from 'ethers/lib/utils';
-import { CHAIN_ALGORAND } from './algorand';
+import { CHAIN_TYPE } from './config';
 import { useWindow } from './containers';
-import { CHAIN_ETHEREUM } from './ethereum';
 import { WALLET_ID } from './utils/HookRouter/types';
 
 /**
@@ -11,7 +10,7 @@ import { WALLET_ID } from './utils/HookRouter/types';
 type StorageValue = {
     isConnected: boolean;
     connectedAccount: string;
-    chain: string;
+    chain: CHAIN_TYPE;
     walletId: WALLET_ID;
     accounts: string[];
 };
@@ -24,7 +23,7 @@ const STORAGE_KEY = 'wallet-state-storage';
  *  Maybe be replaced with less coupled implementation in the future
  */
 class WalletStateStorage {
-    private chain: string;
+    private chain: CHAIN_TYPE;
     private storage: Storage | null;
     private walletId: WALLET_ID;
 
@@ -33,7 +32,7 @@ class WalletStateStorage {
      * @param chain - The chain identifier to use as key
      * @param walletId - Current wallet ID
      */
-    constructor(chain: string, walletId: WALLET_ID) {
+    constructor(chain: CHAIN_TYPE, walletId: WALLET_ID) {
         this.chain = chain;
         this.walletId = walletId;
         this.storage = this._storage();
@@ -103,9 +102,9 @@ class WalletStateStorage {
      */
     private isValidAddress(account: string): boolean {
         switch (this.chain) {
-            case CHAIN_ETHEREUM:
+            case CHAIN_TYPE.ETHEREUM:
                 return isAddress(account);
-            case CHAIN_ALGORAND:
+            case CHAIN_TYPE.ALGORAND:
                 return isValidAddress(account);
             default:
                 return false;
@@ -122,7 +121,7 @@ class WalletStateStorage {
     }
 
     private _storage(): Storage | null {
-        return useWindow((windowObject) => (windowObject as any).localStorage);
+        return useWindow((windowObject) => (windowObject as Window).localStorage);
     }
 }
 

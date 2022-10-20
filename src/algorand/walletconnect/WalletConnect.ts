@@ -6,8 +6,8 @@ import { NotImplementedError, WalletNotConnectedError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { HookEvent, WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
-import { AlgorandSignerTxn, AlgorandWalletType, CHAIN_ALGORAND } from '..';
-import { WALLET_TYPE } from '../../config/wallets';
+import { AlgorandSignerTxn, AlgorandWalletType } from '..';
+import { CHAIN_TYPE, WALLET_TYPE } from '../../config/wallets';
 import { WalletHookHandlerInterface, WalletInterface } from '../../types';
 import {
     AlgorandWalletConnectAsset,
@@ -34,7 +34,7 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
     ]);
     private _state: AlgorandWalletConnectState;
     private provider: WalletConnectClient | undefined;
-    private walletStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_WALLETCONNECT);
+    private walletStorage = new WalletStateStorage(CHAIN_TYPE.ALGORAND, WALLET_ID.ALGORAND_WALLETCONNECT);
 
     public type: AlgorandWalletType = WALLET_TYPE.ALGORAND_WALLETCONNECT;
     public name = 'ALGORAND_WALLETCONNECT';

@@ -3,8 +3,8 @@ import { NotImplementedError, WalletNotConnectedError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { HookEvent, WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
 import WalletStateStorage from '~/src/WalletStateStorage';
-import { AlgorandSignerTxn, AlgorandWalletType, CHAIN_ALGORAND } from '..';
-import { WALLET_TYPE } from '../../config/wallets';
+import { AlgorandSignerTxn, AlgorandWalletType } from '..';
+import { CHAIN_TYPE, WALLET_TYPE } from '../../config/wallets';
 import { WalletHookHandlerInterface, WalletInterface } from './../../types';
 import { MyAlgoAsset, MyAlgoSigner, MyAlgoState } from './types';
 
@@ -27,7 +27,7 @@ class MyAlgo implements WalletInterface<MyAlgoState>, WalletHookHandlerInterface
     ]);
     private _state: MyAlgoState;
     private provider: MyAlgoConnect | undefined;
-    private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_ALGORAND, WALLET_ID.ALGORAND_MYALGO);
+    private walletStorage: WalletStateStorage = new WalletStateStorage(CHAIN_TYPE.ALGORAND, WALLET_ID.ALGORAND_MYALGO);
     public currentActiveAccountAddress = '';
 
     public type: AlgorandWalletType = WALLET_TYPE.ALGORAND_MYALGO;
