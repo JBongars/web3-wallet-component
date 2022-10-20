@@ -530,10 +530,8 @@ class $5f075e6dc19036e9$export$6a733d504587e4b0 {
     async signOut() {
         this._state.accounts = [];
         this._state.isConnected = false;
-        if (!this.provider) {
-            this.provider = this.getProvider();
-            await this.provider.reconnectSession();
-        }
+        if (!this.provider) this.provider = this.getProvider();
+        if (!this.provider.connector) await this.provider.reconnectSession();
         try {
             await this.provider?.disconnect();
         } catch (e) {
@@ -625,6 +623,7 @@ class $5f075e6dc19036e9$export$6a733d504587e4b0 {
         this._state = data;
     }
     getProvider() {
+        this._enforceIsConnected();
         if (this.provider instanceof (0, $8zHUo$perawalletconnect.PeraWalletConnect)) return this.provider;
         this.provider = new (0, $8zHUo$perawalletconnect.PeraWalletConnect)();
         return this.provider;
@@ -1599,6 +1598,7 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
             this._state.accounts = [];
             this._state.isConnected = false;
             this.provider = undefined;
+            this._updateWalletStorageValue();
             this.hookRouter.applyHooks([
                 (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
             ]);

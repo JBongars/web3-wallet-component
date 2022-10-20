@@ -132,6 +132,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
             this._state.accounts = [];
             this._state.isConnected = false;
             this.provider = undefined;
+            this._updateWalletStorageValue();
             this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
             this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
         });
