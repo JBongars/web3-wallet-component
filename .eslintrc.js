@@ -25,6 +25,7 @@ module.exports = {
                 caughtErrorsIgnorePattern: '^_'
             }
         ],
-        'tsdoc/syntax': ['error']
+        'tsdoc/syntax': ['error'],
+        'endOfLine': "auto"
     }
 };
