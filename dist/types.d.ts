@@ -182,7 +182,7 @@ export class EthWalletConnect implements WalletInterface<EthereumWalletConnectSt
     type: EthereumWalletType;
     name: string;
     constructor(state?: EthereumWalletConnectState);
-    getWCProvider(): Promise<WalletConnectProvider>;
+    getWCProvider(qrcode?: boolean): Promise<WalletConnectProvider>;
     init(): Promise<WALLET_STATUS>;
     signIn(): Promise<WALLET_STATUS>;
     signOut(): Promise<WALLET_STATUS>;

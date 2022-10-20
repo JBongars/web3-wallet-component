@@ -60,8 +60,8 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         }
     }
 
-    private async _getProvider(): Promise<ethers.providers.Web3Provider> {
-        const provider = await this.getWCProvider();
+    private async _getProvider(qrcode = false): Promise<ethers.providers.Web3Provider> {
+        const provider = await this.getWCProvider(qrcode);
         return new providers.Web3Provider(provider);
     }
 
@@ -82,7 +82,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         }
     }
 
-    public async getWCProvider(): Promise<WalletConnectProvider> {
+    public async getWCProvider(qrcode = false): Promise<WalletConnectProvider> {
         const { data: chains }: { data: EVMBasedChain[] } = await axios.get('https://chainid.network/chains.json');
         const ignoredChainIds = [1, 3, 4, 5, 42, 11155111];
         const filteredChains = chains.filter((chain: EVMBasedChain) => {
@@ -106,7 +106,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
         const provider = new WalletConnectProvider({
             rpc,
-            qrcode: true
+            qrcode
         });
 
         await provider.enable();
@@ -140,7 +140,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     }
 
     public async signIn(): Promise<WALLET_STATUS> {
-        const provider = await this._getProvider();
+        const provider = await this._getProvider(true);
         this._state.accounts = await provider.listAccounts();
         this._state.isConnected = this._state.accounts.length > 0;
         this._updateWalletStorageValue();

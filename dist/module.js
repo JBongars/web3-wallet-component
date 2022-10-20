@@ -1536,8 +1536,8 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
         if (this._state.isConnected && this._state.accounts.length > 0) this.walletStorage.updateValue(true, this._state.accounts[0], this._state.accounts);
         else this.walletStorage.updateValue(false, "", []);
     }
-    async _getProvider() {
-        const provider = await this.getWCProvider();
+    async _getProvider(qrcode = false) {
+        const provider = await this.getWCProvider(qrcode);
         return new (0, $hgUW1$providers).Web3Provider(provider);
     }
     _enforceIsConnected() {
@@ -1549,7 +1549,7 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
         const currentChain = await provider.send("eth_chainId", []);
         if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
     }
-    async getWCProvider() {
+    async getWCProvider(qrcode = false) {
         const { data: chains  } = await (0, $hgUW1$axios).get("https://chainid.network/chains.json");
         const ignoredChainIds = [
             1,
@@ -1575,7 +1575,7 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
         });
         const provider = new (0, $hgUW1$walletconnectweb3provider)({
             rpc: rpc,
-            qrcode: true
+            qrcode: qrcode
         });
         await provider.enable();
         provider.on("accountsChanged", async (accounts)=>{
@@ -1603,7 +1603,7 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        const provider = await this._getProvider();
+        const provider = await this._getProvider(true);
         this._state.accounts = await provider.listAccounts();
         this._state.isConnected = this._state.accounts.length > 0;
         this._updateWalletStorageValue();
