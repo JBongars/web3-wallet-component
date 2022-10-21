@@ -527,8 +527,10 @@ class $95e4ef1726fa05c6$export$6a733d504587e4b0 {
     async signOut() {
         this._state.accounts = [];
         this._state.isConnected = false;
-        if (!this.provider) this.provider = this.getProvider();
-        if (!this.provider.connector) await this.provider.reconnectSession();
+        if (!this.provider) {
+            this.provider = this.getProvider();
+            await this.provider.reconnectSession();
+        }
         try {
             await this.provider?.disconnect();
         } catch (e) {
@@ -620,7 +622,6 @@ class $95e4ef1726fa05c6$export$6a733d504587e4b0 {
         this._state = data;
     }
     getProvider() {
-        this._enforceIsConnected();
         if (this.provider instanceof (0, $hgUW1$PeraWalletConnect)) return this.provider;
         this.provider = new (0, $hgUW1$PeraWalletConnect)();
         return this.provider;
@@ -1667,21 +1668,22 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
         return chainId;
     }
     async addChainToWallet(chainConfig) {
-        return (0, $412a545945027ba9$export$24b8fbafc4b6a151)(async (window)=>window.ethereum?.request({
-                method: "wallet_addEthereumChain",
-                params: [
-                    chainConfig
-                ]
-            }));
+        const provider = await this._getProvider();
+        await provider.provider.request({
+            method: "wallet_addEthereumChain",
+            params: [
+                chainConfig
+            ]
+        });
     }
     async switchChainFromWallet(chain) {
-        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((window)=>window.ethereum);
-        if (ethereum.networkVersion !== chain) try {
-            await ethereum.request({
+        const provider = await this._getProvider();
+        try {
+            await provider.provider.request({
                 method: "wallet_switchEthereumChain",
                 params: [
                     {
-                        chainId: `0x${chain}`
+                        chainId: `0x${chain.toString(16)}`
                     }
                 ]
             });

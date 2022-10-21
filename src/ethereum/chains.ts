@@ -1,5 +1,5 @@
-import axios from "axios";
-import { ethers } from "ethers";
+import axios from 'axios';
+import { ethers } from 'ethers';
 
 type ChainConfig = {
     chainName: string;

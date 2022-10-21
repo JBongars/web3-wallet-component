@@ -219,29 +219,27 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     }
 
     public async addChainToWallet(chainConfig: EthereumWalletConnectChainConfig): Promise<void> {
-        return useWindow(async (window: any) =>
-            window.ethereum?.request({
-                method: 'wallet_addEthereumChain',
-                params: [chainConfig]
-            })
-        );
+        const provider: any = await this._getProvider();
+        await provider.provider.request({
+            method: 'wallet_addEthereumChain',
+            params: [chainConfig]
+        });
     }
 
     public async switchChainFromWallet(chain: number) {
-        const ethereum = useWindow((window: any) => window.ethereum);
-        if (ethereum.networkVersion !== chain) {
-            try {
-                await ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: `0x${chain}` }]
-                });
-            } catch (err) {
-                if (err && (err as { code: number }).code === 4902) {
-                    const chainConfig = await getChainConfig(chain);
-                    await this.addChainToWallet(chainConfig as EthereumWalletConnectChainConfig);
-                } else {
-                    throw err;
-                }
+        const provider: any = await this._getProvider();
+
+        try {
+            await provider.provider.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: `0x${chain.toString(16)}` }]
+            });
+        } catch (err) {
+            if (err && (err as { code: number }).code === 4902) {
+                const chainConfig = await getChainConfig(chain);
+                await this.addChainToWallet(chainConfig as EthereumWalletConnectChainConfig);
+            } else {
+                throw err;
             }
         }
     }
