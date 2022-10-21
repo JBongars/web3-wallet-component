@@ -192,9 +192,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     }
 
     public getIsWalletInstalled(): boolean {
-        const ethereum = useWindow((windowObject) => (windowObject as any).ethereum) as any;
-
-        return Boolean(ethereum);
+        return true;
     }
 
     public getPrimaryAccount(): string {
