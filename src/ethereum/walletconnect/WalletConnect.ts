@@ -7,7 +7,6 @@ import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/ty
 import WalletStateStorage from '~/src/WalletStateStorage';
 import { CHAIN_ETHEREUM, EthereumWalletType } from '..';
 import { WALLET_TYPE } from '../../config/wallets';
-import { useWindow } from '../../containers';
 import { EVMBasedChain, WalletHookHandlerInterface, WalletInterface } from '../../types';
 import { getChainConfig } from '../chains';
 import { EthereumWalletConnectAsset, EthereumWalletConnectChainConfig, EthereumWalletConnectState } from './types';
@@ -226,19 +225,16 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
     public async switchChainFromWallet(chain: number) {
         const provider: any = await this._getProvider();
+        const defaultChains = [1, 3, 4, 5, 42];
 
-        try {
+        if (defaultChains.includes(chain)) {
             await provider.provider.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: `0x${chain.toString(16)}` }]
             });
-        } catch (err) {
-            if (err && (err as { code: number }).code === 4902) {
-                const chainConfig = await getChainConfig(chain);
-                await this.addChainToWallet(chainConfig as EthereumWalletConnectChainConfig);
-            } else {
-                throw err;
-            }
+        } else {
+            const chainConfig = await getChainConfig(chain);
+            await this.addChainToWallet(chainConfig as EthereumWalletConnectChainConfig);
         }
     }
 

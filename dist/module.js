@@ -1499,7 +1499,6 @@ $parcel$export($07e52f3c9fc905f8$exports, "EthWalletConnect", () => $07e52f3c9fc
 
 
 
-
 const $07e52f3c9fc905f8$var$initialState = Object.freeze({
     accounts: [],
     isConnected: false
@@ -1649,8 +1648,7 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
         return this._state.isConnected;
     }
     getIsWalletInstalled() {
-        const ethereum = (0, $412a545945027ba9$export$24b8fbafc4b6a151)((windowObject)=>windowObject.ethereum);
-        return Boolean(ethereum);
+        return true;
     }
     getPrimaryAccount() {
         this._enforceChain();
@@ -1678,20 +1676,24 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
     }
     async switchChainFromWallet(chain) {
         const provider = await this._getProvider();
-        try {
-            await provider.provider.request({
-                method: "wallet_switchEthereumChain",
-                params: [
-                    {
-                        chainId: `0x${chain.toString(16)}`
-                    }
-                ]
-            });
-        } catch (err) {
-            if (err && err.code === 4902) {
-                const chainConfig = await (0, $6efec99b285d035b$export$703a843624f42e6c)(chain);
-                await this.addChainToWallet(chainConfig);
-            } else throw err;
+        const defaultChains = [
+            1,
+            3,
+            4,
+            5,
+            42
+        ];
+        if (defaultChains.includes(chain)) await provider.provider.request({
+            method: "wallet_switchEthereumChain",
+            params: [
+                {
+                    chainId: `0x${chain.toString(16)}`
+                }
+            ]
+        });
+        else {
+            const chainConfig = await (0, $6efec99b285d035b$export$703a843624f42e6c)(chain);
+            await this.addChainToWallet(chainConfig);
         }
     }
     async forceCurrentChainID(chain) {
