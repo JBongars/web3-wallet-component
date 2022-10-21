@@ -1669,8 +1669,8 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
         return chainId;
     }
     async addChainToWallet(chainConfig) {
-        const provider = await this._getProvider();
-        await provider.provider.request({
+        const provider = await this.getWCProvider();
+        await provider.request({
             method: "wallet_addEthereumChain",
             params: [
                 chainConfig
@@ -1678,7 +1678,7 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
         });
     }
     async switchChainFromWallet(chain) {
-        const provider = await this._getProvider();
+        const provider = await this.getWCProvider();
         const defaultChains = [
             1,
             3,
@@ -1686,7 +1686,7 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
             5,
             42
         ];
-        if (defaultChains.includes(chain)) await provider.provider.request({
+        if (defaultChains.includes(chain)) await provider.request({
             method: "wallet_switchEthereumChain",
             params: [
                 {

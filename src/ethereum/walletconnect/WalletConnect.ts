@@ -216,19 +216,19 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     }
 
     public async addChainToWallet(chainConfig: EthereumWalletConnectChainConfig): Promise<void> {
-        const provider: any = await this._getProvider();
-        await provider.provider.request({
+        const provider: WalletConnectProvider = await this.getWCProvider();
+        await provider.request({
             method: 'wallet_addEthereumChain',
             params: [chainConfig]
         });
     }
 
     public async switchChainFromWallet(chain: number) {
-        const provider: any = await this._getProvider();
+        const provider: WalletConnectProvider = await this.getWCProvider();
         const defaultChains = [1, 3, 4, 5, 42];
 
         if (defaultChains.includes(chain)) {
-            await provider.provider.request({
+            await provider.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: `0x${chain.toString(16)}` }]
             });
