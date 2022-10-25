@@ -1572,7 +1572,7 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
                 11155111: "https://sepolia.etherscan.io"
             };
             if (filteredChains && filteredChains.length) filteredChains.forEach((chain)=>{
-                const filtered = chain.rpc.filter((item)=>!item.includes("${INFURA_API_KEY}") && !item.includes("${ALCHEMY_API_KEY}"));
+                const filtered = chain.rpc.filter((item)=>!item.includes("API_KEY"));
                 rpc[chain.networkId] = filtered[0];
             });
             const provider = new (0, $hgUW1$walletconnectweb3provider)({
