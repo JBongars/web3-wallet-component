@@ -185,7 +185,7 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
     public getIsConnected(): boolean {
         const provider = this.getProvider();
 
-        return provider.connected;
+        return provider.chainId == 4160 && provider.connected;
     }
 
     public getPrimaryAccount(): Accounts {
