@@ -99,13 +99,18 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
         if (filteredChains && filteredChains.length) {
             filteredChains.forEach((chain: EVMBasedChain) => {
-                rpc[chain.networkId] = chain.rpc[0];
+                const filtered = chain.rpc.filter(
+                    (item) => !item.includes('${INFURA_API_KEY}') && !item.includes('${ALCHEMY_API_KEY}')
+                );
+
+                rpc[chain.networkId] = filtered[0];
             });
         }
 
         const provider = new WalletConnectProvider({
             rpc,
-            qrcode
+            qrcode,
+            pollingInterval: 12000
         });
 
         await provider.enable();
