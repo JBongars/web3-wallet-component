@@ -624,10 +624,6 @@ class $95e4ef1726fa05c6$export$6a733d504587e4b0 {
     getProvider() {
         if (this.provider instanceof (0, $hgUW1$PeraWalletConnect)) return this.provider;
         this.provider = new (0, $hgUW1$PeraWalletConnect)();
-        // this.provider.connector = new WalletConnect({
-        //     storageId: `walletconnect-${WALLET_ID.ALGORAND_PERAWALLET}`
-        // })
-        console.log(this.provider.connector);
         return this.provider;
     }
 }
@@ -721,9 +717,6 @@ class $42024282ef82c6ee$export$ba0ef3a0d99fcc8f {
         }
         this.provider.on("connect", (error, payload)=>{
             if (error) throw error;
-            console.log({
-                payload: payload
-            });
             // Get provided accounts
             const { accounts: accounts  } = payload.params[0];
             this._state.isConnected = Array.isArray(accounts) && accounts.length > 0;
@@ -1565,7 +1558,6 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
         if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
     }
     async getWCProvider(qrcode = false) {
-        console.log("calling wc-provider");
         // if (!this._walletConnectProvider) {
         const { data: chains  } = await (0, $hgUW1$axios).get("https://chainid.network/chains.json");
         const ignoredChainIds = [
