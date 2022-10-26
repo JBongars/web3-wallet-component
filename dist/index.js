@@ -697,19 +697,13 @@ class $85900a75ff20f989$export$ba0ef3a0d99fcc8f {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        this.provider = this.getProvider();
-        // create new session
-        await this.provider.createSession({
-            chainId: 1611
+        this.provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))({
+            bridge: "https://bridge.walletconnect.org",
+            qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal)))
         });
-        console.log("test", 1611);
-        if (!this.provider.connected) {
-            // create new session
-            await this.provider.createSession({
-                chainId: 1611
-            });
-            console.log("test", 1611);
-        } else {
+        if (!this.provider.connected) // create new session
+        await this.provider.createSession();
+        else {
             const { accounts: accounts  } = this.provider;
             this._state.isConnected = Array.isArray(accounts) && accounts.length > 0;
             this._state.accounts = accounts;
@@ -838,8 +832,7 @@ class $85900a75ff20f989$export$ba0ef3a0d99fcc8f {
         if (this.provider instanceof (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))) return this.provider;
         this.provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))({
             bridge: "https://bridge.walletconnect.org",
-            qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal))),
-            storageId: `walletconnect-${(0, $57b8a5d2d8300786$export$7c460c214963f696).ALGORAND_WALLETCONNECT}`
+            qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal)))
         });
         return this.provider;
     }
@@ -1592,6 +1585,9 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
                 pollingInterval: 12000,
                 storageId: `walletconnect-${(0, $57b8a5d2d8300786$export$7c460c214963f696).ETHEREUM_WALLETCONNECT}`
             });
+            // Check if chain id has valid RPC URL before attempting to connect
+            const isValidChain = filteredChains.find((chain)=>chain.networkId === provider.chainId);
+            if (!isValidChain) throw new Error("Connection error: No RPC URL available.");
             await provider.enable();
             provider.on("accountsChanged", async (accounts)=>{
                 this._state.accounts = accounts;
@@ -1748,11 +1744,7 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
     }
     async getProvider() {
         await this._enforceChain();
-        if (!this.provider) {
-            console.log("!this.provider");
-            return this._getProvider();
-        }
-        console.log("this.provider");
+        if (!this.provider) return this._getProvider();
         return this.provider;
     }
 }

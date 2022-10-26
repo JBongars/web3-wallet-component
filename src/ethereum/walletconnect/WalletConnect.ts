@@ -115,6 +115,10 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
                 storageId: `walletconnect-${WALLET_ID.ETHEREUM_WALLETCONNECT}`
             });
 
+            // Check if chain id has valid RPC URL before attempting to connect
+            const isValidChain = filteredChains.find((chain) => chain.networkId === provider.chainId);
+            if (!isValidChain) throw new Error("Connection error: No RPC URL available.");
+
             await provider.enable();
 
             provider.on('accountsChanged', async (accounts: string[]) => {
@@ -295,10 +299,8 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     public async getProvider(): Promise<ethers.providers.Web3Provider> {
         await this._enforceChain();
         if (!this.provider) {
-            console.log('!this.provider');
             return this._getProvider();
         }
-        console.log('this.provider');
         return this.provider;
     }
 }
