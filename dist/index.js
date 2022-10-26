@@ -1629,7 +1629,7 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
             wc.on("connect", (error, payload)=>{
                 if (error) console.log("connect error");
                 console.log("called here", payload);
-                //disconect the wallet connect if chain id is invalid. 
+                //disconect the wallet connect if chain id is invalid.
                 if (!rpc[payload.params[0].chainId]) {
                     console.log("invalid chain", {
                         payload: payload
@@ -1642,7 +1642,8 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
                     });
                     if (payload) {
                         console.log("updateState");
-                        provider.updateState(payload.params[0]).then(async ()=>{
+                        provider.updateState(payload.params[0]).then(()=>{
+                            console.log("updatestate then");
                             this._state.accounts = provider.accounts;
                             this._state.isConnected = this._state.accounts.length > 0;
                             this._updateWalletStorageValue();
@@ -1658,31 +1659,39 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
             provider.connected = true;
             provider.updateState(wc.session);
         }
-        wc.on("disconnect", (error)=>{
-            console.log("disconnect", {
-                error: error
+        if (wc) {
+            provider.stop();
+            provider.start();
+            wc.on("connect", ()=>{
+                provider.stop();
+                provider.start();
             });
-            if (error) {
-                provider.emit("error", error);
-                return;
-            }
-            provider.onDisconnect();
-        });
-        wc.on("session_update", (error, payload)=>{
-            console.log("session_update", {
-                error: error,
-                payload: payload
+            wc.on("disconnect", (error)=>{
+                console.log("disconnect", {
+                    error: error
+                });
+                if (error) {
+                    provider.emit("error", error);
+                    return;
+                }
+                provider.onDisconnect();
             });
-            if (error) {
-                provider.emit("error", error);
-                return;
-            }
-            console.log("almost");
-            if (payload) {
-                console.log("here");
-                provider.updateState(payload.params[0]);
-            }
-        });
+            wc.on("session_update", (error, payload)=>{
+                console.log("session_update", {
+                    error: error,
+                    payload: payload
+                });
+                if (error) {
+                    provider.emit("error", error);
+                    return;
+                }
+                console.log("almost");
+                if (payload) {
+                    console.log("here");
+                    provider.updateState(payload.params[0]);
+                }
+            });
+        }
         provider.on("accountsChanged", async (accounts)=>{
             this._state.accounts = accounts;
             if (accounts.length === 0) {
@@ -1783,6 +1792,7 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
     }
     async switchChainFromWallet(chain) {
         const provider = await this.getWCProvider();
+        provider.enable();
         const defaultChains = [
             1,
             3,

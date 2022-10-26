@@ -141,6 +141,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
                                 this._updateWalletStorageValue();
                                 this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, this._state.accounts);
                             });
+                            
                         }
                         provider.emit('connect');
                         provider.triggerConnect(wc);
@@ -154,27 +155,35 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
             }
         }
 
-        wc.on('disconnect', (error) => {
-            console.log('disconnect', { error });
-            if (error) {
-                provider.emit('error', error);
-                return;
-            }
-            provider.onDisconnect();
-        });
+        if(wc) {
+            provider.stop()
+            provider.start()
+            wc.on("connect", () => {
+                provider.stop()
+                provider.start()
+            })
+            wc.on('disconnect', (error) => {
+                console.log('disconnect', { error });
+                if (error) {
+                    provider.emit('error', error);
+                    return;
+                }
+                provider.onDisconnect();
+            });
 
-        wc.on('session_update', (error, payload) => {
-            console.log('session_update', { error, payload });
-            if (error) {
-                provider.emit('error', error);
-                return;
-            }
-            console.log('almost');
-            if (payload) {
-                console.log('here');
-                provider.updateState(payload.params[0]);
-            }
-        });
+            wc.on('session_update', (error, payload) => {
+                console.log('session_update', { error, payload });
+                if (error) {
+                    provider.emit('error', error);
+                    return;
+                }
+                console.log('almost');
+                if (payload) {
+                    console.log('here');
+                    provider.updateState(payload.params[0]);
+                }
+            });
+        }
 
         provider.on('accountsChanged', async (accounts: string[]) => {
             this._state.accounts = accounts;
