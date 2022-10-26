@@ -83,7 +83,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     }
 
     public async getWCProvider(qrcode = false): Promise<WalletConnectProvider> {
-        // if (!this._walletConnectProvider) {
+        if (!this._walletConnectProvider) {
             const { data: chains }: { data: EVMBasedChain[] } = await axios.get('https://chainid.network/chains.json');
             const ignoredChainIds = [1, 3, 4, 5, 42, 11155111];
             const filteredChains = chains.filter((chain: EVMBasedChain) => {
@@ -142,7 +142,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
             });
 
             this._walletConnectProvider = provider;
-        // }
+        }
 
         return this._walletConnectProvider;
     }
