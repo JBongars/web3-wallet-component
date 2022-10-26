@@ -62,7 +62,8 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
     private async _getProvider(qrcode = false): Promise<ethers.providers.Web3Provider> {
         const provider = await this.getWCProvider(qrcode);
-        return new providers.Web3Provider(provider);
+        this.provider = new providers.Web3Provider(provider);
+        return this.provider
     }
 
     private _enforceIsConnected(): void {
@@ -110,7 +111,8 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
             const provider = new WalletConnectProvider({
                 rpc,
                 qrcode,
-                pollingInterval: 12000
+                pollingInterval: 12000,
+                storageId: `walletconnect-${WALLET_ID.ETHEREUM_WALLETCONNECT}`
             });
 
             await provider.enable();
@@ -291,7 +293,12 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
     public async getProvider(): Promise<ethers.providers.Web3Provider> {
         await this._enforceChain();
-        return await this._getProvider();
+        if(!this.provider) {
+            console.log('!this.provider')
+            return this._getProvider()
+        }
+        console.log('this.provider')
+        return this.provider;
     }
 }
 

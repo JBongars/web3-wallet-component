@@ -1,7 +1,7 @@
 import { formatJsonRpcRequest } from '@json-rpc-tools/utils';
 import { SignedTx } from '@randlabs/myalgo-connect';
 import WalletConnectClient from '@walletconnect/client';
-import QRCodeModal from 'algorand-walletconnect-qrcode-modal';
+import QRCodeModal, {AlgorandQRCodeModalOptions} from 'algorand-walletconnect-qrcode-modal';
 import { NotImplementedError, WalletNotConnectedError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { HookEvent, WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
@@ -81,14 +81,20 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
     }
 
     public async signIn(): Promise<WALLET_STATUS> {
-        this.provider = new WalletConnectClient({
-            bridge: 'https://bridge.walletconnect.org', // Required
-            qrcodeModal: QRCodeModal
+        
+        this.provider = this.getProvider();
+        // create new session
+        await this.provider.createSession({
+            chainId: 1611,
         });
+        console.log('test', 1611)
 
         if (!this.provider.connected) {
             // create new session
-            await this.provider.createSession();
+            await this.provider.createSession({
+                chainId: 1611, 
+            });
+            console.log('test', 1611)
         } else {
             const { accounts } = this.provider;
 
@@ -185,7 +191,7 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
     public getIsConnected(): boolean {
         const provider = this.getProvider();
 
-        return provider.chainId == 4160 && provider.connected;
+        return provider.connected;
     }
 
     public getPrimaryAccount(): Accounts {
@@ -252,7 +258,8 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
 
         this.provider = new WalletConnectClient({
             bridge: 'https://bridge.walletconnect.org', // Required
-            qrcodeModal: QRCodeModal
+            qrcodeModal: QRCodeModal,
+            storageId: `walletconnect-${WALLET_ID.ALGORAND_WALLETCONNECT}` 
         });
         return this.provider;
     }

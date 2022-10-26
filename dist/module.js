@@ -624,6 +624,10 @@ class $95e4ef1726fa05c6$export$6a733d504587e4b0 {
     getProvider() {
         if (this.provider instanceof (0, $hgUW1$PeraWalletConnect)) return this.provider;
         this.provider = new (0, $hgUW1$PeraWalletConnect)();
+        // this.provider.connector = new WalletConnect({
+        //     storageId: `walletconnect-${WALLET_ID.ALGORAND_PERAWALLET}`
+        // })
+        console.log(this.provider.connector);
         return this.provider;
     }
 }
@@ -694,13 +698,19 @@ class $42024282ef82c6ee$export$ba0ef3a0d99fcc8f {
         return (0, $90bab4f8b8f7e96d$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        this.provider = new (0, $hgUW1$walletconnectclient)({
-            bridge: "https://bridge.walletconnect.org",
-            qrcodeModal: (0, $hgUW1$algorandwalletconnectqrcodemodal)
+        this.provider = this.getProvider();
+        // create new session
+        await this.provider.createSession({
+            chainId: 1611
         });
-        if (!this.provider.connected) // create new session
-        await this.provider.createSession();
-        else {
+        console.log("test", 1611);
+        if (!this.provider.connected) {
+            // create new session
+            await this.provider.createSession({
+                chainId: 1611
+            });
+            console.log("test", 1611);
+        } else {
             const { accounts: accounts  } = this.provider;
             this._state.isConnected = Array.isArray(accounts) && accounts.length > 0;
             this._state.accounts = accounts;
@@ -711,6 +721,9 @@ class $42024282ef82c6ee$export$ba0ef3a0d99fcc8f {
         }
         this.provider.on("connect", (error, payload)=>{
             if (error) throw error;
+            console.log({
+                payload: payload
+            });
             // Get provided accounts
             const { accounts: accounts  } = payload.params[0];
             this._state.isConnected = Array.isArray(accounts) && accounts.length > 0;
@@ -776,7 +789,7 @@ class $42024282ef82c6ee$export$ba0ef3a0d99fcc8f {
     }
     getIsConnected() {
         const provider = this.getProvider();
-        return provider.chainId == 4160 && provider.connected;
+        return provider.connected;
     }
     getPrimaryAccount() {
         return {
@@ -829,7 +842,8 @@ class $42024282ef82c6ee$export$ba0ef3a0d99fcc8f {
         if (this.provider instanceof (0, $hgUW1$walletconnectclient)) return this.provider;
         this.provider = new (0, $hgUW1$walletconnectclient)({
             bridge: "https://bridge.walletconnect.org",
-            qrcodeModal: (0, $hgUW1$algorandwalletconnectqrcodemodal)
+            qrcodeModal: (0, $hgUW1$algorandwalletconnectqrcodemodal),
+            storageId: `walletconnect-${(0, $90bab4f8b8f7e96d$export$7c460c214963f696).ALGORAND_WALLETCONNECT}`
         });
         return this.provider;
     }
@@ -1538,7 +1552,8 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
     }
     async _getProvider(qrcode = false) {
         const provider = await this.getWCProvider(qrcode);
-        return new (0, $hgUW1$providers).Web3Provider(provider);
+        this.provider = new (0, $hgUW1$providers).Web3Provider(provider);
+        return this.provider;
     }
     _enforceIsConnected() {
         if (!this.getIsConnected()) throw new (0, $28ac839a9eca26f5$export$313d299817c74896)();
@@ -1550,6 +1565,7 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
         if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
     }
     async getWCProvider(qrcode = false) {
+        console.log("calling wc-provider");
         // if (!this._walletConnectProvider) {
         const { data: chains  } = await (0, $hgUW1$axios).get("https://chainid.network/chains.json");
         const ignoredChainIds = [
@@ -1578,7 +1594,8 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
         const provider = new (0, $hgUW1$walletconnectweb3provider)({
             rpc: rpc,
             qrcode: qrcode,
-            pollingInterval: 12000
+            pollingInterval: 12000,
+            storageId: `walletconnect-${(0, $90bab4f8b8f7e96d$export$7c460c214963f696).ETHEREUM_WALLETCONNECT}`
         });
         await provider.enable();
         provider.on("accountsChanged", async (accounts)=>{
@@ -1735,7 +1752,12 @@ class $07e52f3c9fc905f8$export$9741c3aebc6a0fb7 {
     }
     async getProvider() {
         await this._enforceChain();
-        return await this._getProvider();
+        if (!this.provider) {
+            console.log("!this.provider");
+            return this._getProvider();
+        }
+        console.log("this.provider");
+        return this.provider;
     }
 }
 
