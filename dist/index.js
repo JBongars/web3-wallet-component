@@ -697,13 +697,19 @@ class $85900a75ff20f989$export$ba0ef3a0d99fcc8f {
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        this.provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))({
-            bridge: "https://bridge.walletconnect.org",
-            qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal)))
+        this.provider = this.getProvider();
+        // create new session
+        await this.provider.createSession({
+            chainId: 1611
         });
-        if (!this.provider.connected) // create new session
-        await this.provider.createSession();
-        else {
+        console.log("test", 1611);
+        if (!this.provider.connected) {
+            // create new session
+            await this.provider.createSession({
+                chainId: 1611
+            });
+            console.log("test", 1611);
+        } else {
             const { accounts: accounts  } = this.provider;
             this._state.isConnected = Array.isArray(accounts) && accounts.length > 0;
             this._state.accounts = accounts;
@@ -832,7 +838,8 @@ class $85900a75ff20f989$export$ba0ef3a0d99fcc8f {
         if (this.provider instanceof (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))) return this.provider;
         this.provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectclient)))({
             bridge: "https://bridge.walletconnect.org",
-            qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal)))
+            qrcodeModal: (0, ($parcel$interopDefault($8zHUo$algorandwalletconnectqrcodemodal))),
+            storageId: `walletconnect-${(0, $57b8a5d2d8300786$export$7c460c214963f696).ALGORAND_WALLETCONNECT}`
         });
         return this.provider;
     }
@@ -1518,7 +1525,7 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
     walletStorage = new (0, $430794692bff5f59$export$2e2bcd8739ae039)((0, $be737fe08c02d508$export$aef6a8518da1f60c), (0, $57b8a5d2d8300786$export$7c460c214963f696).ETHEREUM_WALLETCONNECT);
     type = (0, $eeb7484c2092e8d9$export$353aefc175350117).ETHEREUM_WALLETCONNECT;
     name = "ETHEREUM_WALLETCONNECT";
-    _walletConnectProvider = undefined;
+    _walletConnectProvider = null;
     constructor(state){
         if (state) this._state = {
             ...state
@@ -1554,69 +1561,126 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
         if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
     }
     async getWCProvider(qrcode = false) {
-        if (!this._walletConnectProvider) {
-            const { data: chains  } = await (0, ($parcel$interopDefault($8zHUo$axios))).get("https://chainid.network/chains.json");
-            const ignoredChainIds = [
-                1,
-                3,
-                4,
-                5,
-                42,
-                11155111
-            ];
-            const filteredChains = chains.filter((chain)=>{
-                return !ignoredChainIds.includes(chain.networkId);
+        // if (!this._walletConnectProvider) {
+        const { data: chains  } = await (0, ($parcel$interopDefault($8zHUo$axios))).get("https://chainid.network/chains.json");
+        const ignoredChainIds = [
+            1,
+            3,
+            4,
+            5,
+            42,
+            11155111
+        ];
+        const filteredChains = chains.filter((chain)=>{
+            return !ignoredChainIds.includes(chain.networkId);
+        });
+        const rpc = {
+            1: "https://rpc.ankr.com/eth",
+            3: "https://rpc.ankr.com/eth_ropsten",
+            4: "https://rpc.ankr.com/eth_rinkeby",
+            5: "https://rpc.ankr.com/eth_goerli",
+            42: "https://kovan.etherscan.io",
+            11155111: "https://sepolia.etherscan.io"
+        };
+        if (filteredChains && filteredChains.length) filteredChains.forEach((chain)=>{
+            const filtered = chain.rpc.filter((item)=>!item.includes("API_KEY"));
+            rpc[chain.networkId] = filtered[0];
+        });
+        const provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectweb3provider)))({
+            rpc: rpc,
+            qrcode: qrcode,
+            pollingInterval: 12000,
+            storageId: `walletconnect-${(0, $57b8a5d2d8300786$export$7c460c214963f696).ETHEREUM_WALLETCONNECT}`
+        });
+        const wc = provider.connector;
+        if (!wc.connected) wc.createSession({
+            chainId: provider.chainId
+        }).then(()=>{
+            wc.on("connect", (error, payload)=>{
+                if (error) console.log("connect error");
+                console.log("called here", payload);
+                //disconect the wallet connect if chain id is invalid.
+                if (!rpc[payload.params[0].chainId]) {
+                    console.log("invalid chain", {
+                        payload: payload
+                    });
+                    wc.killSession();
+                } else {
+                    provider.connected = true;
+                    console.log("valid chain", {
+                        payload: payload
+                    });
+                    if (payload) {
+                        console.log("updateState");
+                        provider.updateState(payload.params[0]).then(()=>{
+                            console.log("updatestate then");
+                            this._state.accounts = provider.accounts;
+                            this._state.isConnected = this._state.accounts.length > 0;
+                            this._updateWalletStorageValue();
+                            this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, this._state.accounts);
+                        });
+                    }
+                    provider.emit("connect");
+                    provider.triggerConnect(wc);
+                }
             });
-            const rpc = {
-                1: "https://rpc.ankr.com/eth",
-                3: "https://rpc.ankr.com/eth_ropsten",
-                4: "https://rpc.ankr.com/eth_rinkeby",
-                5: "https://rpc.ankr.com/eth_goerli",
-                42: "https://kovan.etherscan.io",
-                11155111: "https://sepolia.etherscan.io"
-            };
-            if (filteredChains && filteredChains.length) filteredChains.forEach((chain)=>{
-                const filtered = chain.rpc.filter((item)=>!item.includes("API_KEY"));
-                rpc[chain.networkId] = filtered[0];
+        });
+        else if (!provider.connected) {
+            provider.connected = true;
+            provider.updateState(wc.session);
+        }
+        wc.on("disconnect", (error)=>{
+            console.log("disconnect", {
+                error: error
             });
-            const provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectweb3provider)))({
-                rpc: rpc,
-                qrcode: qrcode,
-                pollingInterval: 12000,
-                storageId: `walletconnect-${(0, $57b8a5d2d8300786$export$7c460c214963f696).ETHEREUM_WALLETCONNECT}`
+            if (error) {
+                provider.emit("error", error);
+                return;
+            }
+            provider.onDisconnect();
+        });
+        wc.on("session_update", (error, payload)=>{
+            console.log("session_update", {
+                error: error,
+                payload: payload
             });
-            // Check if chain id has valid RPC URL before attempting to connect
-            const isValidChain = filteredChains.find((chain)=>chain.networkId === provider.chainId);
-            if (!isValidChain) throw new Error("Connection error: No RPC URL available.");
-            await provider.enable();
-            provider.on("accountsChanged", async (accounts)=>{
-                this._state.accounts = accounts;
-                if (accounts.length === 0) {
-                    await this.signOut();
-                    this.hookRouter.applyHooks([
-                        (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
-                    ]);
-                } else this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
-                this._updateWalletStorageValue();
-            });
-            provider.on("chainChanged", async (chainId)=>{
-                const id = (0, $8zHUo$ethers.ethers).utils.hexValue(chainId);
-                this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, id);
-            });
-            provider.on("disconnect", async (_code, _reason)=>{
-                this._state.accounts = [];
-                this._state.isConnected = false;
-                this.provider = undefined;
-                this._updateWalletStorageValue();
-                this.hookRouter.applyHooks([
-                    (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
-                ]);
+            if (error) {
+                provider.emit("error", error);
+                return;
+            }
+            console.log("almost");
+            if (payload) {
+                console.log("here");
+                provider.updateState(payload.params[0]);
+            }
+        });
+        provider.on("accountsChanged", async (accounts)=>{
+            this._state.accounts = accounts;
+            if (accounts.length === 0) {
+                await this.signOut();
                 this.hookRouter.applyHooks([
                     (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
                 ]);
-            });
-            this._walletConnectProvider = provider;
-        }
+            } else this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
+            this._updateWalletStorageValue();
+        });
+        provider.on("chainChanged", async (chainId)=>{
+            const id = (0, $8zHUo$ethers.ethers).utils.hexValue(chainId);
+            this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, id);
+        });
+        provider.on("disconnect", async (_code, _reason)=>{
+            this._state.accounts = [];
+            this._state.isConnected = false;
+            this.provider = undefined;
+            this._updateWalletStorageValue();
+            this.hookRouter.applyHooks([
+                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
+            ]);
+            this.hookRouter.applyHooks([
+                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
+            ]);
+        });
+        this._walletConnectProvider = provider;
         return this._walletConnectProvider;
     }
     async init() {
@@ -1637,7 +1701,6 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
         this.provider = undefined;
         this._updateWalletStorageValue();
         (await this.getWCProvider()).disconnect();
-        this._walletConnectProvider = undefined;
         this.hookRouter.applyHooks([
             (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
         ]);
@@ -1691,6 +1754,7 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
     }
     async switchChainFromWallet(chain) {
         const provider = await this.getWCProvider();
+        provider.enable();
         const defaultChains = [
             1,
             3,

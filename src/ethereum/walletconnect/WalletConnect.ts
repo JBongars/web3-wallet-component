@@ -1,7 +1,6 @@
-import WalletConnect from '@walletconnect/client';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import axios from 'axios';
-import { ethers, logger, providers } from 'ethers';
+import { ethers, providers } from 'ethers';
 import { NotImplementedError, WalletNotConnectedError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
@@ -64,7 +63,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     private async _getProvider(qrcode = false): Promise<ethers.providers.Web3Provider> {
         const provider = await this.getWCProvider(qrcode);
         this.provider = new providers.Web3Provider(provider);
-        
+
         return this.provider;
     }
 
@@ -114,64 +113,65 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
             rpc,
             qrcode,
             pollingInterval: 12000,
-            storageId: `walletconnect-${WALLET_ID.ETHEREUM_WALLETCONNECT}`,
+            storageId: `walletconnect-${WALLET_ID.ETHEREUM_WALLETCONNECT}`
         });
 
         const wc = provider.connector;
-     
-       if(!wc.connected) {
+
+        if (!wc.connected) {
             wc.createSession({ chainId: provider.chainId }).then(() => {
-                wc.on("connect", (error, payload) => {
+                wc.on('connect', (error, payload) => {
                     if (error) {
-                        console.log("connect error")
+                        console.log('connect error');
                     }
-                    console.log("called here", payload)
-                    //disconect the wallet connect if chain id is invalid. 
+                    console.log('called here', payload);
+                    //disconect the wallet connect if chain id is invalid.
                     if (!rpc[payload.params[0].chainId]) {
-                        console.log("invalid chain", {payload})
-                        wc.killSession()
+                        console.log('invalid chain', { payload });
+                        wc.killSession();
                     } else {
-                        provider.connected = true
-                        console.log("valid chain", {payload})
+                        provider.connected = true;
+                        console.log('valid chain', { payload });
                         if (payload) {
-                            console.log("updateState")
-                            provider.updateState(payload.params[0]).then(async () => {
-                                this._state.accounts =  provider.accounts;
+                            console.log('updateState');
+                            provider.updateState(payload.params[0]).then(() => {
+                                console.log('updatestate then');
+                                this._state.accounts = provider.accounts;
                                 this._state.isConnected = this._state.accounts.length > 0;
                                 this._updateWalletStorageValue();
                                 this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, this._state.accounts);
                             });
                         }
-                        provider.emit("connect")
-                        provider.triggerConnect(wc)
+                        provider.emit('connect');
+                        provider.triggerConnect(wc);
                     }
                 });
-            })
-       } else {
-           if (!provider.connected) {
-               provider.connected = true;
-               provider.updateState(wc.session);
-           }
-       }
+            });
+        } else {
+            if (!provider.connected) {
+                provider.connected = true;
+                provider.updateState(wc.session);
+            }
+        }
 
-        wc.on("disconnect", error => {
-            console.log("disconnect", { error })
+        wc.on('disconnect', (error) => {
+            console.log('disconnect', { error });
             if (error) {
-                provider.emit("error", error);
+                provider.emit('error', error);
                 return;
             }
             provider.onDisconnect();
         });
 
-        wc.on("session_update", (error, payload) => {
-            console.log("session_update", {error, payload})
+        wc.on('session_update', (error, payload) => {
+            console.log('session_update', { error, payload });
             if (error) {
-                provider.emit("error", error);
+                provider.emit('error', error);
                 return;
             }
-            console.log("almost")
-            if(payload) {
-                console.log("here")
+            console.log('almost');
+            if (payload) {
+                console.log('here');
                 provider.updateState(payload.params[0]);
             }
         });
@@ -293,8 +293,8 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
     public async switchChainFromWallet(chain: number) {
         const provider: WalletConnectProvider = await this.getWCProvider();
+        provider.enable();
         const defaultChains = [1, 3, 4, 5, 42];
-
         if (defaultChains.includes(chain)) {
             await provider.request({
                 method: 'wallet_switchEthereumChain',
