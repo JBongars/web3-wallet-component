@@ -30,7 +30,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     private walletStorage = new WalletStateStorage(CHAIN_ETHEREUM, WALLET_ID.ETHEREUM_WALLETCONNECT);
     public type: EthereumWalletType = WALLET_TYPE.ETHEREUM_WALLETCONNECT;
     public name = 'ETHEREUM_WALLETCONNECT';
-    private _walletConnectProvider: WalletConnectProvider | null = null;
+    private _walletConnectProvider: WalletConnectProvider | undefined = undefined;
 
     constructor(state?: EthereumWalletConnectState) {
         if (state) {
@@ -84,67 +84,67 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     }
 
     public async getWCProvider(qrcode = false): Promise<WalletConnectProvider> {
-        // if (!this._walletConnectProvider) {
-        const { data: chains }: { data: EVMBasedChain[] } = await axios.get('https://chainid.network/chains.json');
-        const ignoredChainIds = [1, 3, 4, 5, 42, 11155111];
-        const filteredChains = chains.filter((chain: EVMBasedChain) => {
-            return !ignoredChainIds.includes(chain.networkId);
-        });
-
-        const rpc: { [key: string]: string } = {
-            1: 'https://rpc.ankr.com/eth',
-            3: 'https://rpc.ankr.com/eth_ropsten',
-            4: 'https://rpc.ankr.com/eth_rinkeby',
-            5: 'https://rpc.ankr.com/eth_goerli',
-            42: 'https://kovan.etherscan.io',
-            11155111: 'https://sepolia.etherscan.io'
-        };
-
-        if (filteredChains && filteredChains.length) {
-            filteredChains.forEach((chain: EVMBasedChain) => {
-                const filtered = chain.rpc.filter((item) => !item.includes('API_KEY'));
-
-                rpc[chain.networkId] = filtered[0];
+        if (!this._walletConnectProvider) {
+            const { data: chains }: { data: EVMBasedChain[] } = await axios.get('https://chainid.network/chains.json');
+            const ignoredChainIds = [1, 3, 4, 5, 42, 11155111];
+            const filteredChains = chains.filter((chain: EVMBasedChain) => {
+                return !ignoredChainIds.includes(chain.networkId);
             });
-        }
 
-        const provider = new WalletConnectProvider({
-            rpc,
-            qrcode,
-            pollingInterval: 12000,
-            storageId: `walletconnect-${WALLET_ID.ETHEREUM_WALLETCONNECT}`
-        });
+            const rpc: { [key: string]: string } = {
+                1: 'https://rpc.ankr.com/eth',
+                3: 'https://rpc.ankr.com/eth_ropsten',
+                4: 'https://rpc.ankr.com/eth_rinkeby',
+                5: 'https://rpc.ankr.com/eth_goerli',
+                42: 'https://kovan.etherscan.io',
+                11155111: 'https://sepolia.etherscan.io'
+            };
 
-        await provider.enable();
+            if (filteredChains && filteredChains.length) {
+                filteredChains.forEach((chain: EVMBasedChain) => {
+                    const filtered = chain.rpc.filter((item) => !item.includes('API_KEY'));
 
-        provider.on('accountsChanged', async (accounts: string[]) => {
-            this._state.accounts = accounts;
-
-            if (accounts.length === 0) {
-                await this.signOut();
-                this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
-            } else {
-                this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, accounts);
+                    rpc[chain.networkId] = filtered[0];
+                });
             }
-            this._updateWalletStorageValue();
-        });
 
-        provider.on('chainChanged', async (chainId: number) => {
-            const id = ethers.utils.hexValue(chainId);
-            this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, id);
-        });
+            const provider = new WalletConnectProvider({
+                rpc,
+                qrcode,
+                pollingInterval: 12000,
+                storageId: `walletconnect-${WALLET_ID.ETHEREUM_WALLETCONNECT}`
+            });
 
-        provider.on('disconnect', async (_code: number, _reason: string) => {
-            this._state.accounts = [];
-            this._state.isConnected = false;
-            this.provider = undefined;
-            this._updateWalletStorageValue();
-            this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
-            this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
-        });
+            await provider.enable();
 
-        this._walletConnectProvider = provider;
-        // }
+            provider.on('accountsChanged', async (accounts: string[]) => {
+                this._state.accounts = accounts;
+
+                if (accounts.length === 0) {
+                    await this.signOut();
+                    this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
+                } else {
+                    this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, accounts);
+                }
+                this._updateWalletStorageValue();
+            });
+
+            provider.on('chainChanged', async (chainId: number) => {
+                const id = ethers.utils.hexValue(chainId);
+                this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, id);
+            });
+
+            provider.on('disconnect', async (_code: number, _reason: string) => {
+                this._state.accounts = [];
+                this._state.isConnected = false;
+                this.provider = undefined;
+                this._updateWalletStorageValue();
+                this.hookRouter.applyHooks([WALLET_HOOK.CHAIN_ON_DISCONNECT]);
+                this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
+            });
+
+            this._walletConnectProvider = provider;
+        }
 
         return this._walletConnectProvider;
     }
@@ -169,6 +169,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         this.provider = undefined;
         this._updateWalletStorageValue();
         (await this.getWCProvider()).disconnect();
+        this._walletConnectProvider = undefined;
 
         this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
         return WALLET_STATUS.OK;
