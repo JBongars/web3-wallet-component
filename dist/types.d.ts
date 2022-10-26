@@ -349,6 +349,7 @@ export class PeraWallet implements WalletInterface<PeraWalletState>, WalletHookH
      */
     _dangerouslyUpdateInternalState(data: PeraWalletState): void;
     getProvider(): PeraWalletConnect;
+    registerDisconnectListener(): void;
 }
 export type AlgorandWalletConnectState = {
     accounts: string[];

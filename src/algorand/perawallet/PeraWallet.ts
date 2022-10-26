@@ -1,6 +1,7 @@
 import { formatJsonRpcRequest } from '@json-rpc-tools/utils';
 import { PeraWalletConnect } from '@perawallet/connect';
 import { SignedTx } from '@randlabs/myalgo-connect';
+import { isValidAddress } from 'algosdk';
 import { NotImplementedError, WalletNotConnectedError } from '~/src/errors';
 import { WalletHookHandlerInterface, WalletInterface } from '~/src/types';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
@@ -62,6 +63,7 @@ class PeraWallet implements WalletInterface<PeraWalletState>, WalletHookHandlerI
                     address: account
                 }))
             };
+            this.getProvider()
         }
     }
 
@@ -76,6 +78,15 @@ class PeraWallet implements WalletInterface<PeraWalletState>, WalletHookHandlerI
     }
 
     public async init(): Promise<WALLET_STATUS> {
+        console.log("init")
+        this.getProvider()
+        console.log("reconnecting")
+        try {
+            await this.getProvider().reconnectSession()
+        } catch(err) {
+            console.log(err)
+        }
+        this.registerDisconnectListener()
         return WALLET_STATUS.OK;
     }
 
@@ -83,21 +94,20 @@ class PeraWallet implements WalletInterface<PeraWalletState>, WalletHookHandlerI
         this.provider = this.getProvider();
         const accounts = await this.provider.connect();
 
-        this._state.accounts = accounts.map((account) => ({
-            name: '',
-            address: account
-        }));
-        this._state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-        this._updateWalletStorageValue();
-        this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+        this.registerDisconnectListener()
 
-        this.provider?.connector?.on('disconnect', (error, _payload) => {
-            if (error) {
-                throw error;
-            }
-
-            this.signOut();
-        });
+        const algorandAcc = accounts.filter(value => isValidAddress(value))
+        if (algorandAcc.length > 0) {
+            this._state.accounts = algorandAcc.map((account) => ({
+                name: '',
+                address: account
+            }));
+            this._state.isConnected = true;
+            this._updateWalletStorageValue();
+            this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+        } else {
+            this.provider.disconnect()
+        }
 
         return WALLET_STATUS.OK;
     }
@@ -105,21 +115,22 @@ class PeraWallet implements WalletInterface<PeraWalletState>, WalletHookHandlerI
     public async signOut(): Promise<WALLET_STATUS> {
         this._state.accounts = [];
         this._state.isConnected = false;
+        this._updateWalletStorageValue();
+        this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
 
         if (!this.provider) {
-            this.provider = this.getProvider();
-            await this.provider.reconnectSession();
+            const provider = this.getProvider();
+            await provider.reconnectSession();
         }
 
         try {
-            await this.provider?.disconnect();
+            this.provider?.disconnect()
         } catch (e) {
             console.error('Failed to kill session...');
         }
 
-        this.provider = undefined;
-        this._updateWalletStorageValue();
-        this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
+        this.provider = undefined
+       
         return WALLET_STATUS.OK;
     }
 
@@ -229,12 +240,29 @@ class PeraWallet implements WalletInterface<PeraWalletState>, WalletHookHandlerI
     }
 
     public getProvider(): PeraWalletConnect {
-        if (this.provider instanceof PeraWalletConnect) {
+        if (this.provider && this.provider instanceof PeraWalletConnect) {
             return this.provider;
         }
 
-        this.provider = new PeraWalletConnect();
+        const provider = new PeraWalletConnect();
+       
+        this.provider = provider
+
         return this.provider;
+    }
+
+    public registerDisconnectListener() {
+        this.provider?.connector?.on('disconnect', (error, _payload) => {
+            console.log('disconnect init', { error, _payload })
+            if (error) {
+                throw error;
+            }
+
+            this._state.accounts = [];
+            this._state.isConnected = false;
+            this._updateWalletStorageValue();
+            this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
+        });
     }
 }
 

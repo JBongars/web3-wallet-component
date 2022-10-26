@@ -2,6 +2,7 @@ import { formatJsonRpcRequest } from '@json-rpc-tools/utils';
 import { SignedTx } from '@randlabs/myalgo-connect';
 import WalletConnectClient from '@walletconnect/client';
 import QRCodeModal, {AlgorandQRCodeModalOptions} from 'algorand-walletconnect-qrcode-modal';
+import { isValidAddress } from 'algosdk';
 import { NotImplementedError, WalletNotConnectedError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { HookEvent, WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
@@ -83,18 +84,11 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
     public async signIn(): Promise<WALLET_STATUS> {
         
         this.provider = this.getProvider();
-        // create new session
-        await this.provider.createSession({
-            chainId: 1611,
-        });
-        console.log('test', 1611)
+
 
         if (!this.provider.connected) {
             // create new session
-            await this.provider.createSession({
-                chainId: 1611, 
-            });
-            console.log('test', 1611)
+            await this.provider.createSession();
         } else {
             const { accounts } = this.provider;
 
@@ -105,16 +99,25 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
         }
 
         this.provider.on('connect', (error, payload) => {
+            console.log("onConnect")
             if (error) {
                 throw error;
             }
 
             // Get provided accounts
             const { accounts } = payload.params[0];
-            this._state.isConnected = Array.isArray(accounts) && accounts.length > 0;
-            this._state.accounts = accounts;
-            this._updateWalletStorageValue();
-            this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);
+            if (Array.isArray(accounts) && accounts.length > 0) {
+                const algorandAcc = accounts.filter(value => isValidAddress(value))
+               if(algorandAcc.length > 0)  {
+                   this._state.isConnected = true;
+                   this._state.accounts = algorandAcc;
+                   this._updateWalletStorageValue();
+                   this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_CHANGE]);   
+               } else {
+                console.log("sign out")
+                this.signOut()
+               }
+            }
         });
 
         this.provider.on('disconnect', (error, _payload) => {
