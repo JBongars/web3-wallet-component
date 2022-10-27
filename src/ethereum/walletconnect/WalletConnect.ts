@@ -119,35 +119,42 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         const wc = provider.connector;
 
         if (!wc.connected) {
-            wc.createSession({ chainId: provider.chainId }).then(() => {
-                wc.on('connect', (error, payload) => {
-                    if (error) {
-                        console.log('connect error');
+            wc.on('connect', (error, payload) => {
+                if (error) {
+                    console.log('connect error');
+                }
+                if(provider.isConnecting) {
+                    provider.isConnecting = false
+                }
+                
+                //disconect the wallet connect if chain id is invalid.
+                if (!rpc[payload.params[0].chainId]) {
+                    console.log('invalid chain', { payload });
+                    wc.killSession();
+                } else {
+                    provider.connected = true;
+                    if (payload) {
+                        provider.updateState(payload.params[0]).then(() => {
+                            this._state.accounts = provider.accounts;
+                            this._state.isConnected = this._state.accounts.length > 0;
+                            this._updateWalletStorageValue();
+                            this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, this._state.accounts);
+                        });
+                        provider.stop()
+                        provider.start()
                     }
-                    console.log('called here', payload);
-                    //disconect the wallet connect if chain id is invalid.
-                    if (!rpc[payload.params[0].chainId]) {
-                        console.log('invalid chain', { payload });
-                        wc.killSession();
-                    } else {
-                        provider.connected = true;
-                        console.log('valid chain', { payload });
-                        if (payload) {
-                            console.log('updateState');
-                            provider.updateState(payload.params[0]).then(() => {
-                                console.log('updatestate then');
-                                this._state.accounts = provider.accounts;
-                                this._state.isConnected = this._state.accounts.length > 0;
-                                this._updateWalletStorageValue();
-                                this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, this._state.accounts);
-                            });
-                            
-                        }
-                        provider.emit('connect');
-                        provider.triggerConnect(wc);
-                    }
-                });
+                    provider.emit('connect');
+                    provider.triggerConnect(wc);
+                }
             });
+            wc.on("modal_closed", () => {})
+            try {
+                provider.isConnecting = true
+                await wc.createSession({ chainId: provider.chainId });
+            } catch(err) {
+                provider.isConnecting = false
+                console.log({err})
+            }
         } else {
             if (!provider.connected) {
                 provider.connected = true;
@@ -158,10 +165,6 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         if(wc) {
             provider.stop()
             provider.start()
-            wc.on("connect", () => {
-                provider.stop()
-                provider.start()
-            })
             wc.on('disconnect', (error) => {
                 console.log('disconnect', { error });
                 if (error) {
