@@ -1556,6 +1556,7 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
     type = (0, $eeb7484c2092e8d9$export$353aefc175350117).ETHEREUM_WALLETCONNECT;
     name = "ETHEREUM_WALLETCONNECT";
     _walletConnectProvider = null;
+    _rpc = null;
     constructor(state){
         if (state) this._state = {
             ...state
@@ -1576,8 +1577,8 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
         if (this._state.isConnected && this._state.accounts.length > 0) this.walletStorage.updateValue(true, this._state.accounts[0], this._state.accounts);
         else this.walletStorage.updateValue(false, "", []);
     }
-    async _getProvider(qrcode = false) {
-        const provider = await this.getWCProvider(qrcode);
+    async _getProvider() {
+        const provider = await this.getWCProvider();
         this.provider = new (0, $8zHUo$ethers.providers).Web3Provider(provider, "any");
         return this.provider;
     }
@@ -1590,160 +1591,54 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
         const currentChain = await provider.send("eth_chainId", []);
         if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
     }
-    async getWCProvider(qrcode = false) {
-        // if (!this._walletConnectProvider) {
-        const { data: chains  } = await (0, ($parcel$interopDefault($8zHUo$axios))).get("https://chainid.network/chains.json");
-        const ignoredChainIds = [
-            1,
-            3,
-            4,
-            5,
-            42,
-            11155111
-        ];
-        const filteredChains = chains.filter((chain)=>{
-            return !ignoredChainIds.includes(chain.networkId);
-        });
-        const rpc = {
-            1: "https://rpc.ankr.com/eth",
-            3: "https://rpc.ankr.com/eth_ropsten",
-            4: "https://rpc.ankr.com/eth_rinkeby",
-            5: "https://rpc.ankr.com/eth_goerli",
-            42: "https://kovan.etherscan.io",
-            11155111: "https://sepolia.etherscan.io"
-        };
-        if (filteredChains && filteredChains.length) filteredChains.forEach((chain)=>{
-            const filtered = chain.rpc.filter((item)=>!item.includes("API_KEY"));
-            rpc[chain.networkId] = filtered[0];
-        });
-        const provider = new (0, ($parcel$interopDefault($8zHUo$walletconnectweb3provider)))({
+    async getWCProvider() {
+        const rpc = await this._getRpc();
+        if (this._walletConnectProvider) return this._walletConnectProvider;
+        this._walletConnectProvider = new (0, ($parcel$interopDefault($8zHUo$walletconnectweb3provider)))({
             rpc: rpc,
-            qrcode: qrcode,
+            qrcode: true,
             qrcodeModalOptions: {
                 desktopLinks: []
             },
             pollingInterval: 12000,
             storageId: `walletconnect-${(0, $57b8a5d2d8300786$export$7c460c214963f696).ETHEREUM_WALLETCONNECT}`
         });
-        const wc = provider.connector;
-        if (!wc.connected) {
-            wc.on("connect", (error, payload)=>{
-                if (error) console.log("connect error");
-                if (provider.isConnecting) provider.isConnecting = false;
-                //disconect the wallet connect if chain id is invalid.
-                if (!rpc[payload.params[0].chainId]) {
-                    console.log("invalid chain", {
-                        payload: payload
-                    });
-                    wc.killSession();
-                } else {
-                    provider.connected = true;
-                    if (payload) {
-                        provider.updateState(payload.params[0]).then(()=>{
-                            this._state.accounts = provider.accounts;
-                            this._state.isConnected = this._state.accounts.length > 0;
-                            this._updateWalletStorageValue();
-                            this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, this._state.accounts);
-                        });
-                        provider.stop();
-                        provider.start();
-                    }
-                    provider.emit("connect");
-                    provider.triggerConnect(wc);
-                }
-            });
-            wc.on("modal_closed", ()=>{});
-            try {
-                provider.isConnecting = true;
-                await wc.createSession({
-                    chainId: provider.chainId
-                });
-            } catch (err) {
-                provider.isConnecting = false;
-                console.log({
-                    err: err
-                });
-            }
-        } else if (!provider.connected) {
-            provider.connected = true;
-            provider.updateState(wc.session);
-        }
-        if (wc) {
-            provider.stop();
-            provider.start();
-            wc.on("disconnect", (error)=>{
-                console.log("disconnect", {
-                    error: error
-                });
-                if (error) {
-                    provider.emit("error", error);
-                    return;
-                }
-                provider.onDisconnect();
-            });
-            wc.on("session_update", (error, payload)=>{
-                console.log("session_update", {
-                    error: error,
-                    payload: payload
-                });
-                if (error) {
-                    provider.emit("error", error);
-                    return;
-                }
-                console.log("almost");
-                if (payload) {
-                    console.log("here");
-                    provider.updateState(payload.params[0]);
-                }
-            });
-        }
-        provider.on("accountsChanged", async (accounts)=>{
-            this._state.accounts = accounts;
-            if (accounts.length === 0) {
-                await this.signOut();
-                this.hookRouter.applyHooks([
-                    (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
-                ]);
-            } else this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
-            this._updateWalletStorageValue();
-        });
-        provider.on("chainChanged", async (chainId)=>{
-            const id = (0, $8zHUo$ethers.ethers).utils.hexValue(chainId);
-            this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, id);
-        });
-        provider.on("disconnect", async (_code, _reason)=>{
-            this._state.accounts = [];
-            this._state.isConnected = false;
-            this.provider = undefined;
-            this._updateWalletStorageValue();
-            this.hookRouter.applyHooks([
-                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_DISCONNECT
-            ]);
-            this.hookRouter.applyHooks([
-                (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
-            ]);
-        });
-        this._walletConnectProvider = provider;
         return this._walletConnectProvider;
     }
     async init() {
+        console.log("init");
+        const wcProvider = await this.getWCProvider();
+        const wc = wcProvider.connector;
+        if (wc.connected && !wcProvider.connected) {
+            wcProvider.connected = true;
+            wcProvider.updateState(wc.session);
+        }
+        if (wcProvider.connected) wcProvider.start();
+        await this._registerListeners();
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signIn() {
-        const provider = await this._getProvider(true);
-        this._state.accounts = await provider.listAccounts();
-        this._state.isConnected = this._state.accounts.length > 0;
-        this._updateWalletStorageValue();
-        this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, this._state.accounts);
+        if (!this._walletConnectProvider) this._walletConnectProvider = await this.getWCProvider();
+        const wc = this._walletConnectProvider.connector;
+        try {
+            this._walletConnectProvider.isConnecting = true;
+            await wc.createSession({
+                chainId: this._walletConnectProvider.chainId
+            });
+        } catch (err) {
+            this._walletConnectProvider.isConnecting = false;
+            console.log({
+                err: err
+            });
+        }
         return (0, $57b8a5d2d8300786$export$de76a1f31766a0a2).OK;
     }
     async signOut() {
         this._enforceIsConnected();
         this._state.accounts = [];
         this._state.isConnected = false;
-        this.provider = undefined;
         this._updateWalletStorageValue();
-        (await this.getWCProvider()).disconnect();
+        this._walletConnectProvider?.disconnect();
         this.hookRouter.applyHooks([
             (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
         ]);
@@ -1853,6 +1748,99 @@ class $bf08368245b76476$export$9741c3aebc6a0fb7 {
         await this._enforceChain();
         if (!this.provider) return this._getProvider();
         return this.provider;
+    }
+    async _getRpc() {
+        if (this._rpc) return this._rpc;
+        const { data: chains  } = await (0, ($parcel$interopDefault($8zHUo$axios))).get("https://chainid.network/chains.json");
+        const ignoredChainIds = [
+            1,
+            3,
+            4,
+            5,
+            42,
+            11155111
+        ];
+        const filteredChains = chains.filter((chain)=>{
+            return !ignoredChainIds.includes(chain.networkId);
+        });
+        const rpc = {
+            1: "https://rpc.ankr.com/eth",
+            3: "https://rpc.ankr.com/eth_ropsten",
+            4: "https://rpc.ankr.com/eth_rinkeby",
+            5: "https://rpc.ankr.com/eth_goerli",
+            42: "https://kovan.etherscan.io",
+            11155111: "https://sepolia.etherscan.io"
+        };
+        if (filteredChains && filteredChains.length) filteredChains.forEach((chain)=>{
+            const filtered = chain.rpc.filter((item)=>!item.includes("API_KEY"));
+            rpc[chain.networkId] = filtered[0];
+        });
+        this._rpc = rpc;
+        return rpc;
+    }
+    async _registerListeners() {
+        if (!this._walletConnectProvider) this._walletConnectProvider = await this.getWCProvider();
+        const rpc = await this._getRpc();
+        const wc = this._walletConnectProvider.connector;
+        wc.on("modal_closed", ()=>{});
+        wc.on("connect", (error, payload)=>{
+            console.log("connect");
+            if (error) console.log("connect error");
+            if (this._walletConnectProvider?.isConnecting) this._walletConnectProvider.isConnecting = false;
+            //disconect the wallet connect if chain id is invalid.
+            if (!rpc[payload.params[0].chainId]) {
+                console.log("invalid chain", {
+                    payload: payload
+                });
+                wc.killSession();
+            } else {
+                if (this._walletConnectProvider) this._walletConnectProvider.connected = true;
+                if (payload) {
+                    this._walletConnectProvider?.updateState(payload.params[0]).then(()=>{
+                        console.log(this._walletConnectProvider?.accounts);
+                        this._state.accounts = this._walletConnectProvider?.accounts || [];
+                        this._state.isConnected = this._state.accounts.length > 0;
+                        this._updateWalletStorageValue();
+                        this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, this._state.accounts);
+                    });
+                    this._walletConnectProvider?.stop();
+                    this._walletConnectProvider?.start();
+                }
+                this._walletConnectProvider?.emit("connect");
+                this._walletConnectProvider?.triggerConnect(wc);
+            }
+        });
+        wc.on("disconnect", (error)=>{
+            console.log("disconnect", {
+                error: error
+            });
+            if (error) {
+                this._walletConnectProvider?.emit("error", error);
+                return;
+            }
+            this._walletConnectProvider?.onDisconnect();
+        });
+        wc.on("session_update", (error, payload)=>{
+            if (error) {
+                this._walletConnectProvider?.emit("error", error);
+                return;
+            }
+            if (payload) this._walletConnectProvider?.updateState(payload.params[0]);
+        });
+        this._walletConnectProvider.on("accountsChanged", async (accounts)=>{
+            this._state.accounts = accounts;
+            if (accounts.length === 0) {
+                await this.signOut();
+                this.hookRouter.applyHooks([
+                    (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
+                ]);
+            } else this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
+            this._updateWalletStorageValue();
+        });
+        this._walletConnectProvider.on("chainChanged", async (chainId)=>{
+            const id = (0, $8zHUo$ethers.ethers).utils.hexValue(chainId);
+            this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).CHAIN_ON_CHANGE, id);
+        });
     }
 }
 
