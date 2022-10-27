@@ -112,6 +112,9 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
         const provider = new WalletConnectProvider({
             rpc,
             qrcode,
+            qrcodeModalOptions: {
+                desktopLinks: []
+            },
             pollingInterval: 12000,
             storageId: `walletconnect-${WALLET_ID.ETHEREUM_WALLETCONNECT}`
         });
@@ -126,7 +129,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
                 if(provider.isConnecting) {
                     provider.isConnecting = false
                 }
-                
+
                 //disconect the wallet connect if chain id is invalid.
                 if (!rpc[payload.params[0].chainId]) {
                     console.log('invalid chain', { payload });
