@@ -39,6 +39,7 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
 
     public type: AlgorandWalletType = WALLET_TYPE.ALGORAND_WALLETCONNECT;
     public name = 'ALGORAND_WALLETCONNECT';
+    private shouldForceModalOpen: boolean = false;
 
     constructor(state?: AlgorandWalletConnectState) {
         if (state) {
@@ -85,10 +86,18 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
         
         this.provider = this.getProvider();
 
+        this.provider.on('modal_closed', () => {
+            this.shouldForceModalOpen = true
+        })
 
         if (!this.provider.connected) {
-            // create new session
-            await this.provider.createSession();
+            if(this.shouldForceModalOpen) {
+                QRCodeModal.open(this.provider.uri, () => {})
+            } else {
+                // create new session
+                await this.provider.createSession();
+            }
+
         } else {
             const { accounts } = this.provider;
 
@@ -100,6 +109,7 @@ class WalletConnect implements WalletInterface<AlgorandWalletConnectState>, Wall
 
         this.provider.on('connect', (error, payload) => {
             console.log("onConnect")
+            this.shouldForceModalOpen = false
             if (error) {
                 throw error;
             }
