@@ -223,7 +223,6 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
     public async switchChainFromWallet(chain: number) {
         const provider: WalletConnectProvider = await this.getWCProvider();
-        await provider.enable();
         const defaultChains = [1, 3, 4, 5, 42];
         if (defaultChains.includes(chain)) {
             await provider.request({
@@ -324,9 +323,26 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
        if(!this._walletConnectProvider) {
         this._walletConnectProvider = await this.getWCProvider()
        }
-
         const rpc = await this._getRpc()
         const wc = this._walletConnectProvider.connector
+
+        this._walletConnectProvider.on('accountsChanged', async (accounts: string[]) => {
+            this._state.accounts = accounts;
+            if (accounts.length === 0) {
+                await this.signOut();
+                this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
+            } else {
+                this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, accounts);
+            }
+            this._updateWalletStorageValue();
+        });
+
+        this._walletConnectProvider.on('chainChanged', async (chainId: number) => {
+            console.log("chainChanged")
+            const id = ethers.utils.hexValue(chainId);
+            this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, id);
+        });
+
         wc.on("modal_closed", () => {
             console.log("shouldForceModalOpen")
             this.shouldForceModalOpen = true
@@ -351,12 +367,13 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
               }
               
                 if (payload) {
+                    console.log(payload.params[0])
                     this._walletConnectProvider?.updateState(payload.params[0]).then(() => {
-                        console.log(this._walletConnectProvider?.accounts)
                         this._state.accounts = this._walletConnectProvider?.accounts || [];
                         this._state.isConnected = this._state.accounts.length > 0;
                         this._updateWalletStorageValue();
                         this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, this._state.accounts);
+                        this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, payload.params[0].chainId);
                     });
                     this._walletConnectProvider?.stop()
                     this._walletConnectProvider?.start()
@@ -372,6 +389,11 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
                 return;
             }
             this._walletConnectProvider?.onDisconnect();
+            console.log('update account on disconnect')
+            this._state.accounts = [];
+            this._state.isConnected = false;
+            this._updateWalletStorageValue();
+            this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
         });
 
         wc.on('session_update', (error, payload) => {
@@ -382,22 +404,6 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
             if (payload) {
                 this._walletConnectProvider?.updateState(payload.params[0]);
             }
-        });
-
-        this._walletConnectProvider.on('accountsChanged', async (accounts: string[]) => {
-            this._state.accounts = accounts;
-            if (accounts.length === 0) {
-                await this.signOut();
-                this.hookRouter.applyHooks([WALLET_HOOK.ACCOUNT_ON_DISCONNECT]);
-            } else {
-                this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, accounts);
-            }
-            this._updateWalletStorageValue();
-        });
-
-        this._walletConnectProvider.on('chainChanged', async (chainId: number) => {
-            const id = ethers.utils.hexValue(chainId);
-            this.hookRouter.applyHookWithArgs(WALLET_HOOK.CHAIN_ON_CHANGE, id);
         });
     }
 }
