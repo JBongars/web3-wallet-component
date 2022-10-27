@@ -1,6 +1,7 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import axios from 'axios';
 import { ethers, providers } from 'ethers';
+import { resolve } from 'path';
 import { NotImplementedError, WalletNotConnectedError } from '~/src/errors';
 import HookRouter from '~/src/utils/HookRouter/HookRouter';
 import { WALLET_HOOK, WALLET_ID, WALLET_STATUS } from '~/src/utils/HookRouter/types';
@@ -32,6 +33,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
     public name = 'ETHEREUM_WALLETCONNECT';
     private _walletConnectProvider: WalletConnectProvider | null = null;
     private _rpc: { [key: string]: string } | null = null
+    private shouldForceModalOpen: boolean = false;
 
     constructor(state?: EthereumWalletConnectState) {
         if (state) {
@@ -128,10 +130,19 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
             this._walletConnectProvider = await this.getWCProvider()
         }
         const wc = this._walletConnectProvider.connector
-
         try {
-            this._walletConnectProvider.isConnecting = true
-            await wc.createSession({ chainId: this._walletConnectProvider.chainId });
+            if (this._walletConnectProvider) {
+                this._walletConnectProvider.isConnecting = true
+            }
+            if(this.shouldForceModalOpen) {
+                console.log('qrcodeModal.open')
+                this._walletConnectProvider.qrcodeModal.open(wc.uri, ()=> {}, {
+                    desktopLinks: []
+                })
+            } else {
+                console.log('createSession')
+                await wc.createSession({ chainId: this._walletConnectProvider?.chainId });
+            }
         } catch (err) {
             this._walletConnectProvider.isConnecting = false
             console.log({ err })
@@ -316,12 +327,16 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
         const rpc = await this._getRpc()
         const wc = this._walletConnectProvider.connector
-        wc.on("modal_closed", () => { })
+        wc.on("modal_closed", () => {
+            console.log("shouldForceModalOpen")
+            this.shouldForceModalOpen = true
+        })
         wc.on('connect', (error, payload) => {
             console.log("connect")
             if (error) {
                 console.log('connect error');
             }
+            this.shouldForceModalOpen = false;
             if (this._walletConnectProvider?.isConnecting) {
                 this._walletConnectProvider.isConnecting = false
             }
