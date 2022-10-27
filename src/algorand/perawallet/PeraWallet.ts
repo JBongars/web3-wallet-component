@@ -78,13 +78,10 @@ class PeraWallet implements WalletInterface<PeraWalletState>, WalletHookHandlerI
     }
 
     public async init(): Promise<WALLET_STATUS> {
-        console.log("init")
         this.getProvider()
-        console.log("reconnecting")
         try {
             await this.getProvider().reconnectSession()
         } catch(err) {
-            console.log(err)
         }
         this.registerDisconnectListener()
         return WALLET_STATUS.OK;
