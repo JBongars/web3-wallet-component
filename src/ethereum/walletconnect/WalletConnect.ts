@@ -62,7 +62,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
     private async _getProvider(qrcode = false): Promise<ethers.providers.Web3Provider> {
         const provider = await this.getWCProvider(qrcode);
-        this.provider = new providers.Web3Provider(provider);
+        this.provider = new providers.Web3Provider(provider, 'any');
 
         return this.provider;
     }
@@ -126,8 +126,8 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
                 if (error) {
                     console.log('connect error');
                 }
-                if(provider.isConnecting) {
-                    provider.isConnecting = false
+                if (provider.isConnecting) {
+                    provider.isConnecting = false;
                 }
 
                 //disconect the wallet connect if chain id is invalid.
@@ -143,20 +143,20 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
                             this._updateWalletStorageValue();
                             this.hookRouter.applyHookWithArgs(WALLET_HOOK.ACCOUNT_ON_CHANGE, this._state.accounts);
                         });
-                        provider.stop()
-                        provider.start()
+                        provider.stop();
+                        provider.start();
                     }
                     provider.emit('connect');
                     provider.triggerConnect(wc);
                 }
             });
-            wc.on("modal_closed", () => {})
+            wc.on('modal_closed', () => {});
             try {
-                provider.isConnecting = true
+                provider.isConnecting = true;
                 await wc.createSession({ chainId: provider.chainId });
-            } catch(err) {
-                provider.isConnecting = false
-                console.log({err})
+            } catch (err) {
+                provider.isConnecting = false;
+                console.log({ err });
             }
         } else {
             if (!provider.connected) {
@@ -165,9 +165,9 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
             }
         }
 
-        if(wc) {
-            provider.stop()
-            provider.start()
+        if (wc) {
+            provider.stop();
+            provider.start();
             wc.on('disconnect', (error) => {
                 console.log('disconnect', { error });
                 if (error) {
@@ -308,7 +308,7 @@ class EthWalletConnect implements WalletInterface<EthereumWalletConnectState>, W
 
     public async switchChainFromWallet(chain: number) {
         const provider: WalletConnectProvider = await this.getWCProvider();
-        provider.enable();
+        await provider.enable();
         const defaultChains = [1, 3, 4, 5, 42];
         if (defaultChains.includes(chain)) {
             await provider.request({
