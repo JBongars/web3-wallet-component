@@ -504,12 +504,6 @@ class $8077658bdae097e7$export$bf6aa8a8e97b6c5f {
     _enforceIsConnected() {
         if (!this.getIsConnected()) throw new (0, $d083fd37dae77b99$export$313d299817c74896)();
     }
-    async _enforceChain() {
-        if (this.chain === null) return;
-        const provider = await this._getProvider();
-        const currentChain = await (0, $0012831bc1085df5$export$9e095c387372d0b1).fetchCurrentChainID(provider);
-        if (currentChain !== this.chain) throw new Error(`Chain has changed to ${currentChain} when it should be ${this.chain}`);
-    }
     _setupInitialState() {
         const storageValue = this._walletStorage.getValue();
         if (storageValue) this._state = {
@@ -522,13 +516,11 @@ class $8077658bdae097e7$export$bf6aa8a8e97b6c5f {
         else this._walletStorage.updateValue(false, "", []);
     }
     async getSigner() {
-        this._enforceChain();
         this._enforceIsConnected();
         const provider = this._getProvider();
         return (0, $0012831bc1085df5$export$9e095c387372d0b1).getSigner(provider);
     }
     async getBalance() {
-        this._enforceChain();
         this._enforceIsConnected();
         const provider = this._getProvider();
         return await (0, $0012831bc1085df5$export$9e095c387372d0b1).getBalance(provider, this._state.accounts[0]);
@@ -544,13 +536,11 @@ class $8077658bdae097e7$export$bf6aa8a8e97b6c5f {
         return this._state.isConnected;
     }
     getPrimaryAccount() {
-        this._enforceChain();
         this._enforceIsConnected();
         if (this._state.accounts.length < 1) throw new Error("wallet is marked as connected but could not find primary account");
         return this._state.accounts[0];
     }
     getAccounts() {
-        this._enforceChain();
         this._enforceIsConnected();
         if (this._state.accounts.length < 1) console.warn("wallet is marked as connected but could not find primary account");
         return this._state.accounts;
@@ -568,11 +558,6 @@ class $8077658bdae097e7$export$bf6aa8a8e97b6c5f {
             await (0, $0012831bc1085df5$export$9e095c387372d0b1).switchChainFromWallet(ethereum, chain);
             if (updateChain) this.chain = chain;
         }
-    }
-    async forceCurrentChainID(chain) {
-        if (this.chain !== null && this.chain !== chain) throw new Error(`Cannot force chain to be 0x${chain} because it is already forced to be 0x${this.chain}`);
-        this.chain = chain;
-        this.switchChainFromWallet(chain);
     }
     onAccountChange = (cb)=>{
         return this.hookRouter.registerCallback((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, cb);
@@ -594,28 +579,40 @@ class $8077658bdae097e7$export$bf6aa8a8e97b6c5f {
     getIsWalletInstalled() {
         throw new (0, $d083fd37dae77b99$export$e162153238934121)();
     }
+    async getProvider() {
+        return this._getProvider();
+    }
     toJSON() {
         return this._state;
     }
     /**
-     * Mounts ethereum based event hooks to the hook router
+     * Mounts ethereum based event hooks t the hook router
      * @see https://eips.ethereum.org/EIPS/eip-1193#references for list of ethereum hooks
      */ async mountEventListeners() {
         if (!this.getIsWalletInstalled()) return;
         const ethereum = this._getEthereumProvider();
         const provider = this._getProvider();
-        if (!ethereum.on) return;
+        if (!ethereum.on) {
+            console.warn("ethereum.on was not found and event listeners could not be mounted. web3-wallet might fall out of sync");
+            return;
+        }
         ethereum.on("accountsChanged", async (accounts)=>{
             console.log({
                 accounts: accounts
             });
             this._state.accounts = accounts;
+            console.log({
+                accounts: accounts
+            });
             if (accounts.length === 0) {
                 await this.signOut();
                 this.hookRouter.applyHooks([
                     (0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_DISCONNECT
                 ]);
-            } else this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
+            } else {
+                console.log("INSIDE");
+                this.hookRouter.applyHookWithArgs((0, $57b8a5d2d8300786$export$5ee9bf08a91850b9).ACCOUNT_ON_CHANGE, accounts);
+            }
             this._updateWalletStorageValue();
         });
         ethereum.on("chainChanged", async (chainId)=>{
@@ -635,10 +632,6 @@ class $8077658bdae097e7$export$bf6aa8a8e97b6c5f {
     async unmountEventListeners() {
         const provider = await this._getProvider();
         provider.removeAllListeners();
-    }
-    async getProvider() {
-        await this._enforceChain();
-        return this._getProvider();
     }
 }
 

@@ -494,7 +494,6 @@ declare abstract class EthereumBaseWallet implements WalletHookHandlerInterface 
     protected _getEthereumProvider(): EthereumObject;
     protected _getProvider(ethereum?: ethers.providers.ExternalProvider): ethers.providers.Web3Provider;
     protected _enforceIsConnected(): void;
-    protected _enforceChain(): Promise<void>;
     protected _setupInitialState(): void;
     protected _updateWalletStorageValue(): void;
     getSigner(): Promise<ethers.providers.JsonRpcSigner>;
@@ -507,21 +506,20 @@ declare abstract class EthereumBaseWallet implements WalletHookHandlerInterface 
     fetchCurrentChainID(): Promise<string>;
     addChainToWallet(chainConfig: BaseEthereumChainConfig): Promise<void>;
     switchChainFromWallet(chain: string, updateChain?: boolean): Promise<void>;
-    forceCurrentChainID(chain: string): Promise<void>;
     onAccountChange: (cb: (accounts: string[]) => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
     onChainChange: (cb: (chain: string) => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
     onAccountDisconnect: (cb: () => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
     onChainDisconnect: (cb: () => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
     onBlockAdded: (cb: (newBlock: number) => void | Promise<void>) => import("~/src/utils/HookRouter/types").HookEvent;
     getIsWalletInstalled(): boolean;
+    getProvider(): Promise<ethers.providers.Web3Provider>;
     toJSON(): BaseEthereumState;
     /**
-     * Mounts ethereum based event hooks to the hook router
+     * Mounts ethereum based event hooks t the hook router
      * @see https://eips.ethereum.org/EIPS/eip-1193#references for list of ethereum hooks
      */
     mountEventListeners(): Promise<void>;
     unmountEventListeners(): Promise<void>;
-    getProvider(): Promise<ethers.providers.Web3Provider>;
 }
 /**
  * State for Metamask Wallet
