@@ -62,6 +62,9 @@ class Algorand
      */
     private _registerActiveWallet = (type: AlgorandWalletType): void => {
         this._activeWallets.unshift(type);
+
+        //ensuring active wallets is unique
+        this._activeWallets = [...new Set(this._activeWallets)]
     };
 
     /**
@@ -183,6 +186,12 @@ class Algorand
         if (this._activeWallets.length === 0) {
             return this.getWallet(this._config.defaultWallet); // Get default wallet
         }
+
+        if (this.getConnectedWallets().length > 0) {
+            const [walletType] = this.getConnectedWallets()
+            return this.getWallet(walletType)
+        }
+
         return this.getWallet(this._activeWallets[0]);
     }
 
